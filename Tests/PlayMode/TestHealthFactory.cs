@@ -26,7 +26,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
     {
         public struct HealthEventsBundle
         {
-            public PreDmgGameEvent PreDmg;
+            public PreDamageGameEvent PreDmg;
             public DamageResolutionGameEvent DamageResolution;
             public EntityMaxHealthChangedGameEvent MaxHpChanged;
             public EntityGainedHealthGameEvent Gained;
@@ -40,7 +40,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         {
             return new HealthEventsBundle
             {
-                PreDmg = ScriptableObject.CreateInstance<PreDmgGameEvent>(),
+                PreDmg = ScriptableObject.CreateInstance<PreDamageGameEvent>(),
                 DamageResolution = ScriptableObject.CreateInstance<DamageResolutionGameEvent>(),
                 MaxHpChanged = ScriptableObject.CreateInstance<EntityMaxHealthChangedGameEvent>(),
                 Gained = ScriptableObject.CreateInstance<EntityGainedHealthGameEvent>(),

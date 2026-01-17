@@ -103,7 +103,7 @@ namespace ElectricDrill.AstraRpgHealthTests
             _entityHealth.OverrideOnDeathStrategy = ScriptableObject.CreateInstance<DestroyImmediateOnDeathStrategy>();
 
             // Events
-            SetPriv("_preDmgInfoEvent", ScriptableObject.CreateInstance<PreDmgGameEvent>());
+            SetPriv("_preDmgInfoEvent", ScriptableObject.CreateInstance<PreDamageGameEvent>());
             SetPriv("_damageResolutionEvent", ScriptableObject.CreateInstance<DamageResolutionGameEvent>());
             SetPriv("_entityDiedEvent", ScriptableObject.CreateInstance<EntityDiedGameEvent>());
             SetPriv("_maxHealthChangedEvent", ScriptableObject.CreateInstance<EntityMaxHealthChangedGameEvent>());

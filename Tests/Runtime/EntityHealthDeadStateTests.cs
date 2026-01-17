@@ -113,7 +113,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             AstraRpgHealthConfigProvider.Instance = config;
 
             // Create events
-            var preDmgEvent = ScriptableObject.CreateInstance<PreDmgGameEvent>();
+            var preDmgEvent = ScriptableObject.CreateInstance<PreDamageGameEvent>();
             var dmgResolutionEvent = ScriptableObject.CreateInstance<DamageResolutionGameEvent>();
             var maxHealthChangedEvent = ScriptableObject.CreateInstance<EntityMaxHealthChangedGameEvent>();
             var gainedHealthEvent = ScriptableObject.CreateInstance<EntityGainedHealthGameEvent>();

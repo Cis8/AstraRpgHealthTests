@@ -49,7 +49,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
                 typeof(EntityHealth).GetField(field, BindingFlags.NonPublic | BindingFlags.Instance)
                     ?.SetValue(eh, so);
 
-            SetEvt("_preDmgInfoEvent", ScriptableObject.CreateInstance<PreDmgGameEvent>());
+            SetEvt("_preDmgInfoEvent", ScriptableObject.CreateInstance<PreDamageGameEvent>());
             SetEvt("_damageResolutionEvent", ScriptableObject.CreateInstance<DamageResolutionGameEvent>());
             SetEvt("_entityDiedEvent", ScriptableObject.CreateInstance<EntityDiedGameEvent>());
             SetEvt("_maxHealthChangedEvent", ScriptableObject.CreateInstance<EntityMaxHealthChangedGameEvent>());
