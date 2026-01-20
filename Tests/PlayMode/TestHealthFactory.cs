@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Reflection;
 using ElectricDrill.AstraRpgFramework;
 using ElectricDrill.AstraRpgFramework.Attributes;
@@ -252,7 +253,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         // Simple OnDeathStrategy used in tests
         private class TestOnDeathStrategy : OnDeathStrategy
         {
-            public override void Die(EntityHealth health) { /* no-op for tests */ }
+            public override IEnumerator Execute(EntityHealth health) { /* no-op for tests */ yield break; }
         }
 
         /// <summary>
