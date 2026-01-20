@@ -81,7 +81,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             if (config == null)
             {
                 config = ScriptableObject.CreateInstance<AstraRpgHealthConfig>();
-                // Ensure a default OnDeathStrategy on the config (no reflection)
+                // Ensure a default OnDeathStrategy on the config
                 var cfgDeath = ScriptableObject.CreateInstance<TestOnDeathStrategy>();
                 config.DefaultOnDeathStrategy = cfgDeath;
                 configMutator?.Invoke(config);
@@ -179,8 +179,8 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             void SetPrivate(string fieldName, object value) =>
                 typeof(EntityHealth).GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic)
                     ?.SetValue(health, value);
-
-            SetPrivate("_preDmgInfoEvent", evtBundle.PreDmg);
+            
+            SetPrivate("_preDamageInfoEvent", evtBundle.PreDmg);
             SetPrivate("_damageResolutionEvent", evtBundle.DamageResolution);
             SetPrivate("_maxHealthChangedEvent", evtBundle.MaxHpChanged);
             SetPrivate("_gainedHealthEvent", evtBundle.Gained);
