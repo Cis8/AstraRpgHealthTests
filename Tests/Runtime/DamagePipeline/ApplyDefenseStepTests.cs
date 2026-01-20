@@ -4,9 +4,7 @@ using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgHealth.Damage;
 using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
 using ElectricDrill.AstraRpgHealth.DamageReductionFunctions;
-using ElectricDrill.AstraRpgHealth.DamageReductionFunctions.DamageReductionFunctions;
 using ElectricDrill.AstraRpgHealth.DefenseReductionFunctions;
-using ElectricDrill.AstraRpgHealth.DefenseReductionFunctions.DefenseReductionFunctions;
 using NUnit.Framework;
 using UnityEngine;
 
