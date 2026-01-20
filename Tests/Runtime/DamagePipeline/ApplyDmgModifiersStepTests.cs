@@ -37,6 +37,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
         private class MockConfig : IAstraRpgHealthConfig
         {
+            public SerializableDictionary<HealSource, Stat> HealSourceModifications { get; set; }
             public Stat GenericDamageModificationStat { get; set; }
             public SerializableDictionary<DamageType, Stat> DamageTypeModifications { get; set; }
             public SerializableDictionary<DamageSource, Stat> DamageSourceModifications { get; set; }

@@ -19,6 +19,7 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
     {
         public AttributesScalingComponent HealthAttributesScaling { get; set; }
         public Stat HealAmountModifierStat { get; set; }
+        public SerializableDictionary<HealSource, Stat> HealSourceModifications { get; set; }
         public Stat GenericDamageModificationStat { get; set; }
         public DamageCalculationStrategy DefaultDamageCalculationCalculationStrategy { get; set; }
         public SerializableDictionary<DamageType, Stat> DamageTypeModifications { get; set; }
