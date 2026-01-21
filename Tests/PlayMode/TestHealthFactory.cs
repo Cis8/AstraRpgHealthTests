@@ -7,6 +7,7 @@ using ElectricDrill.AstraRpgFramework.Events;
 using ElectricDrill.AstraRpgFramework.Experience;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
+using ElectricDrill.AstraRpgFramework.Utils.Executables;
 using ElectricDrill.AstraRpgHealth;
 using ElectricDrill.AstraRpgHealth.Config;
 using ElectricDrill.AstraRpgHealth.Damage;
@@ -82,18 +83,18 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             if (config == null)
             {
                 config = ScriptableObject.CreateInstance<AstraRpgHealthConfig>();
-                // Ensure a default OnDeathStrategy on the config
+                // Ensure a default OnDeathGameAction on the config
                 var cfgDeath = ScriptableObject.CreateInstance<TestOnDeathStrategy>();
-                config.DefaultOnDeathStrategy = cfgDeath;
+                config.DefaultOnDeathGameAction = cfgDeath;
                 configMutator?.Invoke(config);
                 SetConfigProviderInstance(config);
             }
             else
             {
-                if (config.DefaultOnDeathStrategy == null)
+                if (config.DefaultOnDeathGameAction == null)
                 {
                     var cfgDeath = ScriptableObject.CreateInstance<TestOnDeathStrategy>();
-                    config.DefaultOnDeathStrategy = cfgDeath;
+                    config.DefaultOnDeathGameAction = cfgDeath;
                 }
                 SetConfigProviderInstance(config);
             }
@@ -192,7 +193,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
 
             // OnDeathStrategy override (use public property, not reflection)
             var onDeathStrategy = ScriptableObject.CreateInstance<TestOnDeathStrategy>();
-            health.OverrideOnDeathStrategy = onDeathStrategy;
+            health.OverrideOnDeathGameAction = onDeathStrategy;
 
             // Internal (accessible directly)
             health._baseMaxHp = baseMax;
@@ -251,9 +252,9 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         }
 
         // Simple OnDeathStrategy used in tests
-        private class TestOnDeathStrategy : OnDeathStrategy
+        private class TestOnDeathStrategy : GameAction<Component>
         {
-            public override IEnumerator Execute(EntityHealth health) { /* no-op for tests */ yield break; }
+            public override IEnumerator Execute(Component health) { /* no-op for tests */ yield break; }
         }
 
         /// <summary>

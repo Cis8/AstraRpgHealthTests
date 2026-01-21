@@ -2,6 +2,8 @@ using ElectricDrill.AstraRpgFramework;
 using ElectricDrill.AstraRpgFramework.Scaling.ScalingComponents;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
+using ElectricDrill.AstraRpgFramework.Utils.Executables;
+using ElectricDrill.AstraRpgHealth;
 using ElectricDrill.AstraRpgHealth.Config;
 using ElectricDrill.AstraRpgHealth.Damage;
 using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
@@ -51,8 +53,8 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             public float PassiveHealthRegenerationInterval { get; set; }
             public Stat ManualHealthRegenerationStat { get; set; }
             public LifestealConfig LifestealConfig { get; set; }
-            public OnDeathStrategy DefaultOnDeathStrategy { get; set; }
-            public OnResurrectionStrategy DefaultOnResurrectionStrategy { get; set; }
+            public GameAction<UnityEngine.Component> DefaultOnDeathGameAction { get; set; }
+            public GameAction<UnityEngine.Component> DefaultOnResurrectionGameAction { get; set; }
             public HealSource DefaultResurrectionSource { get; set; }
         }
 

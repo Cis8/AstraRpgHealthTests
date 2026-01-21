@@ -4,8 +4,8 @@ using ElectricDrill.AstraRpgFramework.Utils;
 using ElectricDrill.AstraRpgHealth.Config;
 using ElectricDrill.AstraRpgHealth.Damage;
 using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
-using ElectricDrill.AstraRpgHealth.Death;
 using ElectricDrill.AstraRpgHealth.Heal;
+using ElectricDrill.AstraRpgFramework.Utils.Executables.Actions;
 using UnityEngine;
 
 namespace ElectricDrill.AstraRpgHealthTests.TestUtils
@@ -27,7 +27,8 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         public float PassiveHealthRegenerationInterval { get; set; }
         public Stat ManualHealthRegenerationStat { get; set; }
         public LifestealConfig LifestealConfig { get; set; }
-        public OnDeathStrategy DefaultOnDeathStrategy { get; set; }
+        public ExecutableAction<Component> DefaultOnDeathStrategy { get; set; }
+        public ExecutableAction<Component> DefaultOnResurrectionStrategy { get; set; }
 
         public MockAstraRpgHealthConfig()
         {
@@ -40,7 +41,7 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
             DefaultDamageCalculationCalculationStrategy = ScriptableObject.CreateInstance<DamageCalculationStrategy>();
             
             // Create a default death strategy
-            DefaultOnDeathStrategy = ScriptableObject.CreateInstance<DestroyImmediateOnDeathStrategy>();
+            DefaultOnDeathStrategy = ScriptableObject.CreateInstance<DoNothingComponentAction>();
         }
 
         /// <summary>
@@ -66,7 +67,7 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         /// <summary>
         /// Creates a mock config with a custom death strategy.
         /// </summary>
-        public static MockAstraRpgHealthConfig WithDeathStrategy(OnDeathStrategy strategy)
+        public static MockAstraRpgHealthConfig WithDeathStrategy(ExecutableAction<UnityEngine.Component> strategy)
         {
             var config = new MockAstraRpgHealthConfig
             {
@@ -76,4 +77,3 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         }
     }
 }
-

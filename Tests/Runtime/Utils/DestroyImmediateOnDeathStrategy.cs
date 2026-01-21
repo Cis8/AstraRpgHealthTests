@@ -1,13 +1,15 @@
 using System.Collections;
-using ElectricDrill.AstraRpgHealth;
-using ElectricDrill.AstraRpgHealth.Death;
+using ElectricDrill.AstraRpgFramework.Utils.Executables;
+using UnityEngine;
 
-namespace ElectricDrill.AstraRpgHealthTests
+namespace ElectricDrill.AstraRpgHealthTests.TestUtils
 {
-    public class DestroyImmediateOnDeathStrategy : OnDeathStrategy
+    public class DestroyImmediateGameAction : GameAction<Component>
     {
-        public override IEnumerator Execute(EntityHealth entityHealth) {
-            DestroyImmediate(entityHealth.gameObject);
+        public override IEnumerator Execute(Component component) {
+            if (component != null && component.gameObject != null) {
+                Object.DestroyImmediate(component.gameObject);
+            }
             yield break;
         }
     }
