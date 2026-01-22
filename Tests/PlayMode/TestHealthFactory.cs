@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Reflection;
+using System.Threading;
 using ElectricDrill.AstraRpgFramework;
 using ElectricDrill.AstraRpgFramework.Attributes;
 using ElectricDrill.AstraRpgFramework.Events;
@@ -12,7 +12,6 @@ using ElectricDrill.AstraRpgHealth;
 using ElectricDrill.AstraRpgHealth.Config;
 using ElectricDrill.AstraRpgHealth.Damage;
 using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
-using ElectricDrill.AstraRpgHealth.Death;
 using ElectricDrill.AstraRpgHealth.Events;
 using ElectricDrill.AstraRpgHealth.Heal;
 using UnityEngine;
@@ -254,7 +253,11 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         // Simple OnDeathStrategy used in tests
         private class TestOnDeathStrategy : GameAction<Component>
         {
-            public override IEnumerator Execute(Component health) { /* no-op for tests */ yield break; }
+            public override Awaitable ExecuteAsync(Component health, CancellationToken cancellationToken = default) 
+            { 
+                /* no-op for tests */ 
+                return Awaitable.NextFrameAsync(cancellationToken); 
+            }
         }
 
         /// <summary>
