@@ -72,8 +72,8 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         dmgType.DefenseReductionFn = _percDefFn;
 
         // Assign generic modification stat to config (weakness/resistance step usage)
-        _attacker.Config.GenericDamageModificationStat = _genericModStat;
-        _target.Config.GenericDamageModificationStat = _genericModStat;
+        _attacker.Config.GenericPercentageDamageModificationStat = _genericModStat;
+        _target.Config.GenericPercentageDamageModificationStat = _genericModStat;
 
         // Create custom strategy (Critical -> Barrier -> Defense -> Weak/Res)
         var strategy = CreateCritBarrierDefenseWeaknessStrategy();
@@ -142,8 +142,8 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         Assert.AreEqual(30, damageDealt.FinalDamageInfo.Amounts.GetStepAmount(typeof(ApplyDefenseStep)).Post, "Damage after defense should be 30.");
         
         // Weakness/Resistance step checks: pre 30, post 45 (50% generic mod)
-        Assert.AreEqual(30, damageDealt.FinalDamageInfo.Amounts.GetStepAmount(typeof(ApplyDmgModifiersStep)).Pre, "Damage before weakness/resistance should be 30.");
-        Assert.AreEqual(45, damageDealt.FinalDamageInfo.Amounts.GetStepAmount(typeof(ApplyDmgModifiersStep)).Post, "Damage after weakness/resistance should be 45.");
+        Assert.AreEqual(30, damageDealt.FinalDamageInfo.Amounts.GetStepAmount(typeof(ApplyPercentageDmgModifiersStep)).Pre, "Damage before weakness/resistance should be 30.");
+        Assert.AreEqual(45, damageDealt.FinalDamageInfo.Amounts.GetStepAmount(typeof(ApplyPercentageDmgModifiersStep)).Post, "Damage after weakness/resistance should be 45.");
         // --- End of step-by-step checks ---
         
         // Barrier must be consumed first (after crit) => barrier zero

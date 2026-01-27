@@ -108,7 +108,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
                 strat.steps.Add(new ApplyCriticalMultiplierStep());
                 strat.steps.Add(new ApplyBarrierStep());
                 strat.steps.Add(new ApplyDefenseStep());
-                strat.steps.Add(new ApplyDmgModifiersStep());
+                strat.steps.Add(new ApplyPercentageDmgModifiersStep());
 
                 config.DefaultDamageCalculationCalculationStrategy = strat;
             }
@@ -392,7 +392,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             strat.steps.Add(new ApplyCriticalMultiplierStep());
             strat.steps.Add(new ApplyBarrierStep());
             strat.steps.Add(new ApplyDefenseStep());
-            strat.steps.Add(new ApplyDmgModifiersStep());
+            strat.steps.Add(new ApplyPercentageDmgModifiersStep());
             return strat;
         }
 

@@ -3,19 +3,17 @@ using ElectricDrill.AstraRpgFramework.Scaling.ScalingComponents;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
 using ElectricDrill.AstraRpgFramework.Utils.Executables;
-using ElectricDrill.AstraRpgHealth;
 using ElectricDrill.AstraRpgHealth.Config;
 using ElectricDrill.AstraRpgHealth.Damage;
 using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
-using ElectricDrill.AstraRpgHealth.Death;
 using ElectricDrill.AstraRpgHealth.Heal;
-using ElectricDrill.AstraRpgHealth.Resurrection;
 using NUnit.Framework;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 {
-    public class ApplyDmgModifiersStepTests
+    public class ApplyFlatDmgModifiersStepTests
     {
         private class MockDamageType : DamageType
         {
@@ -40,9 +38,12 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         private class MockConfig : IAstraRpgHealthConfig
         {
             public SerializableDictionary<HealSource, Stat> HealSourceModifications { get; set; }
-            public Stat GenericDamageModificationStat { get; set; }
-            public SerializableDictionary<DamageType, Stat> DamageTypeModifications { get; set; }
-            public SerializableDictionary<DamageSource, Stat> DamageSourceModifications { get; set; }
+            public Stat GenericPercentageDamageModificationStat { get; set; }
+            public Stat GenericFlatDamageModificationStat { get; set; }
+            public SerializableDictionary<DamageType, Stat> DamageTypePercentageModifications { get; set; }
+            public SerializableDictionary<DamageType, Stat> DamageTypeFlatModifications { get; set; }
+            public SerializableDictionary<DamageSource, Stat> DamageSourcePercentageModifications { get; set; }
+            public SerializableDictionary<DamageSource, Stat> DamageSourceFlatModifications { get; set; }
             
             // Other required properties (not used in these tests)
             public AttributesScalingComponent HealthAttributesScaling { get; set; }
@@ -132,18 +133,18 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         }
 
         [Test]
-        public void ApplyDmgModifiersStep_SetsAllDamageImmuneReason_WhenGenericModifierIsNegative100()
+        public void ApplyFlatDmgModifiersStep_AppliesGenericFlatReduction()
         {
             const long raw = 100;
-            var genericStat = CreateStat("GenericDmgMod");
+            var genericStat = CreateStat("GenericFlatMod");
 
             var (target, dealer, _, _) = MakeEntities(
-                genericModValue: -100,
+                genericModValue: -20, // -20 flat damage
                 genericStat: genericStat);
 
             var config = new MockConfig
             {
-                GenericDamageModificationStat = genericStat
+                GenericFlatDamageModificationStat = genericStat
             };
             AstraRpgHealthConfigProvider.Instance = config;
 
@@ -151,27 +152,25 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             var source = MockDamageSource.Create();
             var info = MakeDamageInfo(raw, type, source, target, dealer);
 
-            var step = new ApplyDmgModifiersStep();
+            var step = new ApplyFlatDmgModifiersStep();
             step.Process(info);
 
-            Assert.AreEqual(0, info.Amounts.Current);
-            Assert.IsTrue((info.Reasons & DamagePreventionReason.AllDamageImmune) != 0);
-            Assert.AreEqual(typeof(ApplyDmgModifiersStep), info.TerminationStepType);
+            Assert.AreEqual(80, info.Amounts.Current); // 100 - 20 = 80
         }
 
         [Test]
-        public void ApplyDmgModifiersStep_SetsAllDamageImmuneReason_WhenGenericModifierIsLessThanNegative100()
+        public void ApplyFlatDmgModifiersStep_AppliesGenericFlatIncrement()
         {
             const long raw = 100;
-            var genericStat = CreateStat("GenericDmgMod");
+            var genericStat = CreateStat("GenericFlatMod");
 
             var (target, dealer, _, _) = MakeEntities(
-                genericModValue: -150,
+                genericModValue: 15, // +15 flat damage
                 genericStat: genericStat);
 
             var config = new MockConfig
             {
-                GenericDamageModificationStat = genericStat
+                GenericFlatDamageModificationStat = genericStat
             };
             AstraRpgHealthConfigProvider.Instance = config;
 
@@ -179,57 +178,27 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             var source = MockDamageSource.Create();
             var info = MakeDamageInfo(raw, type, source, target, dealer);
 
-            var step = new ApplyDmgModifiersStep();
+            var step = new ApplyFlatDmgModifiersStep();
             step.Process(info);
 
-            Assert.AreEqual(0, info.Amounts.Current);
-            Assert.IsTrue((info.Reasons & DamagePreventionReason.AllDamageImmune) != 0);
-            Assert.AreEqual(typeof(ApplyDmgModifiersStep), info.TerminationStepType);
+            Assert.AreEqual(115, info.Amounts.Current); // 100 + 15 = 115
         }
 
         [Test]
-        public void ApplyDmgModifiersStep_DoesNotSetAllDamageImmuneReason_WhenGenericModifierIsGreaterThanNegative100()
+        public void ApplyFlatDmgModifiersStep_AppliesSourceFlatModification()
         {
             const long raw = 100;
-            var genericStat = CreateStat("GenericDmgMod");
-
-            var (target, dealer, _, _) = MakeEntities(
-                genericModValue: -50,
-                genericStat: genericStat);
-
-            var config = new MockConfig
-            {
-                GenericDamageModificationStat = genericStat
-            };
-            AstraRpgHealthConfigProvider.Instance = config;
-
-            var type = MockDamageType.Create();
-            var source = MockDamageSource.Create();
-            var info = MakeDamageInfo(raw, type, source, target, dealer);
-
-            var step = new ApplyDmgModifiersStep();
-            step.Process(info);
-
-            Assert.AreEqual(50, info.Amounts.Current); // 100 - 50% = 50
-            Assert.IsFalse((info.Reasons & DamagePreventionReason.AllDamageImmune) != 0);
-            Assert.IsNull(info.TerminationStepType);
-        }
-
-        [Test]
-        public void ApplyDmgModifiersStep_SetsDamageSourceImmuneReason_WhenSourceModifierIsNegative100()
-        {
-            const long raw = 100;
-            var sourceModStat = CreateStat("SourceMod");
+            var sourceModStat = CreateStat("SourceFlatMod");
 
             var source = MockDamageSource.Create("TestSource");
             
             var (target, dealer, _, _) = MakeEntities(
-                sourceModValue: -100,
+                sourceModValue: -30, // -30 flat
                 sourceStat: sourceModStat);
 
             var config = new MockConfig
             {
-                DamageSourceModifications = new SerializableDictionary<DamageSource, Stat>
+                DamageSourceFlatModifications = new SerializableDictionary<DamageSource, Stat>
                 {
                     { source, sourceModStat }
                 }
@@ -239,29 +208,27 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             var type = MockDamageType.Create();
             var info = MakeDamageInfo(raw, type, source, target, dealer);
 
-            var step = new ApplyDmgModifiersStep();
+            var step = new ApplyFlatDmgModifiersStep();
             step.Process(info);
 
-            Assert.AreEqual(0, info.Amounts.Current);
-            Assert.IsTrue((info.Reasons & DamagePreventionReason.DamageSourceImmune) != 0);
-            Assert.AreEqual(typeof(ApplyDmgModifiersStep), info.TerminationStepType);
+            Assert.AreEqual(70, info.Amounts.Current); // 100 - 30 = 70
         }
 
         [Test]
-        public void ApplyDmgModifiersStep_SetsDamageTypeImmuneReason_WhenTypeModifierIsNegative100()
+        public void ApplyFlatDmgModifiersStep_AppliesTypeFlatModification()
         {
             const long raw = 100;
-            var typeModStat = CreateStat("TypeMod");
+            var typeModStat = CreateStat("TypeFlatMod");
 
             var type = MockDamageType.Create("TestType");
             
             var (target, dealer, _, _) = MakeEntities(
-                typeModValue: -100,
+                typeModValue: 25, // +25 flat
                 typeStat: typeModStat);
 
             var config = new MockConfig
             {
-                DamageTypeModifications = new SerializableDictionary<DamageType, Stat>
+                DamageTypeFlatModifications = new SerializableDictionary<DamageType, Stat>
                 {
                     { type, typeModStat }
                 }
@@ -271,41 +238,39 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             var source = MockDamageSource.Create();
             var info = MakeDamageInfo(raw, type, source, target, dealer);
 
-            var step = new ApplyDmgModifiersStep();
+            var step = new ApplyFlatDmgModifiersStep();
             step.Process(info);
 
-            Assert.AreEqual(0, info.Amounts.Current);
-            Assert.IsTrue((info.Reasons & DamagePreventionReason.DamageTypeImmune) != 0);
-            Assert.AreEqual(typeof(ApplyDmgModifiersStep), info.TerminationStepType);
+            Assert.AreEqual(125, info.Amounts.Current); // 100 + 25 = 125
         }
 
         [Test]
-        public void ApplyDmgModifiersStep_PrioritizesGenericImmunity_OverSourceAndTypeModifiers()
+        public void ApplyFlatDmgModifiersStep_AppliesCumulativeFlatModifications()
         {
             const long raw = 100;
-            var genericStat = CreateStat("GenericDmgMod");
-            var sourceStat = CreateStat("SourceMod");
-            var typeStat = CreateStat("TypeMod");
+            var genericStat = CreateStat("GenericFlatMod");
+            var sourceStat = CreateStat("SourceFlatMod");
+            var typeStat = CreateStat("TypeFlatMod");
 
             var type = MockDamageType.Create("TestType");
             var source = MockDamageSource.Create("TestSource");
 
             var (target, dealer, _, _) = MakeEntities(
-                genericModValue: -100, // Generic immunity
-                sourceModValue: 50, // Would increase damage
-                typeModValue: 50, // Would increase damage
+                genericModValue: -10, // -10 flat
+                sourceModValue: -5,   // -5 flat
+                typeModValue: 20,     // +20 flat
                 genericStat: genericStat,
                 sourceStat: sourceStat,
                 typeStat: typeStat);
 
             var config = new MockConfig
             {
-                GenericDamageModificationStat = genericStat,
-                DamageSourceModifications = new SerializableDictionary<DamageSource, Stat>
+                GenericFlatDamageModificationStat = genericStat,
+                DamageSourceFlatModifications = new SerializableDictionary<DamageSource, Stat>
                 {
                     { source, sourceStat }
                 },
-                DamageTypeModifications = new SerializableDictionary<DamageType, Stat>
+                DamageTypeFlatModifications = new SerializableDictionary<DamageType, Stat>
                 {
                     { type, typeStat }
                 }
@@ -314,64 +279,43 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
             var info = MakeDamageInfo(raw, type, source, target, dealer);
 
-            var step = new ApplyDmgModifiersStep();
+            var step = new ApplyFlatDmgModifiersStep();
             step.Process(info);
 
-            Assert.AreEqual(0, info.Amounts.Current);
-            // Should set AllDamageImmune, NOT DamageSourceImmune or DamageTypeImmune
-            Assert.IsTrue((info.Reasons & DamagePreventionReason.AllDamageImmune) != 0);
-            Assert.IsFalse((info.Reasons & DamagePreventionReason.DamageSourceImmune) != 0);
-            Assert.IsFalse((info.Reasons & DamagePreventionReason.DamageTypeImmune) != 0);
+            // Net: -10 -5 +20 = +5
+            // 100 + 5 = 105
+            Assert.AreEqual(105, info.Amounts.Current);
         }
 
         [Test]
-        public void ApplyDmgModifiersStep_AppliesCumulativeModifiers_WhenNoneReachImmunity()
+        public void ApplyFlatDmgModifiersStep_ClampsDamageToZero_WhenNegativeResult()
         {
-            const long raw = 100;
-            var genericStat = CreateStat("GenericDmgMod");
-            var sourceStat = CreateStat("SourceDmgMod");
-            var typeStat = CreateStat("TypeDmgMod");
-
-            var type = MockDamageType.Create("TestType");
-            var source = MockDamageSource.Create("TestSource");
+            const long raw = 50;
+            var genericStat = CreateStat("GenericFlatMod");
 
             var (target, dealer, _, _) = MakeEntities(
-                genericModValue: -20, // -20%
-                sourceModValue: -30, // -30%
-                typeModValue: 10, // +10%
-                genericStat: genericStat,
-                sourceStat: sourceStat,
-                typeStat: typeStat);
+                genericModValue: -100, // -100 flat would result in negative
+                genericStat: genericStat);
 
             var config = new MockConfig
             {
-                GenericDamageModificationStat = genericStat,
-                DamageSourceModifications = new SerializableDictionary<DamageSource, Stat>
-                {
-                    { source, sourceStat }
-                },
-                DamageTypeModifications = new SerializableDictionary<DamageType, Stat>
-                {
-                    { type, typeStat }
-                }
+                GenericFlatDamageModificationStat = genericStat
             };
             AstraRpgHealthConfigProvider.Instance = config;
 
+            var type = MockDamageType.Create();
+            var source = MockDamageSource.Create();
             var info = MakeDamageInfo(raw, type, source, target, dealer);
 
-            var step = new ApplyDmgModifiersStep();
+            var step = new ApplyFlatDmgModifiersStep();
             step.Process(info);
 
-            // Net: -20 -30 +10 = -40%
-            // 100 * -0.40 = -40
-            // 100 + (-40) = 60
-            Assert.AreEqual(60, info.Amounts.Current);
-            Assert.AreEqual(DamagePreventionReason.None, info.Reasons);
-            Assert.IsNull(info.TerminationStepType);
+            // 50 - 100 = -50, but should be clamped to 0
+            Assert.AreEqual(0, info.Amounts.Current);
         }
 
         [Test]
-        public void ApplyDmgModifiersStep_DoesNotModify_WhenNoConfigProvided()
+        public void ApplyFlatDmgModifiersStep_DoesNotModify_WhenNoConfigProvided()
         {
             const long raw = 100;
             
@@ -384,12 +328,36 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             var source = MockDamageSource.Create();
             var info = MakeDamageInfo(raw, type, source, target, dealer);
 
-            var step = new ApplyDmgModifiersStep();
+            var step = new ApplyFlatDmgModifiersStep();
             step.Process(info);
 
             Assert.AreEqual(raw, info.Amounts.Current);
-            Assert.AreEqual(DamagePreventionReason.None, info.Reasons);
+        }
+
+        [Test]
+        public void ApplyFlatDmgModifiersStep_HandlesZeroModifications()
+        {
+            const long raw = 100;
+            var genericStat = CreateStat("GenericFlatMod");
+
+            var (target, dealer, _, _) = MakeEntities(
+                genericModValue: 0, // No modification
+                genericStat: genericStat);
+
+            var config = new MockConfig
+            {
+                GenericFlatDamageModificationStat = genericStat
+            };
+            AstraRpgHealthConfigProvider.Instance = config;
+
+            var type = MockDamageType.Create();
+            var source = MockDamageSource.Create();
+            var info = MakeDamageInfo(raw, type, source, target, dealer);
+
+            var step = new ApplyFlatDmgModifiersStep();
+            step.Process(info);
+
+            Assert.AreEqual(100, info.Amounts.Current); // No change
         }
     }
 }
-
