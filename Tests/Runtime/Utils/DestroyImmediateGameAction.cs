@@ -1,5 +1,5 @@
 using System.Threading;
-using ElectricDrill.AstraRpgFramework.Utils.Executables;
+using ElectricDrill.AstraRpgFramework.GameActions;
 using UnityEngine;
 
 namespace ElectricDrill.AstraRpgHealth.Tests.Runtime.Utils

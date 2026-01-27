@@ -2,9 +2,9 @@ using System;
 using System.Reflection;
 using ElectricDrill.AstraRpgFramework;
 using ElectricDrill.AstraRpgFramework.Experience;
+using ElectricDrill.AstraRpgFramework.GameActions.Actions.SO.Component;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
-using ElectricDrill.AstraRpgFramework.Utils.Executables.Actions;
 using ElectricDrill.AstraRpgHealth;
 using ElectricDrill.AstraRpgHealth.Config;
 using ElectricDrill.AstraRpgHealth.Damage;
@@ -101,7 +101,7 @@ namespace ElectricDrill.AstraRpgHealthTests
             _entityHealth._hp = new LongRef { UseConstant = true, ConstantValue = MAX_HP };
             _entityHealth._deathThreshold = LongVarFactory.CreateLongVar(0);
             _entityHealth._barrier = new LongRef { UseConstant = true, ConstantValue = 0 };
-            _entityHealth.OverrideOnDeathGameAction = ScriptableObject.CreateInstance<DoNothingComponentAction>();
+            _entityHealth.OverrideOnDeathGameAction = ScriptableObject.CreateInstance<DoNothingComponentGameAction>();
 
             // Events
             SetPriv("_preDmgInfoEvent", ScriptableObject.CreateInstance<PreDamageGameEvent>());

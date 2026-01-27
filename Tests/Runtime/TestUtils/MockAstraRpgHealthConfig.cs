@@ -1,8 +1,8 @@
+using ElectricDrill.AstraRpgFramework.GameActions;
+using ElectricDrill.AstraRpgFramework.GameActions.Actions.SO.Component;
 using ElectricDrill.AstraRpgFramework.Scaling.ScalingComponents;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
-using ElectricDrill.AstraRpgFramework.Utils.Executables;
-using ElectricDrill.AstraRpgFramework.Utils.Executables.Actions;
 using ElectricDrill.AstraRpgHealth.Config;
 using ElectricDrill.AstraRpgHealth.Damage;
 using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
@@ -45,7 +45,7 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
             DefaultDamageCalculationCalculationStrategy = ScriptableObject.CreateInstance<DamageCalculationStrategy>();
             
             // Create a default death strategy
-            DefaultOnDeathGameAction = ScriptableObject.CreateInstance<DoNothingComponentAction>();
+            DefaultOnDeathGameAction = ScriptableObject.CreateInstance<DoNothingComponentGameAction>();
             
             // Create a default HealSource for resurrection
             DefaultResurrectionSource = ScriptableObject.CreateInstance<HealSource>();
