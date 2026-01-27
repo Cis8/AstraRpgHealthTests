@@ -15,24 +15,26 @@ using UnityEngine;
 
 namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 {
-    public class applyPercentageDmgModifiersStepTests
+    public class ApplyPercentageDmgModifiersStepTests
     {
         private class MockDamageType : DamageType
         {
-            public static MockDamageType Create(string name = "MockType")
+            public static MockDamageType Create(string name = "MockType", Stat percentageStat = null)
             {
                 var t = CreateInstance<MockDamageType>();
                 t.name = name;
+                t.PercentageDamageModificationStat = percentageStat;
                 return t;
             }
         }
 
         private class MockDamageSource : DamageSource
         {
-            public static MockDamageSource Create(string name = "MockSource")
+            public static MockDamageSource Create(string name = "MockSource", Stat percentageStat = null)
             {
                 var s = CreateInstance<MockDamageSource>();
                 s.name = name;
+                s.PercentageDamageModificationStat = percentageStat;
                 return s;
             }
         }
@@ -42,10 +44,6 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             public SerializableDictionary<HealSource, Stat> HealSourceModifications { get; set; }
             public Stat GenericPercentageDamageModificationStat { get; set; }
             public Stat GenericFlatDamageModificationStat { get; set; }
-            public SerializableDictionary<DamageType, Stat> DamageTypePercentageModifications { get; set; }
-            public SerializableDictionary<DamageType, Stat> DamageTypeFlatModifications { get; set; }
-            public SerializableDictionary<DamageSource, Stat> DamageSourcePercentageModifications { get; set; }
-            public SerializableDictionary<DamageSource, Stat> DamageSourceFlatModifications { get; set; }
             
             // Other required properties (not used in these tests)
             public AttributesScalingComponent HealthAttributesScaling { get; set; }
@@ -224,19 +222,14 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             const long raw = 100;
             var sourceModStat = CreateStat("SourceMod");
 
-            var source = MockDamageSource.Create("TestSource");
+            var source = MockDamageSource.Create("TestSource", sourceModStat);
             
             var (target, dealer, _, _) = MakeEntities(
                 sourceModValue: -100,
                 sourceStat: sourceModStat);
 
-            var config = new MockConfig
-            {
-                DamageSourcePercentageModifications = new SerializableDictionary<DamageSource, Stat>
-                {
-                    { source, sourceModStat }
-                }
-            };
+            // No dictionary config needed
+            var config = new MockConfig();
             AstraRpgHealthConfigProvider.Instance = config;
 
             var type = MockDamageType.Create();
@@ -256,19 +249,14 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             const long raw = 100;
             var typeModStat = CreateStat("TypeMod");
 
-            var type = MockDamageType.Create("TestType");
+            var type = MockDamageType.Create("TestType", typeModStat);
             
             var (target, dealer, _, _) = MakeEntities(
                 typeModValue: -100,
                 typeStat: typeModStat);
 
-            var config = new MockConfig
-            {
-                DamageTypePercentageModifications = new SerializableDictionary<DamageType, Stat>
-                {
-                    { type, typeModStat }
-                }
-            };
+            // No dictionary config needed
+            var config = new MockConfig();
             AstraRpgHealthConfigProvider.Instance = config;
 
             var source = MockDamageSource.Create();
@@ -290,28 +278,22 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             var sourceStat = CreateStat("SourceMod");
             var typeStat = CreateStat("TypeMod");
 
-            var type = MockDamageType.Create("TestType");
-            var source = MockDamageSource.Create("TestSource");
+            var type = MockDamageType.Create("TestType", typeStat);
+            var source = MockDamageSource.Create("TestSource", sourceStat);
 
             var (target, dealer, _, _) = MakeEntities(
                 genericModValue: -100, // Generic immunity
                 sourceModValue: 50, // Would increase damage
                 typeModValue: 50, // Would increase damage
                 genericStat: genericStat,
+                sourceStat: sourceStat, // Changed: Explicitly passed sourceStat
                 typeStat: typeStat);
 
 
             var config = new MockConfig
             {
                 GenericPercentageDamageModificationStat = genericStat,
-                DamageSourcePercentageModifications = new SerializableDictionary<DamageSource, Stat>
-                {
-                    { source, sourceStat }
-                },
-                DamageTypePercentageModifications = new SerializableDictionary<DamageType, Stat>
-                {
-                    { type, typeStat }
-                }
+                // No dictionaries
             };
             AstraRpgHealthConfigProvider.Instance = config;
 
@@ -335,8 +317,8 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             var sourceStat = CreateStat("SourceDmgMod");
             var typeStat = CreateStat("TypeDmgMod");
 
-            var type = MockDamageType.Create("TestType");
-            var source = MockDamageSource.Create("TestSource");
+            var type = MockDamageType.Create("TestType", typeStat);
+            var source = MockDamageSource.Create("TestSource", sourceStat);
 
             var (target, dealer, _, _) = MakeEntities(
                 genericModValue: -20, // -20%
@@ -349,14 +331,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             var config = new MockConfig
             {
                 GenericPercentageDamageModificationStat = genericStat,
-                DamageSourcePercentageModifications = new SerializableDictionary<DamageSource, Stat>
-                {
-                    { source, sourceStat }
-                },
-                DamageTypePercentageModifications = new SerializableDictionary<DamageType, Stat>
-                {
-                    { type, typeStat }
-                }
+                // No dictionaries
             };
             AstraRpgHealthConfigProvider.Instance = config;
 

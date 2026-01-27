@@ -23,10 +23,6 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         public Stat GenericPercentageDamageModificationStat { get; set; }
         public Stat GenericFlatDamageModificationStat { get; set; }
         public DamageCalculationStrategy DefaultDamageCalculationCalculationStrategy { get; set; }
-        public SerializableDictionary<DamageType, Stat> DamageTypePercentageModifications { get; set; }
-        public SerializableDictionary<DamageType, Stat> DamageTypeFlatModifications { get; set; }
-        public SerializableDictionary<DamageSource, Stat> DamageSourcePercentageModifications { get; set; }
-        public SerializableDictionary<DamageSource, Stat> DamageSourceFlatModifications { get; set; }
         public HealSource PassiveHealthRegenerationSource { get; set; }
         public Stat PassiveHealthRegenerationStat { get; set; }
         public float PassiveHealthRegenerationInterval { get; set; }
@@ -39,10 +35,6 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         public MockAstraRpgHealthConfig()
         {
             // Initialize with sensible defaults
-            DamageTypePercentageModifications = new SerializableDictionary<DamageType, Stat>();
-            DamageTypeFlatModifications = new SerializableDictionary<DamageType, Stat>();
-            DamageSourcePercentageModifications = new SerializableDictionary<DamageSource, Stat>();
-            DamageSourceFlatModifications = new SerializableDictionary<DamageSource, Stat>();
             PassiveHealthRegenerationInterval = 1f;
             
             // HealthAttributesScaling is null by default - only set if test needs it
