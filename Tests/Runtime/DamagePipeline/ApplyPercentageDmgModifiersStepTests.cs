@@ -7,6 +7,7 @@ using ElectricDrill.AstraRpgHealth;
 using ElectricDrill.AstraRpgHealth.Config;
 using ElectricDrill.AstraRpgHealth.Damage;
 using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
+using ElectricDrill.AstraRpgHealth.Experience;
 using ElectricDrill.AstraRpgHealth.Heal;
 using ElectricDrill.AstraRpgHealth.Resurrection;
 using NUnit.Framework;
@@ -56,6 +57,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             public GameAction<UnityEngine.Component> DefaultOnDeathGameAction { get; set; }
             public GameAction<UnityEngine.Component> DefaultOnResurrectionGameAction { get; set; }
             public HealSource DefaultResurrectionSource { get; set; }
+            public ExpCollectionStrategy DefaultExpCollectionStrategy { get; set; }
         }
 
         // Concrete stats component to avoid null Stats and allow deterministic values

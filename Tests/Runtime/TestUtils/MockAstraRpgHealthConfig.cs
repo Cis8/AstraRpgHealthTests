@@ -6,6 +6,7 @@ using ElectricDrill.AstraRpgFramework.Utils;
 using ElectricDrill.AstraRpgHealth.Config;
 using ElectricDrill.AstraRpgHealth.Damage;
 using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
+using ElectricDrill.AstraRpgHealth.Experience;
 using ElectricDrill.AstraRpgHealth.Heal;
 using UnityEngine;
 
@@ -31,6 +32,7 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         public GameAction<UnityEngine.Component> DefaultOnDeathGameAction { get; set; }
         public GameAction<UnityEngine.Component> DefaultOnResurrectionGameAction { get; set; }
         public HealSource DefaultResurrectionSource { get; set; }
+        public ExpCollectionStrategy DefaultExpCollectionStrategy { get; set; }
 
         public MockAstraRpgHealthConfig()
         {
