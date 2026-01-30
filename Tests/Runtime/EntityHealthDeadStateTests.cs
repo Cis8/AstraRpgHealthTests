@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using ElectricDrill.AstraRpgFramework;
 using ElectricDrill.AstraRpgFramework.Experience;
 using ElectricDrill.AstraRpgFramework.GameActions.Actions.SO.Component;
@@ -125,23 +126,23 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
 
             // Use reflection to set private event fields
             var healthType = typeof(EntityHealth);
-            healthType.GetField("_preDmgInfoEvent", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            healthType.GetField("_preDmgInfoEvent", BindingFlags.NonPublic | BindingFlags.Instance)
                 ?.SetValue(_entityHealth, preDmgEvent);
-            healthType.GetField("_damageResolutionEvent", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            healthType.GetField("_damageResolutionEvent", BindingFlags.NonPublic | BindingFlags.Instance)
                 ?.SetValue(_entityHealth, dmgResolutionEvent);
-            healthType.GetField("_maxHealthChangedEvent", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            healthType.GetField("_maxHealthChangedEvent", BindingFlags.NonPublic | BindingFlags.Instance)
                 ?.SetValue(_entityHealth, maxHealthChangedEvent);
-            healthType.GetField("_gainedHealthEvent", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            healthType.GetField("_gainedHealthEvent", BindingFlags.NonPublic | BindingFlags.Instance)
                 ?.SetValue(_entityHealth, gainedHealthEvent);
-            healthType.GetField("_lostHealthEvent", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            healthType.GetField("_lostHealthEvent", BindingFlags.NonPublic | BindingFlags.Instance)
                 ?.SetValue(_entityHealth, lostHealthEvent);
-            healthType.GetField("_entityDiedEvent", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            healthType.GetField("_entityDiedEvent", BindingFlags.NonPublic | BindingFlags.Instance)
                 ?.SetValue(_entityHealth, diedEvent);
-            healthType.GetField("_preHealEvent", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            healthType.GetField("_preHealEvent", BindingFlags.NonPublic | BindingFlags.Instance)
                 ?.SetValue(_entityHealth, preHealEvent);
-            healthType.GetField("_entityHealedEvent", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            healthType.GetField("_entityHealedEvent", BindingFlags.NonPublic | BindingFlags.Instance)
                 ?.SetValue(_entityHealth, healedEvent);
-            healthType.GetField("_entityResurrectedEvent", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            healthType.GetField("_entityResurrectedEvent", BindingFlags.NonPublic | BindingFlags.Instance)
                 ?.SetValue(_entityHealth, resurrectEvent);
         }
 
@@ -171,6 +172,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
                 .WithAmount(amount)
                 .WithSource(_healSource)
                 .WithHealer(_mockEntityCore.Object)
+                .WithTarget(_mockEntityCore.Object)
                 .Build();
         }
 

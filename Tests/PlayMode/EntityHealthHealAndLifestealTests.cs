@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
-using ElectricDrill.AstraRpgHealth.Config;
 using ElectricDrill.AstraRpgHealth.Heal;
 using NUnit.Framework;
 using UnityEngine;
@@ -101,6 +100,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
                 .WithAmount(100)
                 .WithSource(_genericHealSource)
                 .WithHealer(_attacker.Core)
+                .WithTarget(_target.Core)
                 .Build());
 
             Assert.AreEqual(100, _attacker.Health.Hp);
@@ -118,6 +118,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
                 .WithAmount(20)
                 .WithSource(_genericHealSource)
                 .WithHealer(_attacker.Core)
+                .WithTarget(_target.Core)
                 .WithIsCritical(true)
                 .WithCriticalMultiplier(2.5)
                 .Build());
