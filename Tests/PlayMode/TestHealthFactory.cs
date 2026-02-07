@@ -124,10 +124,10 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             // Still need reflection for private _onLevelUp and _onLevelDown inside EntityLevel (no public/internal API exposed)
             typeof(EntityLevel)
                 .GetField("_onLevelUp", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(core.Level, ScriptableObject.CreateInstance<EntityLeveledUpGameEvent>());
+                ?.SetValue(core.Level, ScriptableObject.CreateInstance<EntityLevelUpGameEvent>());
             typeof(EntityLevel)
                 .GetField("_onLevelDown", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(core.Level, ScriptableObject.CreateInstance<EntityLeveledDownGameEvent>());
+                ?.SetValue(core.Level, ScriptableObject.CreateInstance<EntityLevelDownGameEvent>());
             core.SpawnedEntityEvent = ScriptableObject.CreateInstance<EntityCoreGameEvent>();
 
             // Stats

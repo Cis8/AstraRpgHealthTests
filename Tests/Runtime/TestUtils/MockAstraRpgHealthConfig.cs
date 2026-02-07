@@ -1,10 +1,9 @@
 using ElectricDrill.AstraRpgFramework.GameActions;
-using ElectricDrill.AstraRpgFramework.GameActions.Actions.SO.Component;
+using ElectricDrill.AstraRpgFramework.GameActions.Actions.Component;
 using ElectricDrill.AstraRpgFramework.Scaling.ScalingComponents;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
 using ElectricDrill.AstraRpgHealth.Config;
-using ElectricDrill.AstraRpgHealth.Damage;
 using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
 using ElectricDrill.AstraRpgHealth.Experience;
 using ElectricDrill.AstraRpgHealth.Heal;
@@ -29,8 +28,8 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         public float PassiveHealthRegenerationInterval { get; set; }
         public Stat ManualHealthRegenerationStat { get; set; }
         public LifestealConfig LifestealConfig { get; set; }
-        public GameAction<UnityEngine.Component> DefaultOnDeathGameAction { get; set; }
-        public GameAction<UnityEngine.Component> DefaultOnResurrectionGameAction { get; set; }
+        public GameAction<Component> DefaultOnDeathGameAction { get; set; }
+        public GameAction<Component> DefaultOnResurrectionGameAction { get; set; }
         public HealSource DefaultResurrectionSource { get; set; }
         public ExpCollectionStrategy DefaultExpCollectionStrategy { get; set; }
 
@@ -76,7 +75,7 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         /// <summary>
         /// Creates a mock config with a custom death strategy.
         /// </summary>
-        public static MockAstraRpgHealthConfig WithDeathGameAction(GameAction<UnityEngine.Component> strategy)
+        public static MockAstraRpgHealthConfig WithDeathGameAction(GameAction<Component> strategy)
         {
             var config = new MockAstraRpgHealthConfig
             {

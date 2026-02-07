@@ -1,6 +1,6 @@
 using System.Reflection;
 using ElectricDrill.AstraRpgFramework;
-using ElectricDrill.AstraRpgFramework.GameActions.Actions.SO.Component;
+using ElectricDrill.AstraRpgFramework.GameActions.Actions.Component;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
 using ElectricDrill.AstraRpgHealth;
