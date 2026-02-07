@@ -27,7 +27,10 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         public Stat PassiveHealthRegenerationStat { get; set; }
         public float PassiveHealthRegenerationInterval { get; set; }
         public Stat ManualHealthRegenerationStat { get; set; }
+        public bool SuppressPassiveRegenerationEvents { get; set; }
+        public bool SuppressManualRegenerationEvents { get; set; }
         public LifestealConfig LifestealConfig { get; set; }
+        public bool SuppressLifestealEvents { get; set; }
         public GameAction<Component> DefaultOnDeathGameAction { get; set; }
         public GameAction<Component> DefaultOnResurrectionGameAction { get; set; }
         public HealSource DefaultResurrectionSource { get; set; }
@@ -37,6 +40,9 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         {
             // Initialize with sensible defaults
             PassiveHealthRegenerationInterval = 1f;
+            SuppressPassiveRegenerationEvents = false;
+            SuppressManualRegenerationEvents = false;
+            SuppressLifestealEvents = false;
             
             // HealthAttributesScaling is null by default - only set if test needs it
             // This avoids validation errors when test entities don't have EntityAttributes
