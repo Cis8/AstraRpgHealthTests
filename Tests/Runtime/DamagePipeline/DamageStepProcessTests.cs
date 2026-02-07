@@ -8,8 +8,8 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 {
     public class DamageStepProcessTests
     {
-        private class MockDamageType : DamageType { public static MockDamageType Create() => CreateInstance<MockDamageType>(); }
-        private class MockDamageSource : DamageSource { public static MockDamageSource Create() => CreateInstance<MockDamageSource>(); }
+        private class MockDamageType : DamageTypeSO { public static MockDamageType Create() => CreateInstance<MockDamageType>(); }
+        private class MockDamageSource : DamageSourceSO { public static MockDamageSource Create() => CreateInstance<MockDamageSource>(); }
 
         private class ZeroDamageStep : DamageStep {
             public override string DisplayName => "Zero";

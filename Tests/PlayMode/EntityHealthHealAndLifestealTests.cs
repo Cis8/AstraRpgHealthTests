@@ -14,10 +14,10 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         private HealthEntityBundle _attacker;
         private HealthEntityBundle _target;
 
-        private HealSource _genericHealSource;
-        private HealSource _lifestealHealSource;
+        private HealSourceSO _genericHealSource;
+        private HealSourceSO _lifestealHealSource;
         private Stat _lifestealStat;
-        private LifestealConfig _lifestealConfig;
+        private LifestealConfigSO _lifestealConfig;
         private HealthEventsBundle _sharedEvents;
 
         [SetUp]
@@ -37,9 +37,9 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
                 sharedConfig: _attacker.Config,
                 sharedEvents: _sharedEvents);
 
-            _genericHealSource = ScriptableObject.CreateInstance<HealSource>();
+            _genericHealSource = ScriptableObject.CreateInstance<HealSourceSO>();
             _genericHealSource.name = "GenericHealSource";
-            _lifestealHealSource = ScriptableObject.CreateInstance<HealSource>();
+            _lifestealHealSource = ScriptableObject.CreateInstance<HealSourceSO>();
             _lifestealHealSource.name = "LifestealHealSource";
 
             _lifestealStat = ScriptableObject.CreateInstance<Stat>();

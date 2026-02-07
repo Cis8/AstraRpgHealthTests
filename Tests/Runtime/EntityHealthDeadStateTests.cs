@@ -23,7 +23,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
     {
         private const long MaxHp = 100;
 
-        private class MockDamageSource : DamageSource
+        private class MockDamageSource : DamageSourceSO
         {
             public static MockDamageSource Create()
             {
@@ -33,7 +33,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             }
         }
         
-        private class MockHealSource : HealSource
+        private class MockHealSource : HealSourceSO
         {
             public static MockHealSource Create()
             {
@@ -43,7 +43,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             }
         }
 
-        private class MockDamageType : DamageType
+        private class MockDamageType : DamageTypeSO
         {
             public static MockDamageType Create()
             {
@@ -52,7 +52,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             }
         }
 
-        private class TestDamageCalculationStrategy : DamageCalculationStrategy
+        private class TestDamageCalculationStrategy : DamageCalculationStrategySO
         {
             private Func<DamageInfo, DamageInfo> _fn;
             public static TestDamageCalculationStrategy Create(Func<DamageInfo, DamageInfo> fn)
@@ -109,7 +109,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             _healSource = MockHealSource.Create();
 
             // Create minimal config
-            var config = ScriptableObject.CreateInstance<AstraRpgHealthConfig>();
+            var config = ScriptableObject.CreateInstance<AstraRpgHealthConfigSO>();
             config.DefaultDamageCalculationCalculationStrategy = TestDamageCalculationStrategy.Create(d => d);
             AstraRpgHealthConfigProvider.Instance = config;
 

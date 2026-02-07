@@ -3,7 +3,6 @@ using System.Reflection;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
 using ElectricDrill.AstraRpgHealth;
-using ElectricDrill.AstraRpgHealth.Config;
 using ElectricDrill.AstraRpgHealth.Damage;
 using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
 using ElectricDrill.AstraRpgHealth.DamageReductionFunctions;
@@ -26,10 +25,10 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
     private Stat _lifestealStat;
     private Stat _genericModStat;
 
-    private FlatDamageReductionFn _flatDmgFn;
-    private PercentageDefenseReductionFn _percDefFn;
+    private FlatDamageReductionFnSO _flatDmgFn;
+    private PercentageDefenseReductionFnSO _percDefFn;
 
-    private LifestealConfig _lifestealCfg;
+    private LifestealConfigSO _lifestealCfg;
 
     [SetUp]
     public void SetUp()
@@ -61,8 +60,8 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         InjectPercentageStat(_attacker.Stats, _genericModStat, new Percentage(0)); // no mod for attacker
 
         // Reduction functions
-        _flatDmgFn = ScriptableObject.CreateInstance<FlatDamageReductionFn>();
-        _percDefFn = ScriptableObject.CreateInstance<PercentageDefenseReductionFn>();
+        _flatDmgFn = ScriptableObject.CreateInstance<FlatDamageReductionFnSO>();
+        _percDefFn = ScriptableObject.CreateInstance<PercentageDefenseReductionFnSO>();
 
         // Configure DamageType
         var dmgType = _attacker.DefaultDamageType;
@@ -83,7 +82,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         _target.Health._overrideDamageCalculationStrategy = strategy;
 
         // Lifesteal mapping + configure basis after critical step post (overwrite with Step/Post)
-        var lifestealSource = ScriptableObject.CreateInstance<HealSource>();
+        var lifestealSource = ScriptableObject.CreateInstance<HealSourceSO>();
         _lifestealCfg = AssignLifestealMapping(_attacker.Config, dmgType, _lifestealStat, lifestealSource);
         ConfigureLifestealBasisAfterCritical(_lifestealCfg, dmgType, _lifestealStat, lifestealSource);
         // Set lifesteal config directly on the shared config

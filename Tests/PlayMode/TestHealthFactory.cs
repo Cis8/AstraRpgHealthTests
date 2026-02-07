@@ -59,18 +59,18 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             public EntityStats Stats;
             public EntityAttributes Attributes;
             public EntityHealth Health;
-            public AstraRpgHealthConfig Config;
-            public DamageType DefaultDamageType;
-            public DamageSource DefaultDamageSource;
+            public AstraRpgHealthConfigSO Config;
+            public DamageTypeSO DefaultDamageType;
+            public DamageSourceSO DefaultDamageSource;
             public HealthEventsBundle Events; // events actually used (shared or per-entity)
         }
 
         public static HealthEntityBundle CreateEntity(string name = "Entity",
-            AstraRpgHealthConfig sharedConfig = null,
+            AstraRpgHealthConfigSO sharedConfig = null,
             long maxHp = 100,
             bool allowNegative = false,
             long barrierAmount = 0,
-            Action<AstraRpgHealthConfig> configMutator = null,
+            Action<AstraRpgHealthConfigSO> configMutator = null,
             Action<EntityHealth> healthMutator = null,
             bool initializeStats = false,
             bool initializeAttributes = false,
@@ -81,7 +81,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             var config = sharedConfig;
             if (config == null)
             {
-                config = ScriptableObject.CreateInstance<AstraRpgHealthConfig>();
+                config = ScriptableObject.CreateInstance<AstraRpgHealthConfigSO>();
                 // Ensure a default OnDeathGameAction on the config
                 var cfgDeath = ScriptableObject.CreateInstance<TestOnDeathStrategy>();
                 config.DefaultOnDeathGameAction = cfgDeath;
@@ -103,7 +103,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             {
                 if (config.DefaultDamageCalculationCalculationStrategy != null) return;
 
-                var strat = ScriptableObject.CreateInstance<DamageCalculationStrategy>();
+                var strat = ScriptableObject.CreateInstance<DamageCalculationStrategySO>();
                 strat.name = "Auto_DefaultDamageCalculationStrategy";
                 strat.steps.Add(new ApplyCriticalMultiplierStep());
                 strat.steps.Add(new ApplyBarrierStep());
@@ -207,9 +207,9 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             go.SetActive(true);
 
             // Dmg type & source
-            var dmgType = ScriptableObject.CreateInstance<DamageType>();
+            var dmgType = ScriptableObject.CreateInstance<DamageTypeSO>();
             dmgType.name = $"{name}_DmgType";
-            var dmgSource = ScriptableObject.CreateInstance<DamageSource>();
+            var dmgSource = ScriptableObject.CreateInstance<DamageSourceSO>();
             dmgSource.name = $"{name}_DmgSource";
 
             return new HealthEntityBundle
@@ -226,13 +226,13 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             };
         }
 
-        private static void SetConfigProviderInstance(AstraRpgHealthConfig config)
+        private static void SetConfigProviderInstance(AstraRpgHealthConfigSO config)
         {
             AstraRpgHealthConfigProvider.Instance = config;
         }
 
         public static PreDamageInfo BuildPre(long amount, HealthEntityBundle dealer, HealthEntityBundle target,
-            DamageType type = null, DamageSource source = null, bool crit = false, double critMult = 1d, bool ignore = false)
+            DamageTypeSO type = null, DamageSourceSO source = null, bool crit = false, double critMult = 1d, bool ignore = false)
         {
             var dmgType = type ?? dealer.DefaultDamageType;
             var dmgSource = source ?? dealer.DefaultDamageSource;
@@ -348,13 +348,13 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         /// Creates a LifestealConfig with a single mapping (_damageType -> lifestealStatConfig) and assigns it to the provided config.
         /// Returns the created LifestealConfig so tests can Destroy it.
         /// </summary>
-        internal static LifestealConfig AssignLifestealMapping(AstraRpgHealthConfig config, DamageType damageType, Stat lifestealStat, HealSource lifestealSource)
+        internal static LifestealConfigSO AssignLifestealMapping(AstraRpgHealthConfigSO config, DamageTypeSO damageType, Stat lifestealStat, HealSourceSO lifestealSource)
         {
             // Prefer existing lifesteal config if already set, else create a fresh one.
             var lifestealConfig = config.LifestealConfig;
             if (!lifestealConfig)
             {
-                lifestealConfig = ScriptableObject.CreateInstance<LifestealConfig>();
+                lifestealConfig = ScriptableObject.CreateInstance<LifestealConfigSO>();
                 // Assign to config (if property has setter) else try reflection only for this assignment.
                 var cfgType = config.GetType();
                 var prop = cfgType.GetProperty("LifestealConfig", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
@@ -386,9 +386,9 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         /// Critical -> Barrier -> Defense -> Weakness/Resistances (ApplyDmgModifiers).
         /// No reflection: we rely on the concrete step classes directly.
         /// </summary>
-        public static DamageCalculationStrategy CreateCritBarrierDefenseWeaknessStrategy()
+        public static DamageCalculationStrategySO CreateCritBarrierDefenseWeaknessStrategy()
         {
-            var strat = ScriptableObject.CreateInstance<DamageCalculationStrategy>();
+            var strat = ScriptableObject.CreateInstance<DamageCalculationStrategySO>();
             strat.steps.Add(new ApplyCriticalMultiplierStep());
             strat.steps.Add(new ApplyBarrierStep());
             strat.steps.Add(new ApplyDefenseStep());
@@ -402,10 +402,10 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         /// Overwrites any existing mapping for the _damageType.
         /// </summary>
         internal static LifestealStatConfig ConfigureLifestealBasisAfterCritical(
-            LifestealConfig cfg,
-            DamageType damageType,
+            LifestealConfigSO cfg,
+            DamageTypeSO damageType,
             Stat lifestealStat,
-            HealSource lifestealSource)
+            HealSourceSO lifestealSource)
         {
             if (!cfg) throw new ArgumentNullException(nameof(cfg));
             if (!damageType) throw new ArgumentNullException(nameof(damageType));

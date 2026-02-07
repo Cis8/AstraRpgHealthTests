@@ -16,14 +16,14 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 {
     public class ApplyBarrierStepTests
     {
-        private class MockDamageType : DamageType {
+        private class MockDamageType : DamageTypeSO {
             public static MockDamageType Create(bool ignoresBarrier = false) {
                 var t = CreateInstance<MockDamageType>();
                 t.IgnoresBarrier = ignoresBarrier;
                 return t;
             }
         }
-        private class MockDamageSource : DamageSource {
+        private class MockDamageSource : DamageSourceSO {
             public static MockDamageSource Create() {
                 var s = CreateInstance<MockDamageSource>();
                 s.name = "BarrierTestSource";
@@ -69,7 +69,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             return (eh, core);
         }
 
-        private DamageInfo MakeDamageInfo(long raw, DamageType type, EntityCore target, EntityCore dealer)
+        private DamageInfo MakeDamageInfo(long raw, DamageTypeSO type, EntityCore target, EntityCore dealer)
         {
             var pre = PreDamageInfo.Builder
                 .WithAmount(raw)

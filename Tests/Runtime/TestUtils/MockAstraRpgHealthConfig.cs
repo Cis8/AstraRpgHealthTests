@@ -19,22 +19,22 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
     {
         public AttributesScalingComponent HealthAttributesScaling { get; set; }
         public Stat GenericHealAmountModifierStat { get; set; }
-        public SerializableDictionary<HealSource, Stat> HealSourceModifications { get; set; }
+        public SerializableDictionary<HealSourceSO, Stat> HealSourceModifications { get; set; }
         public Stat GenericPercentageDamageModificationStat { get; set; }
         public Stat GenericFlatDamageModificationStat { get; set; }
-        public DamageCalculationStrategy DefaultDamageCalculationCalculationStrategy { get; set; }
-        public HealSource HealthRegenerationSource { get; set; }
+        public DamageCalculationStrategySO DefaultDamageCalculationCalculationStrategy { get; set; }
+        public HealSourceSO HealthRegenerationSource { get; set; }
         public Stat PassiveHealthRegenerationStat { get; set; }
         public float PassiveHealthRegenerationInterval { get; set; }
         public Stat ManualHealthRegenerationStat { get; set; }
         public bool SuppressPassiveRegenerationEvents { get; set; }
         public bool SuppressManualRegenerationEvents { get; set; }
-        public LifestealConfig LifestealConfig { get; set; }
+        public LifestealConfigSO LifestealConfig { get; set; }
         public bool SuppressLifestealEvents { get; set; }
         public GameAction<Component> DefaultOnDeathGameAction { get; set; }
         public GameAction<Component> DefaultOnResurrectionGameAction { get; set; }
-        public HealSource DefaultResurrectionSource { get; set; }
-        public ExpCollectionStrategy DefaultExpCollectionStrategy { get; set; }
+        public HealSourceSO DefaultResurrectionSource { get; set; }
+        public ExpCollectionStrategySO DefaultExpCollectionStrategy { get; set; }
 
         public MockAstraRpgHealthConfig()
         {
@@ -49,13 +49,13 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
             HealthAttributesScaling = null;
             
             // Create a default damage calculation strategy
-            DefaultDamageCalculationCalculationStrategy = ScriptableObject.CreateInstance<DamageCalculationStrategy>();
+            DefaultDamageCalculationCalculationStrategy = ScriptableObject.CreateInstance<DamageCalculationStrategySO>();
             
             // Create a default death strategy
             DefaultOnDeathGameAction = ScriptableObject.CreateInstance<DoNothingComponentGameAction>();
             
             // Create a default HealSource for resurrection
-            DefaultResurrectionSource = ScriptableObject.CreateInstance<HealSource>();
+            DefaultResurrectionSource = ScriptableObject.CreateInstance<HealSourceSO>();
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         /// <summary>
         /// Creates a mock config with a custom damage calculation strategy.
         /// </summary>
-        public static MockAstraRpgHealthConfig WithDamageStrategy(DamageCalculationStrategy strategy)
+        public static MockAstraRpgHealthConfig WithDamageStrategy(DamageCalculationStrategySO strategy)
         {
             var config = new MockAstraRpgHealthConfig
             {
@@ -93,7 +93,7 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         /// <summary>
         /// Creates a mock config with a custom resurrection heal source.
         /// </summary>
-        public static MockAstraRpgHealthConfig WithResurrectionSource(HealSource healSource)
+        public static MockAstraRpgHealthConfig WithResurrectionSource(HealSourceSO healSource)
         {
             var config = new MockAstraRpgHealthConfig
             {

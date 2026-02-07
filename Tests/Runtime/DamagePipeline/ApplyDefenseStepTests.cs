@@ -12,23 +12,23 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 {
     public class ApplyDefenseStepTests
     {
-        private class MockFlatDamageReductionFn : FlatDamageReductionFn
+        private class MockFlatDamageReductionFn : FlatDamageReductionFnSO
         {
             private long _result;
             public void Set(long r) => _result = r;
             public override long ReducedDmg(long amount, double defensiveStatValue) => _result;
         }
 
-        private class MockFlatDefenseReductionFn : FlatDefenseReductionFn
+        private class MockFlatDefenseReductionFn : FlatDefenseReductionFnSO
         {
             private long _result;
             public void Set(long r) => _result = r;
             public override double ReducedDef(long piercingStatValue, long defensiveStatValue, Stat defensiveStat, bool clampDef = true) => _result;
         }
 
-        private class MockDamageType : DamageType
+        private class MockDamageType : DamageTypeSO
         {
-            public static MockDamageType Create(Stat def = null, DamageReductionFn damageFn = null, Stat pierce = null, DefenseReductionFn defenseFn = null) {
+            public static MockDamageType Create(Stat def = null, DamageReductionFnSO damageFn = null, Stat pierce = null, DefenseReductionFnSO defenseFn = null) {
                 var t = CreateInstance<MockDamageType>();
                 t.ReducedBy = def;
                 t.DamageReductionFn = damageFn;
@@ -38,7 +38,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             }
         }
 
-        private class MockDamageSource : DamageSource
+        private class MockDamageSource : DamageSourceSO
         {
             public static MockDamageSource Create() {
                 var s = CreateInstance<MockDamageSource>();
@@ -63,7 +63,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             }
         }
 
-        private DamageInfo MakeDamageInfo(long raw, DamageType type, EntityCore target, EntityCore dealer)
+        private DamageInfo MakeDamageInfo(long raw, DamageTypeSO type, EntityCore target, EntityCore dealer)
         {
             // Build the required PreDamageInfo first (new DamageInfo ctor requirement)
             var pre = PreDamageInfo.Builder

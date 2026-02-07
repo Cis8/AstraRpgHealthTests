@@ -16,7 +16,7 @@ public class AdditionalDamageEdgeCasesPlayModeTests
 {
     private HealthEntityBundle _atk;
     private HealthEntityBundle _tgt;
-    private DamageCalculationStrategy _strategy;
+    private DamageCalculationStrategySO _strategy;
     private HealthEventsBundle _sharedEvents;
     private readonly List<Object> _temp = new();
 
@@ -89,7 +89,7 @@ public class AdditionalDamageEdgeCasesPlayModeTests
 
         var dmgType = _atk.DefaultDamageType;
         dmgType.ReducedBy = defStat;
-        dmgType.DamageReductionFn = ScriptableObject.CreateInstance<FlatDamageReductionFn>(); Reg(dmgType.DamageReductionFn);
+        dmgType.DamageReductionFn = ScriptableObject.CreateInstance<FlatDamageReductionFnSO>(); Reg(dmgType.DamageReductionFn);
 
         var pre = BuildPre(80, _atk, _tgt);
         _tgt.Health.TakeDamage(pre);
@@ -109,9 +109,9 @@ public class AdditionalDamageEdgeCasesPlayModeTests
 
         var dmgType = _atk.DefaultDamageType;
         dmgType.ReducedBy = defStat;
-        dmgType.DamageReductionFn = ScriptableObject.CreateInstance<FlatDamageReductionFn>(); Reg(dmgType.DamageReductionFn);
+        dmgType.DamageReductionFn = ScriptableObject.CreateInstance<FlatDamageReductionFnSO>(); Reg(dmgType.DamageReductionFn);
         dmgType.DefensiveStatPiercedBy = pierceStat;
-        dmgType.DefenseReductionFn = ScriptableObject.CreateInstance<PercentageDefenseReductionFn>(); Reg(dmgType.DefenseReductionFn);
+        dmgType.DefenseReductionFn = ScriptableObject.CreateInstance<PercentageDefenseReductionFnSO>(); Reg(dmgType.DefenseReductionFn);
 
         var pre = BuildPre(40, _atk, _tgt);
         var res = _tgt.Health.TakeDamage(pre);
@@ -133,9 +133,9 @@ public class AdditionalDamageEdgeCasesPlayModeTests
 
         var dmgType = _atk.DefaultDamageType;
         dmgType.ReducedBy = defStat;
-        dmgType.DamageReductionFn = ScriptableObject.CreateInstance<FlatDamageReductionFn>(); Reg(dmgType.DamageReductionFn);
+        dmgType.DamageReductionFn = ScriptableObject.CreateInstance<FlatDamageReductionFnSO>(); Reg(dmgType.DamageReductionFn);
         dmgType.DefensiveStatPiercedBy = pierceStat;
-        dmgType.DefenseReductionFn = ScriptableObject.CreateInstance<PercentageDefenseReductionFn>(); Reg(dmgType.DefenseReductionFn);
+        dmgType.DefenseReductionFn = ScriptableObject.CreateInstance<PercentageDefenseReductionFnSO>(); Reg(dmgType.DefenseReductionFn);
 
         var pre = BuildPre(40, _atk, _tgt);
         var res = _tgt.Health.TakeDamage(pre);
@@ -152,7 +152,7 @@ public class AdditionalDamageEdgeCasesPlayModeTests
         var lsStat = ScriptableObject.CreateInstance<Stat>(); lsStat.name = "LS"; Reg(lsStat);
         InjectPercentageStat(_atk.Stats, lsStat, new Percentage(50));
 
-        var healSource = ScriptableObject.CreateInstance<HealSource>(); Reg(healSource);
+        var healSource = ScriptableObject.CreateInstance<HealSourceSO>(); Reg(healSource);
         var cfg = AssignLifestealMapping(_atk.Config, _atk.DefaultDamageType, lsStat, healSource); Reg(cfg);
         ConfigureLifestealBasisAfterCritical(cfg, _atk.DefaultDamageType, lsStat, healSource);
         AstraRpgHealthConfigProvider.Instance.LifestealConfig = cfg;

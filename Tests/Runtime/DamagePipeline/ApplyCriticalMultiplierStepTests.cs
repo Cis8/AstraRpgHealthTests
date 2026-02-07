@@ -9,7 +9,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 {
     public class ApplyCriticalMultiplierStepTests
     {
-        private class MockDamageType : DamageType
+        private class MockDamageType : DamageTypeSO
         {
             public static MockDamageType Create() {
                 var t = CreateInstance<MockDamageType>();
@@ -17,7 +17,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             }
         }
 
-        private class MockDamageSource : DamageSource
+        private class MockDamageSource : DamageSourceSO
         {
             public static MockDamageSource Create() {
                 var s = CreateInstance<MockDamageSource>();

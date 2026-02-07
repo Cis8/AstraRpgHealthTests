@@ -20,7 +20,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
     /// </summary>
     public class TrueDamageTests
     {
-        private class MockDamageType : DamageType
+        private class MockDamageType : DamageTypeSO
         {
             public static MockDamageType Create(
                 string name = "MockType",
@@ -37,7 +37,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             }
         }
 
-        private class MockDamageSource : DamageSource
+        private class MockDamageSource : DamageSourceSO
         {
             public static MockDamageSource Create(string name = "MockSource")
             {
@@ -49,26 +49,26 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
         private class MockConfig : IAstraRpgHealthConfig
         {
-            public SerializableDictionary<HealSource, Stat> HealSourceModifications { get; set; }
+            public SerializableDictionary<HealSourceSO, Stat> HealSourceModifications { get; set; }
             public Stat GenericPercentageDamageModificationStat { get; set; }
             public Stat GenericFlatDamageModificationStat { get; set; }
             
             // Other required properties
             public AttributesScalingComponent HealthAttributesScaling { get; set; }
             public Stat GenericHealAmountModifierStat { get; set; }
-            public DamageCalculationStrategy DefaultDamageCalculationCalculationStrategy { get; set; }
-            public HealSource HealthRegenerationSource { get; set; }
+            public DamageCalculationStrategySO DefaultDamageCalculationCalculationStrategy { get; set; }
+            public HealSourceSO HealthRegenerationSource { get; set; }
             public Stat PassiveHealthRegenerationStat { get; set; }
             public float PassiveHealthRegenerationInterval { get; set; }
             public Stat ManualHealthRegenerationStat { get; set; }
             public bool SuppressPassiveRegenerationEvents { get; set; }
             public bool SuppressManualRegenerationEvents { get; set; }
-            public LifestealConfig LifestealConfig { get; set; }
+            public LifestealConfigSO LifestealConfig { get; set; }
             public bool SuppressLifestealEvents { get; set; }
             public GameAction<Component> DefaultOnDeathGameAction { get; set; }
             public GameAction<Component> DefaultOnResurrectionGameAction { get; set; }
-            public HealSource DefaultResurrectionSource { get; set; }
-            public ExpCollectionStrategy DefaultExpCollectionStrategy { get; set; }
+            public HealSourceSO DefaultResurrectionSource { get; set; }
+            public ExpCollectionStrategySO DefaultExpCollectionStrategy { get; set; }
         }
 
         private class TestStats : EntityStats
@@ -129,7 +129,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             return stat;
         }
 
-        private DamageInfo MakeDamageInfo(long raw, DamageType type, DamageSource source)
+        private DamageInfo MakeDamageInfo(long raw, DamageTypeSO type, DamageSourceSO source)
         {
             var pre = PreDamageInfo.Builder
                 .WithAmount(raw)

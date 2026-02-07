@@ -24,7 +24,7 @@ namespace ElectricDrill.AstraRpgHealthTests
         private const long MAX_HP = 100;
 
         // Minimal mock ScriptableObjects
-        public class MockDamageSource : DamageSource
+        public class MockDamageSource : DamageSourceSO
         {
             public static MockDamageSource Create()
             {
@@ -34,7 +34,7 @@ namespace ElectricDrill.AstraRpgHealthTests
             }
         }
         
-        public class MockHealSource : HealSource
+        public class MockHealSource : HealSourceSO
         {
             public static MockHealSource Create()
             {
@@ -44,7 +44,7 @@ namespace ElectricDrill.AstraRpgHealthTests
             }
         }
 
-        public class MockDamageType : DamageType
+        public class MockDamageType : DamageTypeSO
         {
             public static MockDamageType Create()
             {
@@ -54,7 +54,7 @@ namespace ElectricDrill.AstraRpgHealthTests
         }
 
         // Test strategy (identity or custom transform)
-        private class TestDamageCalculationStrategy : DamageCalculationStrategy
+        private class TestDamageCalculationStrategy : DamageCalculationStrategySO
         {
             private Func<DamageInfo, DamageInfo> _fn;
             public static TestDamageCalculationStrategy Create(Func<DamageInfo, DamageInfo> fn)
