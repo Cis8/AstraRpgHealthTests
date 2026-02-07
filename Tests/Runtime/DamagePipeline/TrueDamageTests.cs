@@ -57,13 +57,13 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             public AttributesScalingComponent HealthAttributesScaling { get; set; }
             public Stat GenericHealAmountModifierStat { get; set; }
             public DamageCalculationStrategy DefaultDamageCalculationCalculationStrategy { get; set; }
-            public HealSource PassiveHealthRegenerationSource { get; set; }
+            public HealSource HealthRegenerationSource { get; set; }
             public Stat PassiveHealthRegenerationStat { get; set; }
             public float PassiveHealthRegenerationInterval { get; set; }
             public Stat ManualHealthRegenerationStat { get; set; }
             public LifestealConfig LifestealConfig { get; set; }
-            public GameAction<UnityEngine.Component> DefaultOnDeathGameAction { get; set; }
-            public GameAction<UnityEngine.Component> DefaultOnResurrectionGameAction { get; set; }
+            public GameAction<Component> DefaultOnDeathGameAction { get; set; }
+            public GameAction<Component> DefaultOnResurrectionGameAction { get; set; }
             public HealSource DefaultResurrectionSource { get; set; }
             public ExpCollectionStrategy DefaultExpCollectionStrategy { get; set; }
         }

@@ -23,7 +23,7 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         public Stat GenericPercentageDamageModificationStat { get; set; }
         public Stat GenericFlatDamageModificationStat { get; set; }
         public DamageCalculationStrategy DefaultDamageCalculationCalculationStrategy { get; set; }
-        public HealSource PassiveHealthRegenerationSource { get; set; }
+        public HealSource HealthRegenerationSource { get; set; }
         public Stat PassiveHealthRegenerationStat { get; set; }
         public float PassiveHealthRegenerationInterval { get; set; }
         public Stat ManualHealthRegenerationStat { get; set; }
