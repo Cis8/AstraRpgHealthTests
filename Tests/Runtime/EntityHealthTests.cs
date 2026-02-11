@@ -104,14 +104,14 @@ namespace ElectricDrill.AstraRpgHealthTests
             _entityHealth.OverrideOnDeathGameAction = ScriptableObject.CreateInstance<DoNothingComponentGameAction>();
 
             // Events
-            SetPriv("_preDmgInfoEvent", ScriptableObject.CreateInstance<PreDamageGameEvent>());
-            SetPriv("_damageResolutionEvent", ScriptableObject.CreateInstance<DamageResolutionGameEvent>());
-            SetPriv("_entityDiedEvent", ScriptableObject.CreateInstance<EntityDiedGameEvent>());
-            SetPriv("_maxHealthChangedEvent", ScriptableObject.CreateInstance<EntityMaxHealthChangedGameEvent>());
-            SetPriv("_gainedHealthEvent", ScriptableObject.CreateInstance<EntityGainedHealthGameEvent>());
-            SetPriv("_lostHealthEvent", ScriptableObject.CreateInstance<EntityLostHealthGameEvent>());
-            SetPriv("_preHealEvent", ScriptableObject.CreateInstance<PreHealGameEvent>());
-            SetPriv("_entityHealedEvent", ScriptableObject.CreateInstance<EntityHealedGameEvent>());
+            SetPriv("_globalPreDamageInfoEvent", ScriptableObject.CreateInstance<PreDamageGameEvent>());
+            SetPriv("_globalDamageResolutionEvent", ScriptableObject.CreateInstance<DamageResolutionGameEvent>());
+            SetPriv("_globalEntityDiedEvent", ScriptableObject.CreateInstance<EntityDiedGameEvent>());
+            SetPriv("_globalMaxHealthChangedEvent", ScriptableObject.CreateInstance<EntityMaxHealthChangedGameEvent>());
+            SetPriv("_globalGainedHealthEvent", ScriptableObject.CreateInstance<EntityGainedHealthGameEvent>());
+            SetPriv("_globalLostHealthEvent", ScriptableObject.CreateInstance<EntityLostHealthGameEvent>());
+            SetPriv("_globalPreHealEvent", ScriptableObject.CreateInstance<PreHealGameEvent>());
+            SetPriv("_globalEntityHealedEvent", ScriptableObject.CreateInstance<EntityHealedGameEvent>());
 
             // Inject mock config via provider to avoid dependency on Resources
             AstraRpgHealthConfigProvider.Instance = MockAstraRpgHealthConfig.CreateMinimal();
@@ -127,7 +127,7 @@ namespace ElectricDrill.AstraRpgHealthTests
 
         private DamageResolutionGameEvent GetResolutionEvent() =>
             (DamageResolutionGameEvent)typeof(EntityHealth)
-                .GetField("_damageResolutionEvent", BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetField("_globalDamageResolutionEvent", BindingFlags.NonPublic | BindingFlags.Instance)
                 .GetValue(_entityHealth);
 
         [TearDown]

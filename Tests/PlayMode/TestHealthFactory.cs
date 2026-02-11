@@ -181,14 +181,14 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
                 typeof(EntityHealth).GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic)
                     ?.SetValue(health, value);
             
-            SetPrivate("_preDamageInfoEvent", evtBundle.PreDmg);
-            SetPrivate("_damageResolutionEvent", evtBundle.DamageResolution);
-            SetPrivate("_maxHealthChangedEvent", evtBundle.MaxHpChanged);
-            SetPrivate("_gainedHealthEvent", evtBundle.Gained);
-            SetPrivate("_lostHealthEvent", evtBundle.Lost);
-            SetPrivate("_entityDiedEvent", evtBundle.Died);
-            SetPrivate("_preHealEvent", evtBundle.PreHeal);
-            SetPrivate("_entityHealedEvent", evtBundle.Healed);
+            SetPrivate("_globalPreDamageInfoEvent", evtBundle.PreDmg);
+            SetPrivate("_globalDamageResolutionEvent", evtBundle.DamageResolution);
+            SetPrivate("_globalMaxHealthChangedEvent", evtBundle.MaxHpChanged);
+            SetPrivate("_globalGainedHealthEvent", evtBundle.Gained);
+            SetPrivate("_globalLostHealthEvent", evtBundle.Lost);
+            SetPrivate("_globalEntityDiedEvent", evtBundle.Died);
+            SetPrivate("_globalPreHealEvent", evtBundle.PreHeal);
+            SetPrivate("_globalEntityHealedEvent", evtBundle.Healed);
 
             // OnDeathStrategy override (use public property, not reflection)
             var onDeathStrategy = ScriptableObject.CreateInstance<TestOnDeathStrategy>();
