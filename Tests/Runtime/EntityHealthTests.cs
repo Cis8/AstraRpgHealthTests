@@ -163,7 +163,7 @@ namespace ElectricDrill.AstraRpgHealthTests
         public void TakeDamage_WhenImmune_PreventedWithEntityImmune()
         {
             _entityHealth.IsImmune = true;
-            DamageResolution raised = null;
+            DamageResolutionInfo raised = null;
             GetResolutionEvent().OnEventRaised += r => raised = r;
 
             _entityHealth.TakeDamage(BuildPre(50));
@@ -177,7 +177,7 @@ namespace ElectricDrill.AstraRpgHealthTests
         [Test]
         public void TakeDamage_IgnoreFlag_PrePhaseIgnored()
         {
-            DamageResolution res = null;
+            DamageResolutionInfo res = null;
             GetResolutionEvent().OnEventRaised += r => res = r;
 
             _entityHealth.TakeDamage(BuildPre(40, ignore: true));
@@ -191,7 +191,7 @@ namespace ElectricDrill.AstraRpgHealthTests
         [Test]
         public void TakeDamage_ZeroAmount_PrePhaseZero()
         {
-            DamageResolution res = null;
+            DamageResolutionInfo res = null;
             GetResolutionEvent().OnEventRaised += r => res = r;
 
             _entityHealth.TakeDamage(BuildPre(0));
