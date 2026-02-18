@@ -243,7 +243,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             _entity.Config.SuppressManualRegenerationEvents = true;
             
             _entity.Health.TakeDamage(BuildPre(50, _entity, _entity));
-            _entity.Health.Heal(PreHealInfo.Builder
+            _entity.Health.Heal(PreHealContext.Builder
                 .WithAmount(20)
                 .WithSource(_normalHealSource)
                 .WithHealer(_entity.Core)

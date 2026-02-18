@@ -18,9 +18,9 @@ namespace ElectricDrill.AstraRpgHealthTests.Runtime.Heal
             public override DamageInfo ProcessStep(DamageInfo data) => data;
         }
 
-        private DamageAmountInfo BuildAmounts()
+        private DamageAmountContext BuildAmounts()
         {
-            var a = new DamageAmountInfo(100);
+            var a = new DamageAmountContext(100);
             // Simulate defense reducing 100 -> 70
             a.RecordStep(typeof(DefStep), 100, 70);
             // Simulate barrier reducing 70 -> 40

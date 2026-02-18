@@ -71,7 +71,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
         private DamageInfo MakeDamageInfo(long raw, DamageTypeSO type, EntityCore target, EntityCore dealer)
         {
-            var pre = PreDamageInfo.Builder
+            var pre = PreDamageContext.Builder
                 .WithAmount(raw)
                 .WithType(type)
                 .WithSource(MockDamageSource.Create())

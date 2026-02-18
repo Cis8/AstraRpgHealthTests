@@ -155,9 +155,9 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             Object.DestroyImmediate(_healSource);
         }
 
-        private PreDamageInfo CreateDamageInfo(long amount)
+        private PreDamageContext CreateDamageInfo(long amount)
         {
-            return PreDamageInfo.Builder
+            return PreDamageContext.Builder
                 .WithAmount(amount)
                 .WithType(_damageType)
                 .WithSource(_damageSource)
@@ -166,9 +166,9 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
                 .Build();
         }
 
-        private PreHealInfo CreateHealInfo(long amount)
+        private PreHealContext CreateHealInfo(long amount)
         {
-            return PreHealInfo.Builder
+            return PreHealContext.Builder
                 .WithAmount(amount)
                 .WithSource(_healSource)
                 .WithHealer(_mockEntityCore.Object)

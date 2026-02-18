@@ -131,7 +131,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
         private DamageInfo MakeDamageInfo(long raw, DamageTypeSO type, DamageSourceSO source)
         {
-            var pre = PreDamageInfo.Builder
+            var pre = PreDamageContext.Builder
                 .WithAmount(raw)
                 .WithType(type)
                 .WithSource(source)

@@ -125,7 +125,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
 
         // Base damage 40, critical multiplier 2 => 80 before barrier
         var pre = BuildPre(40, _attacker, _target, crit: true, critMult: 2d);
-        DamageResolutionInfo damageDealt = _target.Health.TakeDamage(pre);
+        DamageResolutionContext damageDealt = _target.Health.TakeDamage(pre);
         
         // --- Step-by-step checks ---
         // Critical step checks: pre 40, post 80

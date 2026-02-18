@@ -50,7 +50,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             var targetCore = goTarget.AddComponent<EntityCore>();
             var dealerCore = goDealer.AddComponent<EntityCore>();
 
-            var pre = PreDamageInfo.Builder
+            var pre = PreDamageContext.Builder
                 .WithAmount(amount)
                 .WithType(MockDamageType.Create())
                 .WithSource(MockDamageSource.Create())

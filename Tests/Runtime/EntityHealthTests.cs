@@ -138,9 +138,9 @@ namespace ElectricDrill.AstraRpgHealthTests
             AstraRpgHealthConfigProvider.Reset();
         }
 
-        private PreDamageInfo BuildPre(long amount, bool ignore = false)
+        private PreDamageContext BuildPre(long amount, bool ignore = false)
         {
-            var pre = PreDamageInfo.Builder
+            var pre = PreDamageContext.Builder
                 .WithAmount(amount)
                 .WithType(MockDamageType.Create())
                 .WithSource(MockDamageSource.Create())
@@ -163,7 +163,7 @@ namespace ElectricDrill.AstraRpgHealthTests
         public void TakeDamage_WhenImmune_PreventedWithEntityImmune()
         {
             _entityHealth.IsImmune = true;
-            DamageResolutionInfo raised = null;
+            DamageResolutionContext raised = null;
             GetResolutionEvent().OnEventRaised += r => raised = r;
 
             _entityHealth.TakeDamage(BuildPre(50));
@@ -177,7 +177,7 @@ namespace ElectricDrill.AstraRpgHealthTests
         [Test]
         public void TakeDamage_IgnoreFlag_PrePhaseIgnored()
         {
-            DamageResolutionInfo res = null;
+            DamageResolutionContext res = null;
             GetResolutionEvent().OnEventRaised += r => res = r;
 
             _entityHealth.TakeDamage(BuildPre(40, ignore: true));
@@ -191,7 +191,7 @@ namespace ElectricDrill.AstraRpgHealthTests
         [Test]
         public void TakeDamage_ZeroAmount_PrePhaseZero()
         {
-            DamageResolutionInfo res = null;
+            DamageResolutionContext res = null;
             GetResolutionEvent().OnEventRaised += r => res = r;
 
             _entityHealth.TakeDamage(BuildPre(0));
@@ -221,7 +221,7 @@ namespace ElectricDrill.AstraRpgHealthTests
         public void Heal_CappedAtMax()
         {
             _entityHealth.TakeDamage(BuildPre(30)); // HP 70
-            _entityHealth.Heal(PreHealInfo.Builder
+            _entityHealth.Heal(PreHealContext.Builder
                 .WithAmount(50)
                 .WithSource(MockHealSource.Create())
                 .WithHealer(_mockEntityCore.Object)

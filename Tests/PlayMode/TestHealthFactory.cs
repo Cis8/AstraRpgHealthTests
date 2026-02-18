@@ -231,13 +231,13 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             AstraRpgHealthConfigProvider.Instance = config;
         }
 
-        public static PreDamageInfo BuildPre(long amount, HealthEntityBundle dealer, HealthEntityBundle target,
+        public static PreDamageContext BuildPre(long amount, HealthEntityBundle dealer, HealthEntityBundle target,
             DamageTypeSO type = null, DamageSourceSO source = null, bool crit = false, double critMult = 1d, bool ignore = false)
         {
             var dmgType = type ?? dealer.DefaultDamageType;
             var dmgSource = source ?? dealer.DefaultDamageSource;
 
-            var pre = PreDamageInfo.Builder
+            var pre = PreDamageContext.Builder
                 .WithAmount(amount)
                 .WithType(dmgType)
                 .WithSource(dmgSource)
