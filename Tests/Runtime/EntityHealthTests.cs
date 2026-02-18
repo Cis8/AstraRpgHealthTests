@@ -243,5 +243,38 @@ namespace ElectricDrill.AstraRpgHealthTests
 
             Assert.AreEqual(180, _entityHealth.MaxHp);
         }
+        
+        [Test]
+        public void GetMaxHpPortion_ReturnsExpected()
+        {
+            _entityHealth._totalMaxHp = new LongRef { UseConstant = true, ConstantValue = 300 };
+            _entityHealth._hp = new LongRef { UseConstant = true, ConstantValue = 300 };
+
+            var result = _entityHealth.GetMaxHpPortion(0.2);
+
+            Assert.AreEqual(60, result);
+        }
+
+        [Test]
+        public void GetHpPortion_ReturnsExpected()
+        {
+            _entityHealth._totalMaxHp = new LongRef { UseConstant = true, ConstantValue = 100 };
+            _entityHealth._hp = new LongRef { UseConstant = true, ConstantValue = 80 };
+
+            var result = _entityHealth.GetHpPortion(0.25);
+
+            Assert.AreEqual(20, result);
+        }
+
+        [Test]
+        public void GetMissingHpPortion_ReturnsExpected()
+        {
+            _entityHealth._totalMaxHp = new LongRef { UseConstant = true, ConstantValue = 200 };
+            _entityHealth._hp = new LongRef { UseConstant = true, ConstantValue = 50 };
+
+            var result = _entityHealth.GetMissingHpPortion(0.1);
+
+            Assert.AreEqual(15, result);
+        }
     }
-}
+ }
