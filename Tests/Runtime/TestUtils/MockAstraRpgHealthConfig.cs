@@ -2,7 +2,6 @@ using ElectricDrill.AstraRpgFramework.GameActions;
 using ElectricDrill.AstraRpgFramework.GameActions.Actions.Component;
 using ElectricDrill.AstraRpgFramework.Scaling.ScalingComponents;
 using ElectricDrill.AstraRpgFramework.Stats;
-using ElectricDrill.AstraRpgFramework.Utils;
 using ElectricDrill.AstraRpgHealth.Config;
 using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
 using ElectricDrill.AstraRpgHealth.Experience;
@@ -18,8 +17,8 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
     internal class MockAstraRpgHealthConfig : IAstraRpgHealthConfig
     {
         public AttributesScalingComponent HealthAttributesScaling { get; set; }
-        public Stat GenericHealAmountModifierStat { get; set; }
-        public SerializableDictionary<HealSourceSO, Stat> HealSourceModifications { get; set; }
+        public Stat GenericPercentageHealAmountModifierStat { get; set; }
+        public Stat GenericFlatHealAmountModifierStat { get; set; }
         public Stat GenericPercentageDamageModificationStat { get; set; }
         public Stat GenericFlatDamageModificationStat { get; set; }
         public DamageCalculationStrategySO DefaultDamageCalculationCalculationStrategy { get; set; }
