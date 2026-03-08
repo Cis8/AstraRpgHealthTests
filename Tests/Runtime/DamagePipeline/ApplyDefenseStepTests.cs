@@ -16,7 +16,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         {
             private long _result;
             public void Set(long r) => _result = r;
-            public override long ReducedDmg(long amount, double defensiveStatValue) => _result;
+            public override long CalculateReducedDamage(long amount, double defensiveStatValue) => _result;
         }
 
         private class MockFlatDefenseReductionFn : FlatDefenseReductionFnSO
