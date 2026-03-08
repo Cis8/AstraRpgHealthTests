@@ -30,7 +30,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         {
             public static MockDamageType Create(Stat def = null, DamageReductionFnSO damageFn = null, Stat pierce = null, DefenseReductionFnSO defenseFn = null) {
                 var t = CreateInstance<MockDamageType>();
-                t.ReducedBy = def;
+                t.DefensiveStat = def;
                 t.DamageReductionFn = damageFn;
                 t.DefensiveStatPiercedBy = pierce;
                 t.DefenseReductionFn = defenseFn;

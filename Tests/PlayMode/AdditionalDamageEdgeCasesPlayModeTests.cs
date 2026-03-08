@@ -88,7 +88,7 @@ public class AdditionalDamageEdgeCasesPlayModeTests
         InjectFlatStat(_tgt.Stats, defStat, 999);
 
         var dmgType = _atk.DefaultDamageType;
-        dmgType.ReducedBy = defStat;
+        dmgType.DefensiveStat = defStat;
         dmgType.DamageReductionFn = ScriptableObject.CreateInstance<FlatDamageReductionFnSO>(); Reg(dmgType.DamageReductionFn);
 
         var pre = BuildPre(80, _atk, _tgt);
@@ -108,7 +108,7 @@ public class AdditionalDamageEdgeCasesPlayModeTests
         InjectPercentageStat(_atk.Stats, pierceStat, new Percentage(100));
 
         var dmgType = _atk.DefaultDamageType;
-        dmgType.ReducedBy = defStat;
+        dmgType.DefensiveStat = defStat;
         dmgType.DamageReductionFn = ScriptableObject.CreateInstance<FlatDamageReductionFnSO>(); Reg(dmgType.DamageReductionFn);
         dmgType.DefensiveStatPiercedBy = pierceStat;
         dmgType.DefenseReductionFn = ScriptableObject.CreateInstance<PercentageDefenseReductionFnSO>(); Reg(dmgType.DefenseReductionFn);
@@ -132,7 +132,7 @@ public class AdditionalDamageEdgeCasesPlayModeTests
         InjectPercentageStat(_atk.Stats, pierceStat, new Percentage(200));
 
         var dmgType = _atk.DefaultDamageType;
-        dmgType.ReducedBy = defStat;
+        dmgType.DefensiveStat = defStat;
         dmgType.DamageReductionFn = ScriptableObject.CreateInstance<FlatDamageReductionFnSO>(); Reg(dmgType.DamageReductionFn);
         dmgType.DefensiveStatPiercedBy = pierceStat;
         dmgType.DefenseReductionFn = ScriptableObject.CreateInstance<PercentageDefenseReductionFnSO>(); Reg(dmgType.DefenseReductionFn);

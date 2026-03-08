@@ -65,7 +65,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
 
         // Configure DamageType
         var dmgType = _attacker.DefaultDamageType;
-        dmgType.ReducedBy = _defensiveStat;
+        dmgType.DefensiveStat = _defensiveStat;
         dmgType.DamageReductionFn = _flatDmgFn;
         dmgType.DefensiveStatPiercedBy = _piercingStat;
         dmgType.DefenseReductionFn = _percDefFn;
