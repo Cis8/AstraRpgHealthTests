@@ -23,7 +23,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         {
             private long _result;
             public void Set(long r) => _result = r;
-            public override double ReducedDef(long piercingStatValue, long defensiveStatValue, Stat defensiveStat, bool clampDef = true) => _result;
+            public override double CalculateReducedDefense(long piercingStatValue, long defensiveStatValue, Stat defensiveStat, bool clampDef = true) => _result;
         }
 
         private class MockDamageType : DamageTypeSO
