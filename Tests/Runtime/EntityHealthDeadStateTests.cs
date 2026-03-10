@@ -12,6 +12,7 @@ using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
 using ElectricDrill.AstraRpgHealth.Events;
 using ElectricDrill.AstraRpgHealth.Exceptions;
 using ElectricDrill.AstraRpgHealth.Heal;
+using ElectricDrill.AstraRpgHealth.Resurrection;
 using Moq;
 using NUnit.Framework;
 using UnityEngine;
@@ -322,6 +323,113 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             Assert.AreEqual(0, _entityHealth.Hp);
             Assert.AreEqual(150, _entityHealth.MaxHp);
             Assert.IsTrue(_entityHealth.IsDead());
+        }
+
+        [Test]
+        public void TestResurrect_AppliesHealSourcePercentageModifier()
+        {
+            // Create a real StatSet containing the percentage stat
+            var percentageStat = ScriptableObject.CreateInstance<Stat>();
+            var statSet = ScriptableObject.CreateInstance<StatSet>();
+            statSet._stats.Add(percentageStat);
+
+            var resurrectionSource = MockHealSource.Create();
+            resurrectionSource.PercentageHealModificationStat = percentageStat;
+
+            // Mock: entity StatSet contains the stat and returns +50%
+            _mockEntityStats.Setup(s => s.StatSet).Returns(statSet);
+            _mockEntityStats.Setup(s => s.Get(percentageStat)).Returns(50L); // +50%
+
+            // Kill the entity
+            _entityHealth.TakeDamage(CreateDamageInfo(MaxHp));
+            Assert.IsTrue(_entityHealth.IsDead());
+
+            // Re-inject stats mock to ensure it survives Unity null-check after TakeDamage
+            _entityHealth._entityStats = _mockEntityStats.Object;
+
+            // Resurrect with base 40 HP → 40 * 1.5 = 60
+            _entityHealth.Resurrect(40, resurrectionSource);
+
+            Assert.IsFalse(_entityHealth.IsDead());
+            Assert.AreEqual(60, _entityHealth.Hp);
+        }
+
+        [Test]
+        public void TestResurrect_AppliesHealSourceFlatModifier()
+        {
+            // Create a real StatSet containing the flat stat
+            var flatStat = ScriptableObject.CreateInstance<Stat>();
+            var statSet = ScriptableObject.CreateInstance<StatSet>();
+            statSet._stats.Add(flatStat);
+
+            var resurrectionSource = MockHealSource.Create();
+            resurrectionSource.FlatHealModificationStat = flatStat;
+
+            // Mock: entity StatSet contains the stat and returns +10 flat
+            _mockEntityStats.Setup(s => s.StatSet).Returns(statSet);
+            _mockEntityStats.Setup(s => s.Get(flatStat)).Returns(10L); // +10 flat
+
+            // Kill the entity
+            _entityHealth.TakeDamage(CreateDamageInfo(MaxHp));
+            Assert.IsTrue(_entityHealth.IsDead());
+
+            // Re-inject stats mock to ensure it survives Unity null-check after TakeDamage
+            _entityHealth._entityStats = _mockEntityStats.Object;
+
+            // Resurrect with base 30 HP → 30 + 10 = 40
+            _entityHealth.Resurrect(30, resurrectionSource);
+
+            Assert.IsFalse(_entityHealth.IsDead());
+            Assert.AreEqual(40, _entityHealth.Hp);
+        }
+
+        [Test]
+        public void TestResurrect_FallbackWhenModifiersReduceHpBelowDeathThreshold()
+        {
+            // Create a real StatSet containing the flat stat
+            var flatStat = ScriptableObject.CreateInstance<Stat>();
+            var statSet = ScriptableObject.CreateInstance<StatSet>();
+            statSet._stats.Add(flatStat);
+
+            var resurrectionSource = MockHealSource.Create();
+            resurrectionSource.FlatHealModificationStat = flatStat;
+
+            // -100 flat → effective HP would be <= 0 (death threshold)
+            _mockEntityStats.Setup(s => s.StatSet).Returns(statSet);
+            _mockEntityStats.Setup(s => s.Get(flatStat)).Returns(-100L);
+
+            // Kill the entity (death threshold is 0)
+            _entityHealth.TakeDamage(CreateDamageInfo(MaxHp));
+            Assert.IsTrue(_entityHealth.IsDead());
+
+            // Re-inject stats mock to ensure it survives Unity null-check after TakeDamage
+            _entityHealth._entityStats = _mockEntityStats.Object;
+
+            // Resurrect with base 30 HP; after -100 flat → ≤ 0 → fallback to deathThreshold(0) + 1 = 1
+            _entityHealth.Resurrect(30, resurrectionSource);
+
+            Assert.IsFalse(_entityHealth.IsDead());
+            Assert.IsTrue(_entityHealth.IsAlive());
+            Assert.AreEqual(1, _entityHealth.Hp);
+        }
+
+        [Test]
+        public void TestResurrect_RaisesResurrectedEventWithActualHp()
+        {
+            ResurrectionContext capturedContext = null;
+            var resurrectEvent = ScriptableObject.CreateInstance<EntityResurrectedGameEvent>();
+            resurrectEvent.OnEventRaised += ctx => capturedContext = ctx;
+            typeof(EntityHealth)
+                .GetField("_globalEntityResurrectedEvent", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.SetValue(_entityHealth, resurrectEvent);
+
+            // Kill and resurrect without modifiers → HP = 50
+            _entityHealth.TakeDamage(CreateDamageInfo(MaxHp));
+            _entityHealth.Resurrect(50, _healSource);
+
+            Assert.IsNotNull(capturedContext);
+            Assert.AreEqual(50, capturedContext.NewValue);
+            Assert.AreEqual(0, capturedContext.PreviousValue);
         }
     }
 }
