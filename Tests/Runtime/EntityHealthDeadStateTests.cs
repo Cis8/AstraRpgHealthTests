@@ -112,6 +112,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             // Create minimal config
             var config = ScriptableObject.CreateInstance<AstraRpgHealthConfigSO>();
             config.DefaultDamageCalculationCalculationStrategy = TestDamageCalculationStrategy.Create(d => d);
+            config.DefaultResurrectionSource = _healSource;
             AstraRpgHealthConfigProvider.Instance = config;
 
             // Create events
@@ -247,8 +248,8 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             Assert.IsTrue(_entityHealth.IsDead());
             Assert.AreEqual(0, _entityHealth.Hp);
 
-            // Resurrect with 50 HP
-            _entityHealth.Resurrect(50, _healSource);
+            // Resurrect with 50 HP (uses DefaultResurrectionSource from config)
+            _entityHealth.Resurrect(50);
 
             Assert.IsFalse(_entityHealth.IsDead());
             Assert.IsTrue(_entityHealth.IsAlive());
@@ -262,8 +263,8 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             _entityHealth.TakeDamage(CreateDamageInfo(MaxHp));
             Assert.IsTrue(_entityHealth.IsDead());
 
-            // Resurrect with 75% HP
-            _entityHealth.Resurrect(new Percentage(75), _healSource);
+            // Resurrect with 75% HP (uses DefaultResurrectionSource from config)
+            _entityHealth.Resurrect(new Percentage(75));
 
             Assert.IsFalse(_entityHealth.IsDead());
             Assert.AreEqual(75, _entityHealth.Hp);
@@ -275,7 +276,12 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             Assert.IsFalse(_entityHealth.IsDead());
 
             var ex = Assert.Throws<InvalidOperationException>(() => 
-                _entityHealth.Resurrect(50, _healSource)
+                _entityHealth.Resurrect(PreHealContext.Builder
+                    .WithAmount(50)
+                    .WithSource(_healSource)
+                    .WithHealer(null)
+                    .WithTarget(_mockEntityCore.Object)
+                    .Build())
             );
             
             Assert.IsNotNull(ex);
@@ -287,7 +293,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
         {
             // Kill and resurrect
             _entityHealth.TakeDamage(CreateDamageInfo(MaxHp));
-            _entityHealth.Resurrect(50, _healSource);
+            _entityHealth.Resurrect(50);
             Assert.AreEqual(50, _entityHealth.Hp);
 
             // Heal should work now
@@ -300,7 +306,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
         {
             // Kill and resurrect
             _entityHealth.TakeDamage(CreateDamageInfo(MaxHp));
-            _entityHealth.Resurrect(50, _healSource);
+            _entityHealth.Resurrect(50);
 
             // Damage should work now
             var dmgResult = _entityHealth.TakeDamage(CreateDamageInfo(20));
@@ -348,7 +354,12 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             _entityHealth._entityStats = _mockEntityStats.Object;
 
             // Resurrect with base 40 HP → 40 * 1.5 = 60
-            _entityHealth.Resurrect(40, resurrectionSource);
+            _entityHealth.Resurrect(PreHealContext.Builder
+                .WithAmount(40)
+                .WithSource(resurrectionSource)
+                .WithHealer(null)
+                .WithTarget(_mockEntityCore.Object)
+                .Build());
 
             Assert.IsFalse(_entityHealth.IsDead());
             Assert.AreEqual(60, _entityHealth.Hp);
@@ -377,7 +388,12 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             _entityHealth._entityStats = _mockEntityStats.Object;
 
             // Resurrect with base 30 HP → 30 + 10 = 40
-            _entityHealth.Resurrect(30, resurrectionSource);
+            _entityHealth.Resurrect(PreHealContext.Builder
+                .WithAmount(30)
+                .WithSource(resurrectionSource)
+                .WithHealer(null)
+                .WithTarget(_mockEntityCore.Object)
+                .Build());
 
             Assert.IsFalse(_entityHealth.IsDead());
             Assert.AreEqual(40, _entityHealth.Hp);
@@ -406,7 +422,12 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             _entityHealth._entityStats = _mockEntityStats.Object;
 
             // Resurrect with base 30 HP; after -100 flat → ≤ 0 → fallback to deathThreshold(0) + 1 = 1
-            _entityHealth.Resurrect(30, resurrectionSource);
+            _entityHealth.Resurrect(PreHealContext.Builder
+                .WithAmount(30)
+                .WithSource(resurrectionSource)
+                .WithHealer(null)
+                .WithTarget(_mockEntityCore.Object)
+                .Build());
 
             Assert.IsFalse(_entityHealth.IsDead());
             Assert.IsTrue(_entityHealth.IsAlive());
@@ -423,9 +444,9 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
                 .GetField("_globalEntityResurrectedEvent", BindingFlags.NonPublic | BindingFlags.Instance)
                 ?.SetValue(_entityHealth, resurrectEvent);
 
-            // Kill and resurrect without modifiers → HP = 50
+            // Kill and resurrect without modifiers → HP = 50 (uses DefaultResurrectionSource from config)
             _entityHealth.TakeDamage(CreateDamageInfo(MaxHp));
-            _entityHealth.Resurrect(50, _healSource);
+            _entityHealth.Resurrect(50);
 
             Assert.IsNotNull(capturedContext);
             Assert.AreEqual(50, capturedContext.NewValue);
@@ -433,4 +454,6 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
         }
     }
 }
+
+
 
