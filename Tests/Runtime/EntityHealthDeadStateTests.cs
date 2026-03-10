@@ -449,8 +449,14 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             _entityHealth.Resurrect(50);
 
             Assert.IsNotNull(capturedContext);
-            Assert.AreEqual(50, capturedContext.NewValue);
+            // PreviousValue is the HP before resurrection (entity was dead at 0)
             Assert.AreEqual(0, capturedContext.PreviousValue);
+            // NewValue = PreviousValue + NetAmount = 0 + 50 = 50
+            Assert.AreEqual(50, capturedContext.NewValue);
+            // ReceivedHeal encapsulates the full heal result
+            Assert.IsNotNull(capturedContext.ReceivedHeal);
+            Assert.AreEqual(50, capturedContext.ReceivedHeal.HealAmount.RawAmount);
+            Assert.AreEqual(50, capturedContext.ReceivedHeal.HealAmount.NetAmount);
         }
     }
 }
