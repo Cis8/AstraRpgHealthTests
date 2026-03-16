@@ -7,6 +7,7 @@ using ElectricDrill.AstraRpgHealth;
 using ElectricDrill.AstraRpgHealth.Config;
 using ElectricDrill.AstraRpgHealth.Damage;
 using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
+using ElectricDrill.AstraRpgHealth.Events;
 using ElectricDrill.AstraRpgHealth.Experience;
 using ElectricDrill.AstraRpgHealth.Heal;
 using NUnit.Framework;
@@ -70,6 +71,15 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             public GameAction<Component> DefaultOnResurrectionGameAction { get; set; }
             public HealSourceSO DefaultResurrectionSource { get; set; }
             public ExpCollectionStrategySO DefaultExpCollectionStrategy { get; set; }
+            public PreDamageGameEvent GlobalPreDamageInfoEvent { get; set; }
+            public DamageResolutionGameEvent GlobalDamageResolutionEvent { get; set; }
+            public EntityDiedGameEvent GlobalEntityDiedEvent { get; set; }
+            public EntityMaxHealthChangedGameEvent GlobalMaxHealthChangedEvent { get; set; }
+            public EntityGainedHealthGameEvent GlobalGainedHealthEvent { get; set; }
+            public EntityLostHealthGameEvent GlobalLostHealthEvent { get; set; }
+            public PreHealGameEvent GlobalPreHealEvent { get; set; }
+            public EntityHealedGameEvent GlobalEntityHealedEvent { get; set; }
+            public EntityResurrectedGameEvent GlobalEntityResurrectedEvent { get; set; }
         }
 
         private class TestStats : EntityStats

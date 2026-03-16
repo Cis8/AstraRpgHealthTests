@@ -91,6 +91,9 @@ namespace ElectricDrill.AstraRpgHealthTests
             _mockDealerStats.Setup(s => s.StatSet).Returns(ScriptableObject.CreateInstance<StatSet>());
             _mockDealerStats.Setup(s => s.Get(It.IsAny<Stat>())).Returns(0L);
 
+            // Inject mock config via provider BEFORE AddComponent<EntityHealth> (required events must be set)
+            AstraRpgHealthConfigProvider.Instance = MockAstraRpgHealthConfig.CreateMinimal();
+
             _go.AddComponent<EntityHealth>();
             _entityHealth = _go.GetComponent<EntityHealth>();
             _entityHealth._entityCore = _mockEntityCore.Object;
@@ -103,19 +106,6 @@ namespace ElectricDrill.AstraRpgHealthTests
             _entityHealth._barrier = new LongRef { UseConstant = true, ConstantValue = 0 };
             _entityHealth.OverrideOnDeathGameAction = ScriptableObject.CreateInstance<DoNothingComponentGameAction>();
 
-            // Events
-            SetPriv("_globalPreDamageInfoEvent", ScriptableObject.CreateInstance<PreDamageGameEvent>());
-            SetPriv("_globalDamageResolutionEvent", ScriptableObject.CreateInstance<DamageResolutionGameEvent>());
-            SetPriv("_globalEntityDiedEvent", ScriptableObject.CreateInstance<EntityDiedGameEvent>());
-            SetPriv("_globalMaxHealthChangedEvent", ScriptableObject.CreateInstance<EntityMaxHealthChangedGameEvent>());
-            SetPriv("_globalGainedHealthEvent", ScriptableObject.CreateInstance<EntityGainedHealthGameEvent>());
-            SetPriv("_globalLostHealthEvent", ScriptableObject.CreateInstance<EntityLostHealthGameEvent>());
-            SetPriv("_globalPreHealEvent", ScriptableObject.CreateInstance<PreHealGameEvent>());
-            SetPriv("_globalEntityHealedEvent", ScriptableObject.CreateInstance<EntityHealedGameEvent>());
-
-            // Inject mock config via provider to avoid dependency on Resources
-            AstraRpgHealthConfigProvider.Instance = MockAstraRpgHealthConfig.CreateMinimal();
-
             _entityHealth.SetupMaxHp(EntityHealth.HpBehaviourOnMaxHpIncrease.AddHealthUpToMaxHp);
 
             var defaultStrategy = TestDamageCalculationStrategy.Create(info => info);
@@ -126,9 +116,7 @@ namespace ElectricDrill.AstraRpgHealthTests
             typeof(EntityHealth).GetField(field, BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(_entityHealth, value);
 
         private DamageResolutionGameEvent GetResolutionEvent() =>
-            (DamageResolutionGameEvent)typeof(EntityHealth)
-                .GetField("_globalDamageResolutionEvent", BindingFlags.NonPublic | BindingFlags.Instance)
-                .GetValue(_entityHealth);
+            ((IAstraRpgHealthConfig)AstraRpgHealthConfigProvider.Instance).GlobalDamageResolutionEvent;
 
         [TearDown]
         public void Teardown()

@@ -35,6 +35,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             public EntityDiedGameEvent Died;
             public PreHealGameEvent PreHeal;
             public EntityHealedGameEvent Healed;
+            public EntityResurrectedGameEvent Resurrected;
         }
 
         public static HealthEventsBundle CreateSharedEvents()
@@ -48,7 +49,8 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
                 Lost = ScriptableObject.CreateInstance<EntityLostHealthGameEvent>(),
                 Died = ScriptableObject.CreateInstance<EntityDiedGameEvent>(),
                 PreHeal = ScriptableObject.CreateInstance<PreHealGameEvent>(),
-                Healed = ScriptableObject.CreateInstance<EntityHealedGameEvent>()
+                Healed = ScriptableObject.CreateInstance<EntityHealedGameEvent>(),
+                Resurrected = ScriptableObject.CreateInstance<EntityResurrectedGameEvent>()
             };
         }
 
@@ -114,6 +116,20 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             }
             EnsureDefaultStrategy();
 
+            var events = sharedEvents ?? CreateSharedEvents();
+            var evtBundle = events;
+
+            // Assign global events to config (must happen before go.SetActive(true) triggers Awake/ValidateConstraints)
+            config.GlobalPreDamageInfoEvent = evtBundle.PreDmg;
+            config.GlobalDamageResolutionEvent = evtBundle.DamageResolution;
+            config.GlobalEntityDiedEvent = evtBundle.Died;
+            config.GlobalMaxHealthChangedEvent = evtBundle.MaxHpChanged;
+            config.GlobalGainedHealthEvent = evtBundle.Gained;
+            config.GlobalLostHealthEvent = evtBundle.Lost;
+            config.GlobalPreHealEvent = evtBundle.PreHeal;
+            config.GlobalEntityHealedEvent = evtBundle.Healed;
+            config.GlobalEntityResurrectedEvent = evtBundle.Resurrected;
+
             // GameObject inactive so Awake sees injected fields
             var go = new GameObject(name);
             go.SetActive(false);
@@ -165,9 +181,6 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             
             var health = go.AddComponent<EntityHealth>();
 
-            var events = sharedEvents ?? CreateSharedEvents();
-            var evtBundle = events;
-
             // Refs
             var baseMax = new LongRef { Value = maxHp };
             var totalMax = new LongRef { Value = maxHp };
@@ -175,20 +188,6 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             var barrier = new LongRef { Value = barrierAmount };
             var deathThreshold = ScriptableObject.CreateInstance<LongVar>();
             deathThreshold.Value = allowNegative ? -9999 : 0;
-
-            // Private serialized fields of EntityHealth still require reflection (cannot avoid)
-            void SetPrivate(string fieldName, object value) =>
-                typeof(EntityHealth).GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic)
-                    ?.SetValue(health, value);
-            
-            SetPrivate("_globalPreDamageInfoEvent", evtBundle.PreDmg);
-            SetPrivate("_globalDamageResolutionEvent", evtBundle.DamageResolution);
-            SetPrivate("_globalMaxHealthChangedEvent", evtBundle.MaxHpChanged);
-            SetPrivate("_globalGainedHealthEvent", evtBundle.Gained);
-            SetPrivate("_globalLostHealthEvent", evtBundle.Lost);
-            SetPrivate("_globalEntityDiedEvent", evtBundle.Died);
-            SetPrivate("_globalPreHealEvent", evtBundle.PreHeal);
-            SetPrivate("_globalEntityHealedEvent", evtBundle.Healed);
 
             // OnDeathStrategy override (use public property, not reflection)
             var onDeathStrategy = ScriptableObject.CreateInstance<TestOnDeathStrategy>();

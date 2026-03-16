@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using ElectricDrill.AstraRpgFramework;
 using ElectricDrill.AstraRpgFramework.Experience;
 using ElectricDrill.AstraRpgFramework.GameActions.Actions.Component;
@@ -65,6 +64,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             public override DamageInfo CalculateDamage(DamageInfo data) => _fn?.Invoke(data) ?? data;
         }
 
+        private AstraRpgHealthConfigSO _config;
         private GameObject _go;
         private EntityHealth _entityHealth;
         private Mock<EntityCore> _mockEntityCore;
@@ -78,6 +78,25 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
         [SetUp]
         public void Setup()
         {
+            _damageSource = MockDamageSource.Create();
+            _damageType = MockDamageType.Create();
+            _healSource = MockHealSource.Create();
+
+            // Create and configure the config with required and optional events before the GO activates
+            _config = ScriptableObject.CreateInstance<AstraRpgHealthConfigSO>();
+            _config.DefaultDamageCalculationCalculationStrategy = TestDamageCalculationStrategy.Create(d => d);
+            _config.DefaultResurrectionSource = _healSource;
+            _config.GlobalPreDamageInfoEvent = ScriptableObject.CreateInstance<PreDamageGameEvent>();
+            _config.GlobalDamageResolutionEvent = ScriptableObject.CreateInstance<DamageResolutionGameEvent>();
+            _config.GlobalEntityDiedEvent = ScriptableObject.CreateInstance<EntityDiedGameEvent>();
+            _config.GlobalMaxHealthChangedEvent = ScriptableObject.CreateInstance<EntityMaxHealthChangedGameEvent>();
+            _config.GlobalGainedHealthEvent = ScriptableObject.CreateInstance<EntityGainedHealthGameEvent>();
+            _config.GlobalLostHealthEvent = ScriptableObject.CreateInstance<EntityLostHealthGameEvent>();
+            _config.GlobalPreHealEvent = ScriptableObject.CreateInstance<PreHealGameEvent>();
+            _config.GlobalEntityHealedEvent = ScriptableObject.CreateInstance<EntityHealedGameEvent>();
+            _config.GlobalEntityResurrectedEvent = ScriptableObject.CreateInstance<EntityResurrectedGameEvent>();
+            AstraRpgHealthConfigProvider.Instance = _config;
+
             _go = new GameObject("Entity");
             _mockEntityCore = new Mock<EntityCore>();
             _mockEntityStats = new Mock<EntityStats>();
@@ -104,48 +123,6 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             _entityHealth._deathThreshold = LongVarFactory.CreateLongVar(0);
             _entityHealth._barrier = new LongRef { UseConstant = true };
             _entityHealth.OverrideOnDeathGameAction = ScriptableObject.CreateInstance<DoNothingComponentGameAction>();
-
-            _damageSource = MockDamageSource.Create();
-            _damageType = MockDamageType.Create();
-            _healSource = MockHealSource.Create();
-
-            // Create minimal config
-            var config = ScriptableObject.CreateInstance<AstraRpgHealthConfigSO>();
-            config.DefaultDamageCalculationCalculationStrategy = TestDamageCalculationStrategy.Create(d => d);
-            config.DefaultResurrectionSource = _healSource;
-            AstraRpgHealthConfigProvider.Instance = config;
-
-            // Create events
-            var preDmgEvent = ScriptableObject.CreateInstance<PreDamageGameEvent>();
-            var dmgResolutionEvent = ScriptableObject.CreateInstance<DamageResolutionGameEvent>();
-            var maxHealthChangedEvent = ScriptableObject.CreateInstance<EntityMaxHealthChangedGameEvent>();
-            var gainedHealthEvent = ScriptableObject.CreateInstance<EntityGainedHealthGameEvent>();
-            var lostHealthEvent = ScriptableObject.CreateInstance<EntityLostHealthGameEvent>();
-            var diedEvent = ScriptableObject.CreateInstance<EntityDiedGameEvent>();
-            var preHealEvent = ScriptableObject.CreateInstance<PreHealGameEvent>();
-            var healedEvent = ScriptableObject.CreateInstance<EntityHealedGameEvent>();
-            var resurrectEvent = ScriptableObject.CreateInstance<EntityResurrectedGameEvent>();
-
-            // Use reflection to set private event fields
-            var healthType = typeof(EntityHealth);
-            healthType.GetField("_preDmgInfoEvent", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(_entityHealth, preDmgEvent);
-            healthType.GetField("_damageResolutionEvent", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(_entityHealth, dmgResolutionEvent);
-            healthType.GetField("_maxHealthChangedEvent", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(_entityHealth, maxHealthChangedEvent);
-            healthType.GetField("_gainedHealthEvent", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(_entityHealth, gainedHealthEvent);
-            healthType.GetField("_lostHealthEvent", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(_entityHealth, lostHealthEvent);
-            healthType.GetField("_entityDiedEvent", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(_entityHealth, diedEvent);
-            healthType.GetField("_preHealEvent", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(_entityHealth, preHealEvent);
-            healthType.GetField("_entityHealedEvent", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(_entityHealth, healedEvent);
-            healthType.GetField("_entityResurrectedEvent", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(_entityHealth, resurrectEvent);
         }
 
         [TearDown]
@@ -155,6 +132,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             Object.DestroyImmediate(_damageSource);
             Object.DestroyImmediate(_damageType);
             Object.DestroyImmediate(_healSource);
+            AstraRpgHealthConfigProvider.Reset();
         }
 
         private PreDamageContext CreateDamageInfo(long amount)
@@ -440,9 +418,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             ResurrectionContext capturedContext = null;
             var resurrectEvent = ScriptableObject.CreateInstance<EntityResurrectedGameEvent>();
             resurrectEvent.OnEventRaised += ctx => capturedContext = ctx;
-            typeof(EntityHealth)
-                .GetField("_globalEntityResurrectedEvent", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(_entityHealth, resurrectEvent);
+            _config.GlobalEntityResurrectedEvent = resurrectEvent;
 
             // Kill and resurrect without modifiers → HP = 50 (uses DefaultResurrectionSource from config)
             _entityHealth.TakeDamage(CreateDamageInfo(MaxHp));

@@ -4,6 +4,7 @@ using ElectricDrill.AstraRpgFramework.Scaling.ScalingComponents;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgHealth.Config;
 using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
+using ElectricDrill.AstraRpgHealth.Events;
 using ElectricDrill.AstraRpgHealth.Experience;
 using ElectricDrill.AstraRpgHealth.Heal;
 using UnityEngine;
@@ -34,6 +35,15 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         public GameAction<Component> DefaultOnResurrectionGameAction { get; set; }
         public HealSourceSO DefaultResurrectionSource { get; set; }
         public ExpCollectionStrategySO DefaultExpCollectionStrategy { get; set; }
+        public PreDamageGameEvent GlobalPreDamageInfoEvent { get; set; }
+        public DamageResolutionGameEvent GlobalDamageResolutionEvent { get; set; }
+        public EntityDiedGameEvent GlobalEntityDiedEvent { get; set; }
+        public EntityMaxHealthChangedGameEvent GlobalMaxHealthChangedEvent { get; set; }
+        public EntityGainedHealthGameEvent GlobalGainedHealthEvent { get; set; }
+        public EntityLostHealthGameEvent GlobalLostHealthEvent { get; set; }
+        public PreHealGameEvent GlobalPreHealEvent { get; set; }
+        public EntityHealedGameEvent GlobalEntityHealedEvent { get; set; }
+        public EntityResurrectedGameEvent GlobalEntityResurrectedEvent { get; set; }
 
         public MockAstraRpgHealthConfig()
         {
@@ -55,6 +65,11 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
             
             // Create a default HealSource for resurrection
             DefaultResurrectionSource = ScriptableObject.CreateInstance<HealSourceSO>();
+            
+            // Initialize the three required global events
+            GlobalPreDamageInfoEvent = ScriptableObject.CreateInstance<PreDamageGameEvent>();
+            GlobalDamageResolutionEvent = ScriptableObject.CreateInstance<DamageResolutionGameEvent>();
+            GlobalEntityDiedEvent = ScriptableObject.CreateInstance<EntityDiedGameEvent>();
         }
 
         /// <summary>
