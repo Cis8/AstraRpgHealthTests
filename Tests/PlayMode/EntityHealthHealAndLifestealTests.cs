@@ -99,8 +99,8 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             _attacker.Health.Heal(PreHealContext.Builder
                 .WithAmount(100)
                 .WithSource(_genericHealSource)
-                .WithHealer(_attacker.Core)
                 .WithTarget(_target.Core)
+                .WithHealer(_attacker.Core)
                 .Build());
 
             Assert.AreEqual(100, _attacker.Health.Hp);
@@ -117,8 +117,8 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             _attacker.Health.Heal(PreHealContext.Builder
                 .WithAmount(20)
                 .WithSource(_genericHealSource)
-                .WithHealer(_attacker.Core)
                 .WithTarget(_target.Core)
+                .WithHealer(_attacker.Core)
                 .WithIsCritical(true)
                 .WithCriticalMultiplier(2.5)
                 .Build());

@@ -151,8 +151,8 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             return PreHealContext.Builder
                 .WithAmount(amount)
                 .WithSource(_healSource)
-                .WithHealer(_mockEntityCore.Object)
                 .WithTarget(_mockEntityCore.Object)
+                .WithHealer(_mockEntityCore.Object)
                 .Build();
         }
 
@@ -257,8 +257,8 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
                 _entityHealth.Resurrect(PreHealContext.Builder
                     .WithAmount(50)
                     .WithSource(_healSource)
-                    .WithHealer(null)
                     .WithTarget(_mockEntityCore.Object)
+                    .WithHealer(null)
                     .Build())
             );
             
@@ -335,8 +335,8 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             _entityHealth.Resurrect(PreHealContext.Builder
                 .WithAmount(40)
                 .WithSource(resurrectionSource)
-                .WithHealer(null)
                 .WithTarget(_mockEntityCore.Object)
+                .WithHealer(null)
                 .Build());
 
             Assert.IsFalse(_entityHealth.IsDead());
@@ -369,8 +369,8 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             _entityHealth.Resurrect(PreHealContext.Builder
                 .WithAmount(30)
                 .WithSource(resurrectionSource)
-                .WithHealer(null)
                 .WithTarget(_mockEntityCore.Object)
+                .WithHealer(null)
                 .Build());
 
             Assert.IsFalse(_entityHealth.IsDead());
@@ -403,8 +403,8 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             _entityHealth.Resurrect(PreHealContext.Builder
                 .WithAmount(30)
                 .WithSource(resurrectionSource)
-                .WithHealer(null)
                 .WithTarget(_mockEntityCore.Object)
+                .WithHealer(null)
                 .Build());
 
             Assert.IsFalse(_entityHealth.IsDead());

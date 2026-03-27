@@ -212,8 +212,8 @@ namespace ElectricDrill.AstraRpgHealthTests
             _entityHealth.Heal(PreHealContext.Builder
                 .WithAmount(50)
                 .WithSource(MockHealSource.Create())
-                .WithHealer(_mockEntityCore.Object)
                 .WithTarget(_mockEntityCore.Object)
+                .WithHealer(_mockEntityCore.Object)
                 .Build());
             Assert.AreEqual(MAX_HP, _entityHealth.Hp);
         }

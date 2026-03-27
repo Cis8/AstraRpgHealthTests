@@ -246,8 +246,8 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             _entity.Health.Heal(PreHealContext.Builder
                 .WithAmount(20)
                 .WithSource(_normalHealSource)
-                .WithHealer(_entity.Core)
                 .WithTarget(_entity.Core)
+                .WithHealer(_entity.Core)
                 .Build());
             yield return null;
             
