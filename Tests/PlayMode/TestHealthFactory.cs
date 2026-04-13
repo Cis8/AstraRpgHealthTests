@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Threading;
 using ElectricDrill.AstraRpgFramework;
 using ElectricDrill.AstraRpgFramework.Attributes;
+using ElectricDrill.AstraRpgFramework.Contexts;
 using ElectricDrill.AstraRpgFramework.Events;
 using ElectricDrill.AstraRpgFramework.Experience;
 using ElectricDrill.AstraRpgFramework.GameActions;
@@ -250,9 +251,9 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         }
 
         // Simple OnDeathStrategy used in tests
-        private class TestOnDeathStrategy : GameAction<Component>
+        private class TestOnDeathStrategy : GameAction<IHasEntity>
         {
-            public override Awaitable ExecuteAsync(Component health, CancellationToken cancellationToken = default) 
+            public override Awaitable ExecuteAsync(IHasEntity health, CancellationToken cancellationToken = default) 
             { 
                 /* no-op for tests */ 
                 return Awaitable.NextFrameAsync(cancellationToken); 

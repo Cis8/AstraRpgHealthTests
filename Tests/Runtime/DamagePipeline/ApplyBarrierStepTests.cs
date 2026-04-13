@@ -1,6 +1,7 @@
 using System.Reflection;
 using ElectricDrill.AstraRpgFramework;
 using ElectricDrill.AstraRpgFramework.GameActions.Actions.Component;
+using ElectricDrill.AstraRpgFramework.GameActions.Actions.WithIHasEntity;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
 using ElectricDrill.AstraRpgHealth;
@@ -43,7 +44,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             eh._hp = new LongRef { UseConstant = true, ConstantValue = maxHp };
             eh._barrier = new LongRef { UseConstant = true, ConstantValue = barrierVal };
             eh._deathThreshold = LongVarFactory.CreateLongVar(0);
-            eh.OverrideOnDeathGameAction = ScriptableObject.CreateInstance<DoNothingComponentGameAction>();
+            eh.OverrideOnDeathGameAction = ScriptableObject.CreateInstance<DoNothingEntityContextGameAction>();
 
             // Mandatory events
             void SetEvt(string field, ScriptableObject so) =>

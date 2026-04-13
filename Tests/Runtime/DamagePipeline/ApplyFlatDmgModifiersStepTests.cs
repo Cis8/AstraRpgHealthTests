@@ -1,4 +1,5 @@
 using ElectricDrill.AstraRpgFramework;
+using ElectricDrill.AstraRpgFramework.Contexts;
 using ElectricDrill.AstraRpgFramework.GameActions;
 using ElectricDrill.AstraRpgFramework.Scaling.ScalingComponents;
 using ElectricDrill.AstraRpgFramework.Stats;
@@ -58,8 +59,8 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             public bool SuppressManualRegenerationEvents { get; set; }
             public LifestealConfigSO LifestealConfig { get; set; }
             public bool SuppressLifestealEvents { get; set; }
-            public GameAction<Component> DefaultOnDeathGameAction { get; set; }
-            public GameAction<Component> DefaultOnResurrectionGameAction { get; set; }
+            public GameAction<IHasEntity> DefaultOnDeathGameAction { get; set; }
+            public GameAction<IHasEntity> DefaultOnResurrectionGameAction { get; set; }
             public HealSourceSO DefaultResurrectionSource { get; set; }
             public ExpCollectionStrategySO DefaultExpCollectionStrategy { get; set; }
             public PreDamageGameEvent GlobalPreDamageInfoEvent { get; set; }

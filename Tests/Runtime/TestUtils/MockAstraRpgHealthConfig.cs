@@ -1,5 +1,7 @@
+using ElectricDrill.AstraRpgFramework.Contexts;
 using ElectricDrill.AstraRpgFramework.GameActions;
 using ElectricDrill.AstraRpgFramework.GameActions.Actions.Component;
+using ElectricDrill.AstraRpgFramework.GameActions.Actions.WithIHasEntity;
 using ElectricDrill.AstraRpgFramework.Scaling.ScalingComponents;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgHealth.Config;
@@ -31,8 +33,8 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         public bool SuppressManualRegenerationEvents { get; set; }
         public LifestealConfigSO LifestealConfig { get; set; }
         public bool SuppressLifestealEvents { get; set; }
-        public GameAction<Component> DefaultOnDeathGameAction { get; set; }
-        public GameAction<Component> DefaultOnResurrectionGameAction { get; set; }
+        public GameAction<IHasEntity> DefaultOnDeathGameAction { get; set; }
+        public GameAction<IHasEntity> DefaultOnResurrectionGameAction { get; set; }
         public HealSourceSO DefaultResurrectionSource { get; set; }
         public ExpCollectionStrategySO DefaultExpCollectionStrategy { get; set; }
         public PreDamageGameEvent GlobalPreDamageInfoEvent { get; set; }
@@ -61,7 +63,7 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
             DefaultDamageCalculationCalculationStrategy = ScriptableObject.CreateInstance<DamageCalculationStrategySO>();
             
             // Create a default death strategy
-            DefaultOnDeathGameAction = ScriptableObject.CreateInstance<DoNothingComponentGameAction>();
+            DefaultOnDeathGameAction = ScriptableObject.CreateInstance<DoNothingEntityContextGameAction>();
             
             // Create a default HealSource for resurrection
             DefaultResurrectionSource = ScriptableObject.CreateInstance<HealSourceSO>();
@@ -95,7 +97,7 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         /// <summary>
         /// Creates a mock config with a custom death strategy.
         /// </summary>
-        public static MockAstraRpgHealthConfig WithDeathGameAction(GameAction<Component> strategy)
+        public static MockAstraRpgHealthConfig WithDeathGameAction(GameAction<IHasEntity> strategy)
         {
             var config = new MockAstraRpgHealthConfig
             {
