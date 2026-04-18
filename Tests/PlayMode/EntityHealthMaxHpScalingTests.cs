@@ -2,6 +2,7 @@ using System.Collections;
 using System.Reflection;
 using ElectricDrill.AstraRpgFramework;
 using ElectricDrill.AstraRpgFramework.Attributes;
+using ElectricDrill.AstraRpgFramework.Config;
 using ElectricDrill.AstraRpgFramework.Events;
 using ElectricDrill.AstraRpgFramework.Scaling.ScalingComponents;
 using ElectricDrill.AstraRpgFramework.Stats;
@@ -64,22 +65,15 @@ public class EntityHealthMaxHpScalingTests
         _testAttribute = ScriptableObject.CreateInstance<Attribute>();
         _testAttribute.name = "TestScalingAttribute";
 
-        _statChangedEvt = ScriptableObject.CreateInstance<StatChangedGameEvent>();
-        _attributeChangedEvt = ScriptableObject.CreateInstance<AttributeChangedGameEvent>();
-
         _entity = CreateEntity(
             "ScalingEntity",
             maxHp: 100,
             initializeStats: true,
             healthMutator: h =>
             {
-                // Inject stat change event already set by factory -> overwrite with our reference for raising
-                h.EntityStats.OnStatChanged = _statChangedEvt;
-
                 // Reuse the existing EntityAttributes created by the factory (avoid adding a duplicate)
                 var attrs = h.EntityAttributes;
                 attrs.enabled = true;
-                attrs.OnAttributeChanged = _attributeChangedEvt;
 
                 // Create attribute set containing test attribute (reflection to internal field)
                 var attrSet = ScriptableObject.CreateInstance<AttributeSet>();
@@ -95,6 +89,8 @@ public class EntityHealthMaxHpScalingTests
                     ?.SetValue(attrs, attrSet);
             }
         );
+        _statChangedEvt = _entity.FrameworkConfig.GlobalStatChangedEvent;
+        _attributeChangedEvt = _entity.FrameworkConfig.GlobalAttributeChangedEvent;
 
         // Ensure test stat present + base value 5
         InjectFlatStat(_entity.Stats, _testStat, 5);
@@ -104,11 +100,16 @@ public class EntityHealthMaxHpScalingTests
     [TearDown]
     public void TearDown()
     {
+        AstraRpgFrameworkConfigProvider.Reset();
+
         Object.DestroyImmediate(_entity.Go);
         Object.DestroyImmediate(_testStat);
         Object.DestroyImmediate(_testAttribute);
-        Object.DestroyImmediate(_statChangedEvt);
-        Object.DestroyImmediate(_attributeChangedEvt);
+        Object.DestroyImmediate(_entity.FrameworkConfig.GlobalEntitySpawnedEvent);
+        Object.DestroyImmediate(_entity.FrameworkConfig.GlobalEntityLevelUpEvent);
+        Object.DestroyImmediate(_entity.FrameworkConfig.GlobalEntityLevelDownEvent);
+        Object.DestroyImmediate(_entity.FrameworkConfig.GlobalStatChangedEvent);
+        Object.DestroyImmediate(_entity.FrameworkConfig.GlobalAttributeChangedEvent);
         Object.DestroyImmediate(_entity.DefaultDamageType);
         Object.DestroyImmediate(_entity.DefaultDamageSource);
         Object.DestroyImmediate(_entity.Config);

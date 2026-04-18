@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Threading;
 using ElectricDrill.AstraRpgFramework;
 using ElectricDrill.AstraRpgFramework.Attributes;
+using ElectricDrill.AstraRpgFramework.Config;
 using ElectricDrill.AstraRpgFramework.Contexts;
 using ElectricDrill.AstraRpgFramework.Events;
 using ElectricDrill.AstraRpgFramework.Experience;
@@ -20,6 +21,31 @@ using Attribute = ElectricDrill.AstraRpgFramework.Attributes.Attribute;
 
 namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
 {
+    public class MockAstraRpgFrameworkConfig : IAstraRpgFrameworkConfig
+    {
+        public MockAstraRpgFrameworkConfig(
+            EntityCoreGameEvent spawnedEvent = null,
+            EntityLevelUpGameEvent levelUpEvent = null,
+            EntityLevelDownGameEvent levelDownEvent = null,
+            StatChangedGameEvent statChangedEvent = null,
+            AttributeChangedGameEvent attributeChangedEvent = null)
+        {
+            GlobalEntitySpawnedEvent = spawnedEvent ? spawnedEvent : ScriptableObject.CreateInstance<EntityCoreGameEvent>();
+            GlobalEntityLevelUpEvent = levelUpEvent ? levelUpEvent : ScriptableObject.CreateInstance<EntityLevelUpGameEvent>();
+            GlobalEntityLevelDownEvent = levelDownEvent ? levelDownEvent : ScriptableObject.CreateInstance<EntityLevelDownGameEvent>();
+            GlobalStatChangedEvent = statChangedEvent ? statChangedEvent : ScriptableObject.CreateInstance<StatChangedGameEvent>();
+            GlobalAttributeChangedEvent = attributeChangedEvent ? attributeChangedEvent : ScriptableObject.CreateInstance<AttributeChangedGameEvent>();
+        }
+
+        public EntityCoreGameEvent GlobalEntitySpawnedEvent { get; set; }
+        public EntityLevelUpGameEvent GlobalEntityLevelUpEvent { get; set; }
+        public EntityLevelDownGameEvent GlobalEntityLevelDownEvent { get; set; }
+        public StatChangedGameEvent GlobalStatChangedEvent { get; set; }
+        public AttributeChangedGameEvent GlobalAttributeChangedEvent { get; set; }
+
+        public static MockAstraRpgFrameworkConfig CreateMinimal() => new();
+    }
+
     /// <summary>
     /// Utility factory methods to spawn fully configured EntityHealth objects for play mode tests.
     /// Avoid duplicating reflection setup logic across test classes.
@@ -63,6 +89,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             public EntityAttributes Attributes;
             public EntityHealth Health;
             public AstraRpgHealthConfigSO Config;
+            public MockAstraRpgFrameworkConfig FrameworkConfig;
             public DamageTypeSO DefaultDamageType;
             public DamageSourceSO DefaultDamageSource;
             public HealthEventsBundle Events; // events actually used (shared or per-entity)
@@ -119,6 +146,10 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
 
             var events = sharedEvents ?? CreateSharedEvents();
             var evtBundle = events;
+            var frameworkConfig = sharedConfig != null && AstraRpgFrameworkConfigProvider.Instance is MockAstraRpgFrameworkConfig existingFrameworkConfig
+                ? existingFrameworkConfig
+                : MockAstraRpgFrameworkConfig.CreateMinimal();
+            AstraRpgFrameworkConfigProvider.Instance = frameworkConfig;
 
             // Assign global events to config (must happen before go.SetActive(true) triggers Awake/ValidateConstraints)
             config.GlobalPreDamageInfoEvent = evtBundle.PreDmg;
@@ -138,23 +169,12 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             // Core (no reflection needed for Level property: internal setter)
             var core = go.AddComponent<EntityCore>();
             core.Level = new EntityLevel();
-            // Still need reflection for private _onLevelUp and _onLevelDown inside EntityLevel (no public/internal API exposed)
-            typeof(EntityLevel)
-                .GetField("_onLevelUp", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(core.Level, ScriptableObject.CreateInstance<EntityLevelUpGameEvent>());
-            typeof(EntityLevel)
-                .GetField("_onLevelDown", BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(core.Level, ScriptableObject.CreateInstance<EntityLevelDownGameEvent>());
-            core.SpawnedEntityEvent = ScriptableObject.CreateInstance<EntityCoreGameEvent>();
 
             // Stats
             var stats = go.AddComponent<EntityStats>();
             stats.UseClassBaseStats = false;
             if (!initializeStats)
                 stats.enabled = false;
-
-            var statChangedEvt = ScriptableObject.CreateInstance<StatChangedGameEvent>();
-            stats.OnStatChanged = statChangedEvt;
 
             // Ensure a fixed StatSet exists (internal field accessible)
             if (stats._fixedBaseStatsStatSet == null)
@@ -168,9 +188,6 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             var attributes = go.AddComponent<EntityAttributes>();
             if (!initializeAttributes)
                 attributes.enabled = false;
-            
-            var attrChangedEvt = ScriptableObject.CreateInstance<AttributeChangedGameEvent>();
-            attributes.OnAttributeChanged = attrChangedEvt;
             
             // Ensure a fixed AttributeSet exists (internal field accessible)
             if (attributes._fixedBaseAttributeSet == null)
@@ -220,6 +237,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
                 Attributes = attributes, // added: expose created EntityAttributes
                 Health = health,
                 Config = config,
+                FrameworkConfig = frameworkConfig,
                 DefaultDamageType = dmgType,
                 DefaultDamageSource = dmgSource,
                 Events = evtBundle
