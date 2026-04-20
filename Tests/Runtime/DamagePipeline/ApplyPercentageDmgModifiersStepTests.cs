@@ -66,8 +66,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             public DamageResolutionGameEvent GlobalDamageResolutionEvent { get; set; }
             public EntityDiedGameEvent GlobalEntityDiedEvent { get; set; }
             public EntityMaxHealthChangedGameEvent GlobalMaxHealthChangedEvent { get; set; }
-            public EntityGainedHealthGameEvent GlobalGainedHealthEvent { get; set; }
-            public EntityLostHealthGameEvent GlobalLostHealthEvent { get; set; }
+            public EntityHealthChangedGameEvent GlobalHealthChangedEvent { get; set; }
             public PreHealGameEvent GlobalPreHealEvent { get; set; }
             public EntityHealedGameEvent GlobalEntityHealedEvent { get; set; }
             public EntityResurrectedGameEvent GlobalEntityResurrectedEvent { get; set; }

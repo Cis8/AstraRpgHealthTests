@@ -92,8 +92,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             _config.GlobalDamageResolutionEvent = ScriptableObject.CreateInstance<DamageResolutionGameEvent>();
             _config.GlobalEntityDiedEvent = ScriptableObject.CreateInstance<EntityDiedGameEvent>();
             _config.GlobalMaxHealthChangedEvent = ScriptableObject.CreateInstance<EntityMaxHealthChangedGameEvent>();
-            _config.GlobalGainedHealthEvent = ScriptableObject.CreateInstance<EntityGainedHealthGameEvent>();
-            _config.GlobalLostHealthEvent = ScriptableObject.CreateInstance<EntityLostHealthGameEvent>();
+            _config.GlobalHealthChangedEvent = ScriptableObject.CreateInstance<EntityHealthChangedGameEvent>();
             _config.GlobalPreHealEvent = ScriptableObject.CreateInstance<PreHealGameEvent>();
             _config.GlobalEntityHealedEvent = ScriptableObject.CreateInstance<EntityHealedGameEvent>();
             _config.GlobalEntityResurrectedEvent = ScriptableObject.CreateInstance<EntityResurrectedGameEvent>();

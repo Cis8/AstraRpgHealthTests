@@ -55,8 +55,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             SetEvt("_damageResolutionEvent", ScriptableObject.CreateInstance<DamageResolutionGameEvent>());
             SetEvt("_entityDiedEvent", ScriptableObject.CreateInstance<EntityDiedGameEvent>());
             SetEvt("_maxHealthChangedEvent", ScriptableObject.CreateInstance<EntityMaxHealthChangedGameEvent>());
-            SetEvt("_gainedHealthEvent", ScriptableObject.CreateInstance<EntityGainedHealthGameEvent>());
-            SetEvt("_lostHealthEvent", ScriptableObject.CreateInstance<EntityLostHealthGameEvent>());
+            SetEvt("_healthChangedEvent", ScriptableObject.CreateInstance<EntityHealthChangedGameEvent>());
             SetEvt("_preHealEvent", ScriptableObject.CreateInstance<PreHealGameEvent>());
             SetEvt("_entityHealedEvent", ScriptableObject.CreateInstance<EntityHealedGameEvent>());
 

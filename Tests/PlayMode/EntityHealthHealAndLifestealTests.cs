@@ -80,8 +80,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             Object.DestroyImmediate(_sharedEvents.PreDmg);
             Object.DestroyImmediate(_sharedEvents.DamageResolution);
             Object.DestroyImmediate(_sharedEvents.MaxHpChanged);
-            Object.DestroyImmediate(_sharedEvents.Gained);
-            Object.DestroyImmediate(_sharedEvents.Lost);
+            Object.DestroyImmediate(_sharedEvents.Changed);
             Object.DestroyImmediate(_sharedEvents.Died);
             Object.DestroyImmediate(_sharedEvents.PreHeal);
             Object.DestroyImmediate(_sharedEvents.Healed);

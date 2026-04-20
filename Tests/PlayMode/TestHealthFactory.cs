@@ -57,8 +57,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             public PreDamageGameEvent PreDmg;
             public DamageResolutionGameEvent DamageResolution;
             public EntityMaxHealthChangedGameEvent MaxHpChanged;
-            public EntityGainedHealthGameEvent Gained;
-            public EntityLostHealthGameEvent Lost;
+            public EntityHealthChangedGameEvent Changed;
             public EntityDiedGameEvent Died;
             public PreHealGameEvent PreHeal;
             public EntityHealedGameEvent Healed;
@@ -72,8 +71,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
                 PreDmg = ScriptableObject.CreateInstance<PreDamageGameEvent>(),
                 DamageResolution = ScriptableObject.CreateInstance<DamageResolutionGameEvent>(),
                 MaxHpChanged = ScriptableObject.CreateInstance<EntityMaxHealthChangedGameEvent>(),
-                Gained = ScriptableObject.CreateInstance<EntityGainedHealthGameEvent>(),
-                Lost = ScriptableObject.CreateInstance<EntityLostHealthGameEvent>(),
+                Changed = ScriptableObject.CreateInstance<EntityHealthChangedGameEvent>(),
                 Died = ScriptableObject.CreateInstance<EntityDiedGameEvent>(),
                 PreHeal = ScriptableObject.CreateInstance<PreHealGameEvent>(),
                 Healed = ScriptableObject.CreateInstance<EntityHealedGameEvent>(),
@@ -156,8 +154,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             config.GlobalDamageResolutionEvent = evtBundle.DamageResolution;
             config.GlobalEntityDiedEvent = evtBundle.Died;
             config.GlobalMaxHealthChangedEvent = evtBundle.MaxHpChanged;
-            config.GlobalGainedHealthEvent = evtBundle.Gained;
-            config.GlobalLostHealthEvent = evtBundle.Lost;
+            config.GlobalHealthChangedEvent = evtBundle.Changed;
             config.GlobalPreHealEvent = evtBundle.PreHeal;
             config.GlobalEntityHealedEvent = evtBundle.Healed;
             config.GlobalEntityResurrectedEvent = evtBundle.Resurrected;
