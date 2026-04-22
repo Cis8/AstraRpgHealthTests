@@ -19,7 +19,7 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
     /// </summary>
     internal class MockAstraRpgHealthConfig : IAstraRpgHealthConfig
     {
-        public AttributesScalingComponent HealthAttributesScaling { get; set; }
+        public AttributesScalingComponentSO HealthAttributesScaling { get; set; }
         public StatSO GenericPercentageHealAmountModifierStat { get; set; }
         public StatSO GenericFlatHealAmountModifierStat { get; set; }
         public StatSO GenericPercentageDamageModificationStat { get; set; }
@@ -122,7 +122,7 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         /// Creates a mock config with a custom health attributes scaling component.
         /// Use this only if your test entities have EntityAttributes configured.
         /// </summary>
-        public static MockAstraRpgHealthConfig WithHealthAttributesScaling(AttributesScalingComponent scalingComponent)
+        public static MockAstraRpgHealthConfig WithHealthAttributesScaling(AttributesScalingComponentSO scalingComponent)
         {
             var config = new MockAstraRpgHealthConfig
             {

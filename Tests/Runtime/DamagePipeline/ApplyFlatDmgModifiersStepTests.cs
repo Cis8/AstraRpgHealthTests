@@ -47,7 +47,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             public StatSO GenericFlatDamageModificationStat { get; set; }
             
             // Other required properties (not used in these tests)
-            public AttributesScalingComponent HealthAttributesScaling { get; set; }
+            public AttributesScalingComponentSO HealthAttributesScaling { get; set; }
             public StatSO GenericFlatHealAmountModifierStat { get; set; }
             public StatSO GenericPercentageHealAmountModifierStat { get; set; }
             public DamageCalculationStrategySO DefaultDamageCalculationCalculationStrategy { get; set; }

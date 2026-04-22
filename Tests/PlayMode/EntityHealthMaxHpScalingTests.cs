@@ -39,13 +39,13 @@ public class EntityHealthMaxHpScalingTests
     }
 
     // Fixed attribute scaling component
-    private class FixedAttributeScaling : AttributesScalingComponent
+    private class FixedAttributeScaling : AttributesScalingComponentSO
     {
         public AttributeSO Target;
         public long Amount;
         public static FixedAttributeScaling Create(AttributeSetSO set, AttributeSO target, long amount) {
             var inst = CreateInstance<FixedAttributeScaling>();
-            typeof(AttributesScalingComponent)
+            typeof(AttributesScalingComponentSO)
                 .GetField("_set", BindingFlags.Instance | BindingFlags.NonPublic)
                 ?.SetValue(inst, set);
             inst.Set._attributes.Add(target);
