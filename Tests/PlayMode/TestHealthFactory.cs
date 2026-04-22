@@ -188,7 +188,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             // Ensure a fixed AttributeSet exists (internal field accessible)
             if (attributes._fixedBaseAttributeSet == null)
             {
-                attributes._fixedBaseAttributeSet = ScriptableObject.CreateInstance<AttributeSet>();
+                attributes._fixedBaseAttributeSet = ScriptableObject.CreateInstance<AttributeSetSO>();
                 // Initialize internal fixed base attributes structures
                 attributes.InitializeFixedBaseAttributes();
             }
@@ -340,7 +340,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             
             if (attributes._fixedBaseAttributeSet == null)
             {
-                attributes._fixedBaseAttributeSet = ScriptableObject.CreateInstance<AttributeSet>();
+                attributes._fixedBaseAttributeSet = ScriptableObject.CreateInstance<AttributeSetSO>();
                 attributes.InitializeFixedBaseAttributes();
             }
 

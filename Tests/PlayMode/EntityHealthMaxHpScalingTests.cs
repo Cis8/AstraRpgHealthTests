@@ -43,7 +43,7 @@ public class EntityHealthMaxHpScalingTests
     {
         public AttributeSO Target;
         public long Amount;
-        public static FixedAttributeScaling Create(AttributeSet set, AttributeSO target, long amount) {
+        public static FixedAttributeScaling Create(AttributeSetSO set, AttributeSO target, long amount) {
             var inst = CreateInstance<FixedAttributeScaling>();
             typeof(AttributesScalingComponent)
                 .GetField("_set", BindingFlags.Instance | BindingFlags.NonPublic)
@@ -76,8 +76,8 @@ public class EntityHealthMaxHpScalingTests
                 attrs.enabled = true;
 
                 // Create attribute set containing test attribute (reflection to internal field)
-                var attrSet = ScriptableObject.CreateInstance<AttributeSet>();
-                typeof(AttributeSet)
+                var attrSet = ScriptableObject.CreateInstance<AttributeSetSO>();
+                typeof(AttributeSetSO)
                     .GetField("_attributes", BindingFlags.Instance | BindingFlags.NonPublic)
                     ?.SetValue(attrSet, new SerializableHashSet<AttributeSO> { _testAttribute });
 
