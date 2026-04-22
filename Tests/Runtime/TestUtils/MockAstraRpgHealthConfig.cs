@@ -20,15 +20,15 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
     internal class MockAstraRpgHealthConfig : IAstraRpgHealthConfig
     {
         public AttributesScalingComponent HealthAttributesScaling { get; set; }
-        public Stat GenericPercentageHealAmountModifierStat { get; set; }
-        public Stat GenericFlatHealAmountModifierStat { get; set; }
-        public Stat GenericPercentageDamageModificationStat { get; set; }
-        public Stat GenericFlatDamageModificationStat { get; set; }
+        public StatSO GenericPercentageHealAmountModifierStat { get; set; }
+        public StatSO GenericFlatHealAmountModifierStat { get; set; }
+        public StatSO GenericPercentageDamageModificationStat { get; set; }
+        public StatSO GenericFlatDamageModificationStat { get; set; }
         public DamageCalculationStrategySO DefaultDamageCalculationCalculationStrategy { get; set; }
         public HealSourceSO HealthRegenerationSource { get; set; }
-        public Stat PassiveHealthRegenerationStat { get; set; }
+        public StatSO PassiveHealthRegenerationStat { get; set; }
         public float PassiveHealthRegenerationInterval { get; set; }
-        public Stat ManualHealthRegenerationStat { get; set; }
+        public StatSO ManualHealthRegenerationStat { get; set; }
         public bool SuppressPassiveRegenerationEvents { get; set; }
         public bool SuppressManualRegenerationEvents { get; set; }
         public LifestealConfigSO LifestealConfig { get; set; }

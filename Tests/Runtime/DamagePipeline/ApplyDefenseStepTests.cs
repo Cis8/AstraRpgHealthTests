@@ -23,12 +23,12 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         {
             private long _result;
             public void Set(long r) => _result = r;
-            public override double CalculateReducedDefense(long piercingStatValue, long defensiveStatValue, Stat defensiveStat, bool clampDef = true) => _result;
+            public override double CalculateReducedDefense(long piercingStatValue, long defensiveStatValue, StatSO defensiveStat, bool clampDef = true) => _result;
         }
 
         private class MockDamageType : DamageTypeSO
         {
-            public static MockDamageType Create(Stat def = null, DamageReductionFnSO damageFn = null, Stat pierce = null, DefenseReductionFnSO defenseFn = null) {
+            public static MockDamageType Create(StatSO def = null, DamageReductionFnSO damageFn = null, StatSO pierce = null, DefenseReductionFnSO defenseFn = null) {
                 var t = CreateInstance<MockDamageType>();
                 t.DefensiveStat = def;
                 t.DamageReductionFn = damageFn;
@@ -52,10 +52,10 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         {
             public long defensiveValue;
             public long piercingValue;
-            public Stat defensiveStat;
-            public Stat piercingStat;
+            public StatSO defensiveStat;
+            public StatSO piercingStat;
 
-            public override long Get(Stat stat)
+            public override long Get(StatSO stat)
             {
                 if (stat == defensiveStat) return defensiveValue;
                 if (stat == piercingStat) return piercingValue;
@@ -80,8 +80,8 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         private (EntityCore target, EntityCore dealer, TestStats targetStats, TestStats dealerStats) MakeEntities(
             long defensiveValue = 0,
             long piercingValue = 0,
-            Stat defensiveStat = null,
-            Stat piercingStat = null)
+            StatSO defensiveStat = null,
+            StatSO piercingStat = null)
         {
             var targetGo = new GameObject("Target");
             var dealerGo = new GameObject("Dealer");
@@ -117,7 +117,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             const long DEF_VAL = 30;
             const long EXPECTED = 70;
 
-            var defStat = ScriptableObject.CreateInstance<Stat>();
+            var defStat = ScriptableObject.CreateInstance<StatSO>();
             var dmgFn = ScriptableObject.CreateInstance<MockFlatDamageReductionFn>();
             dmgFn.Set(EXPECTED);
 
@@ -145,8 +145,8 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             const long REDUCED_DEF = 30; // after piercing
             const long EXPECTED = 90; // mocked final dmg
 
-            var defStat = ScriptableObject.CreateInstance<Stat>();
-            var pierceStat = ScriptableObject.CreateInstance<Stat>();
+            var defStat = ScriptableObject.CreateInstance<StatSO>();
+            var pierceStat = ScriptableObject.CreateInstance<StatSO>();
 
             var defFn = ScriptableObject.CreateInstance<MockFlatDefenseReductionFn>();
             defFn.Set(REDUCED_DEF);
@@ -178,7 +178,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             const long RAW = 50;
             const long EXPECTED = 0; // fully absorbed
 
-            var defStat = ScriptableObject.CreateInstance<Stat>();
+            var defStat = ScriptableObject.CreateInstance<StatSO>();
             var dmgFn = ScriptableObject.CreateInstance<MockFlatDamageReductionFn>();
             dmgFn.Set(EXPECTED);
 
@@ -201,7 +201,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             const long RAW = 100;
             const long EXPECTED = 40; // partially reduced
 
-            var defStat = ScriptableObject.CreateInstance<Stat>();
+            var defStat = ScriptableObject.CreateInstance<StatSO>();
             var dmgFn = ScriptableObject.CreateInstance<MockFlatDamageReductionFn>();
             dmgFn.Set(EXPECTED);
 
@@ -223,7 +223,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         {
             const long RAW = 80;
 
-            var defStat = ScriptableObject.CreateInstance<Stat>();
+            var defStat = ScriptableObject.CreateInstance<StatSO>();
             var (target, dealer, _, _) = MakeEntities(defensiveValue: 200, defensiveStat: defStat);
 
             // No damage reduction function configured

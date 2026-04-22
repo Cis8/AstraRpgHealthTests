@@ -16,7 +16,7 @@ using static ElectricDrill.AstraRpgHealthTests.Tests.PlayMode.TestHealthFactory;
 public class EntityHealthMaxHpScalingTests
 {
     private HealthEntityBundle _entity;
-    private Stat _testStat;
+    private StatSO _testStat;
     private Attribute _testAttribute;
     private StatChangedGameEvent _statChangedEvt;
     private AttributeChangedGameEvent _attributeChangedEvt;
@@ -24,9 +24,9 @@ public class EntityHealthMaxHpScalingTests
     // Dynamic stat scaling component
     private class DynamicStatScaling : StatsScalingComponent
     {
-        public Stat Target;
+        public StatSO Target;
         public int Mult;
-        public static DynamicStatScaling Create(StatSet set, Stat target, int mult) {
+        public static DynamicStatScaling Create(StatSet set, StatSO target, int mult) {
             var inst = CreateInstance<DynamicStatScaling>();
             typeof(StatsScalingComponent)
                 .GetField("_set", BindingFlags.Instance | BindingFlags.NonPublic)
@@ -60,7 +60,7 @@ public class EntityHealthMaxHpScalingTests
     [SetUp]
     public void SetUp()
     {
-        _testStat = ScriptableObject.CreateInstance<Stat>();
+        _testStat = ScriptableObject.CreateInstance<StatSO>();
         _testStat.name = "TestScalingStat";
         _testAttribute = ScriptableObject.CreateInstance<Attribute>();
         _testAttribute.name = "TestScalingAttribute";

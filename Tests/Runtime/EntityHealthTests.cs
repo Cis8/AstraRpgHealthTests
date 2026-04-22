@@ -83,14 +83,14 @@ namespace ElectricDrill.AstraRpgHealthTests
             _mockEntityCore.Setup(c => c.Level).Returns(new EntityLevel());
             _mockEntityCore.Setup(c => c.Stats).Returns(_mockEntityStats.Object);
             _mockEntityStats.Setup(s => s.StatSet).Returns(ScriptableObject.CreateInstance<StatSet>());
-            _mockEntityStats.Setup(s => s.Get(It.IsAny<Stat>())).Returns(0L);
+            _mockEntityStats.Setup(s => s.Get(It.IsAny<StatSO>())).Returns(0L);
 
             _mockDealerCore = new Mock<EntityCore>();
             _mockDealerStats = new Mock<EntityStats>();
             _mockDealerCore.Setup(c => c.Level).Returns(new EntityLevel());
             _mockDealerCore.Setup(c => c.Stats).Returns(_mockDealerStats.Object);
             _mockDealerStats.Setup(s => s.StatSet).Returns(ScriptableObject.CreateInstance<StatSet>());
-            _mockDealerStats.Setup(s => s.Get(It.IsAny<Stat>())).Returns(0L);
+            _mockDealerStats.Setup(s => s.Get(It.IsAny<StatSO>())).Returns(0L);
 
             // Inject mock config via provider BEFORE AddComponent<EntityHealth> (required events must be set)
             AstraRpgHealthConfigProvider.Instance = MockAstraRpgHealthConfig.CreateMinimal();

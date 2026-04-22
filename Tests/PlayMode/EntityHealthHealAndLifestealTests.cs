@@ -16,7 +16,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
 
         private HealSourceSO _genericHealSource;
         private HealSourceSO _lifestealHealSource;
-        private Stat _lifestealStat;
+        private StatSO _lifestealStat;
         private LifestealConfigSO _lifestealConfig;
         private HealthEventsBundle _sharedEvents;
 
@@ -42,7 +42,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             _lifestealHealSource = ScriptableObject.CreateInstance<HealSourceSO>();
             _lifestealHealSource.name = "LifestealHealSource";
 
-            _lifestealStat = ScriptableObject.CreateInstance<Stat>();
+            _lifestealStat = ScriptableObject.CreateInstance<StatSO>();
             _lifestealStat.name = "LifestealStat";
             
             InjectPercentageStat(_attacker.Stats, _lifestealStat, new Percentage(25));

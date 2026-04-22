@@ -51,19 +51,19 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
         private class MockConfig : IAstraRpgHealthConfig
         {
-            public SerializableDictionary<HealSourceSO, Stat> HealSourceModifications { get; set; }
-            public Stat GenericPercentageDamageModificationStat { get; set; }
-            public Stat GenericFlatDamageModificationStat { get; set; }
+            public SerializableDictionary<HealSourceSO, StatSO> HealSourceModifications { get; set; }
+            public StatSO GenericPercentageDamageModificationStat { get; set; }
+            public StatSO GenericFlatDamageModificationStat { get; set; }
             
             // Other required properties
             public AttributesScalingComponent HealthAttributesScaling { get; set; }
-            public Stat GenericFlatHealAmountModifierStat { get; set; }
-            public Stat GenericPercentageHealAmountModifierStat { get; set; }
+            public StatSO GenericFlatHealAmountModifierStat { get; set; }
+            public StatSO GenericPercentageHealAmountModifierStat { get; set; }
             public DamageCalculationStrategySO DefaultDamageCalculationCalculationStrategy { get; set; }
             public HealSourceSO HealthRegenerationSource { get; set; }
-            public Stat PassiveHealthRegenerationStat { get; set; }
+            public StatSO PassiveHealthRegenerationStat { get; set; }
             public float PassiveHealthRegenerationInterval { get; set; }
-            public Stat ManualHealthRegenerationStat { get; set; }
+            public StatSO ManualHealthRegenerationStat { get; set; }
             public bool SuppressPassiveRegenerationEvents { get; set; }
             public bool SuppressManualRegenerationEvents { get; set; }
             public LifestealConfigSO LifestealConfig { get; set; }
@@ -87,10 +87,10 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         {
             public long genericPercentageModValue;
             public long genericFlatModValue;
-            public Stat genericPercentageStat;
-            public Stat genericFlatStat;
+            public StatSO genericPercentageStat;
+            public StatSO genericFlatStat;
 
-            public override long Get(Stat stat)
+            public override long Get(StatSO stat)
             {
                 if (stat == genericPercentageStat) return genericPercentageModValue;
                 if (stat == genericFlatStat) return genericFlatModValue;
@@ -134,9 +134,9 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             Object.DestroyImmediate(_dealerGo);
         }
 
-        private static Stat CreateStat(string name)
+        private static StatSO CreateStat(string name)
         {
-            var stat = ScriptableObject.CreateInstance<Stat>();
+            var stat = ScriptableObject.CreateInstance<StatSO>();
             stat.name = name;
             return stat;
         }

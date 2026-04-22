@@ -24,9 +24,9 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         private HealSourceSO _regenHealSource;
         private HealSourceSO _normalHealSource;
         private HealSourceSO _lifestealHealSource;
-        private Stat _passiveRegenStat;
-        private Stat _manualRegenStat;
-        private Stat _lifestealStat;
+        private StatSO _passiveRegenStat;
+        private StatSO _manualRegenStat;
+        private StatSO _lifestealStat;
         private LifestealConfigSO _lifestealConfig;
         
         private int _preHealEventCount;
@@ -46,11 +46,11 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             _lifestealHealSource.name = "LifestealHealSource";
             
             // Create stats
-            _passiveRegenStat = ScriptableObject.CreateInstance<Stat>();
+            _passiveRegenStat = ScriptableObject.CreateInstance<StatSO>();
             _passiveRegenStat.name = "PassiveRegenStat";
-            _manualRegenStat = ScriptableObject.CreateInstance<Stat>();
+            _manualRegenStat = ScriptableObject.CreateInstance<StatSO>();
             _manualRegenStat.name = "ManualRegenStat";
-            _lifestealStat = ScriptableObject.CreateInstance<Stat>();
+            _lifestealStat = ScriptableObject.CreateInstance<StatSO>();
             _lifestealStat.name = "LifestealStat";
 
             // Create entities

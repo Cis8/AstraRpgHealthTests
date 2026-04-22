@@ -279,7 +279,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         /// Inject a Percentage stat value into an EntityStats without using reflection.
         /// Adds the stat to the fixed StatSet if missing and sets its fixed base value.
         /// </summary>
-        public static void InjectPercentageStat(EntityStats stats, Stat stat, Percentage value)
+        public static void InjectPercentageStat(EntityStats stats, StatSO stat, Percentage value)
         {
             if (stats == null || stat == null) return;
 
@@ -310,7 +310,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         /// <summary>
         /// Inject a flat (raw long) stat value into an EntityStats (non-percentage defensive or similar).
         /// </summary>
-        public static void InjectFlatStat(EntityStats stats, Stat stat, long value)
+        public static void InjectFlatStat(EntityStats stats, StatSO stat, long value)
         {
             if (stats == null || stat == null) return;
 
@@ -363,7 +363,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         /// Creates a LifestealConfig with a single mapping (_damageType -> lifestealStatConfig) and assigns it to the provided config.
         /// Returns the created LifestealConfig so tests can Destroy it.
         /// </summary>
-        internal static LifestealConfigSO AssignLifestealMapping(AstraRpgHealthConfigSO config, DamageTypeSO damageType, Stat lifestealStat, HealSourceSO lifestealSource)
+        internal static LifestealConfigSO AssignLifestealMapping(AstraRpgHealthConfigSO config, DamageTypeSO damageType, StatSO lifestealStat, HealSourceSO lifestealSource)
         {
             // Prefer existing lifesteal config if already set, else create a fresh one.
             var lifestealConfig = config.LifestealConfig;
@@ -419,7 +419,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         internal static LifestealStatConfig ConfigureLifestealBasisAfterCritical(
             LifestealConfigSO cfg,
             DamageTypeSO damageType,
-            Stat lifestealStat,
+            StatSO lifestealStat,
             HealSourceSO lifestealSource)
         {
             if (!cfg) throw new ArgumentNullException(nameof(cfg));

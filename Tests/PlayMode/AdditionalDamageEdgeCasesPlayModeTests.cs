@@ -84,7 +84,7 @@ public class AdditionalDamageEdgeCasesPlayModeTests
     [UnityTest]
     public IEnumerator Defense_Fully_Nulls_Damage()
     {
-        var defStat = ScriptableObject.CreateInstance<Stat>(); defStat.name = "BigDef"; Reg(defStat);
+        var defStat = ScriptableObject.CreateInstance<StatSO>(); defStat.name = "BigDef"; Reg(defStat);
         InjectFlatStat(_tgt.Stats, defStat, 999);
 
         var dmgType = _atk.DefaultDamageType;
@@ -101,8 +101,8 @@ public class AdditionalDamageEdgeCasesPlayModeTests
     [UnityTest]
     public IEnumerator Piercing_100_Ignores_Defense()
     {
-        var defStat = ScriptableObject.CreateInstance<Stat>(); defStat.name = "Def"; Reg(defStat);
-        var pierceStat = ScriptableObject.CreateInstance<Stat>(); pierceStat.name = "Pierce"; Reg(pierceStat);
+        var defStat = ScriptableObject.CreateInstance<StatSO>(); defStat.name = "Def"; Reg(defStat);
+        var pierceStat = ScriptableObject.CreateInstance<StatSO>(); pierceStat.name = "Pierce"; Reg(pierceStat);
 
         InjectFlatStat(_tgt.Stats, defStat, 50);
         InjectPercentageStat(_atk.Stats, pierceStat, new Percentage(100));
@@ -125,8 +125,8 @@ public class AdditionalDamageEdgeCasesPlayModeTests
     [UnityTest]
     public IEnumerator Piercing_200_Ignores_Defense()
     {
-        var defStat = ScriptableObject.CreateInstance<Stat>(); defStat.name = "Def"; Reg(defStat);
-        var pierceStat = ScriptableObject.CreateInstance<Stat>(); pierceStat.name = "Pierce"; Reg(pierceStat);
+        var defStat = ScriptableObject.CreateInstance<StatSO>(); defStat.name = "Def"; Reg(defStat);
+        var pierceStat = ScriptableObject.CreateInstance<StatSO>(); pierceStat.name = "Pierce"; Reg(pierceStat);
 
         InjectFlatStat(_tgt.Stats, defStat, 50);
         InjectPercentageStat(_atk.Stats, pierceStat, new Percentage(200));
@@ -149,7 +149,7 @@ public class AdditionalDamageEdgeCasesPlayModeTests
     [UnityTest]
     public IEnumerator Lifesteal_Does_Not_Exceed_MaxHp()
     {
-        var lsStat = ScriptableObject.CreateInstance<Stat>(); lsStat.name = "LS"; Reg(lsStat);
+        var lsStat = ScriptableObject.CreateInstance<StatSO>(); lsStat.name = "LS"; Reg(lsStat);
         InjectPercentageStat(_atk.Stats, lsStat, new Percentage(50));
 
         var healSource = ScriptableObject.CreateInstance<HealSourceSO>(); Reg(healSource);

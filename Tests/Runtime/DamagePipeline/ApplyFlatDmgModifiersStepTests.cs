@@ -20,7 +20,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
     {
         private class MockDamageType : DamageTypeSO
         {
-            public static MockDamageType Create(string name = "MockType", Stat flatStat = null)
+            public static MockDamageType Create(string name = "MockType", StatSO flatStat = null)
             {
                 var t = CreateInstance<MockDamageType>();
                 t.name = name;
@@ -31,7 +31,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
         private class MockDamageSource : DamageSourceSO
         {
-            public static MockDamageSource Create(string name = "MockSource", Stat flatStat = null)
+            public static MockDamageSource Create(string name = "MockSource", StatSO flatStat = null)
             {
                 var s = CreateInstance<MockDamageSource>();
                 s.name = name;
@@ -42,19 +42,19 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
         private class MockConfig : IAstraRpgHealthConfig
         {
-            public SerializableDictionary<HealSourceSO, Stat> HealSourceModifications { get; set; }
-            public Stat GenericPercentageDamageModificationStat { get; set; }
-            public Stat GenericFlatDamageModificationStat { get; set; }
+            public SerializableDictionary<HealSourceSO, StatSO> HealSourceModifications { get; set; }
+            public StatSO GenericPercentageDamageModificationStat { get; set; }
+            public StatSO GenericFlatDamageModificationStat { get; set; }
             
             // Other required properties (not used in these tests)
             public AttributesScalingComponent HealthAttributesScaling { get; set; }
-            public Stat GenericFlatHealAmountModifierStat { get; set; }
-            public Stat GenericPercentageHealAmountModifierStat { get; set; }
+            public StatSO GenericFlatHealAmountModifierStat { get; set; }
+            public StatSO GenericPercentageHealAmountModifierStat { get; set; }
             public DamageCalculationStrategySO DefaultDamageCalculationCalculationStrategy { get; set; }
             public HealSourceSO HealthRegenerationSource { get; set; }
-            public Stat PassiveHealthRegenerationStat { get; set; }
+            public StatSO PassiveHealthRegenerationStat { get; set; }
             public float PassiveHealthRegenerationInterval { get; set; }
-            public Stat ManualHealthRegenerationStat { get; set; }
+            public StatSO ManualHealthRegenerationStat { get; set; }
             public bool SuppressPassiveRegenerationEvents { get; set; }
             public bool SuppressManualRegenerationEvents { get; set; }
             public LifestealConfigSO LifestealConfig { get; set; }
@@ -80,11 +80,11 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             public long genericModValue;
             public long sourceModValue;
             public long typeModValue;
-            public Stat genericStat;
-            public Stat sourceStat;
-            public Stat typeStat;
+            public StatSO genericStat;
+            public StatSO sourceStat;
+            public StatSO typeStat;
 
-            public override long Get(Stat stat)
+            public override long Get(StatSO stat)
             {
                 if (stat == genericStat) return genericModValue;
                 if (stat == sourceStat) return sourceModValue;
@@ -97,9 +97,9 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             long genericModValue = 0,
             long sourceModValue = 0,
             long typeModValue = 0,
-            Stat genericStat = null,
-            Stat sourceStat = null,
-            Stat typeStat = null)
+            StatSO genericStat = null,
+            StatSO sourceStat = null,
+            StatSO typeStat = null)
         {
             var targetGo = new GameObject("Target");
             var dealerGo = new GameObject("Dealer");
@@ -140,9 +140,9 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
                 Object.DestroyImmediate(go);
         }
 
-        private static Stat CreateStat(string name)
+        private static StatSO CreateStat(string name)
         {
-            var stat = ScriptableObject.CreateInstance<Stat>();
+            var stat = ScriptableObject.CreateInstance<StatSO>();
             stat.name = name;
             return stat;
         }

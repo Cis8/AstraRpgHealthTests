@@ -20,10 +20,10 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
     private HealthEntityBundle _attacker;
     private HealthEntityBundle _target;
 
-    private Stat _defensiveStat;
-    private Stat _piercingStat;
-    private Stat _lifestealStat;
-    private Stat _genericModStat;
+    private StatSO _defensiveStat;
+    private StatSO _piercingStat;
+    private StatSO _lifestealStat;
+    private StatSO _genericModStat;
 
     private FlatDamageReductionFnSO _flatDmgFn;
     private PercentageDefenseReductionFnSO _percDefFn;
@@ -45,10 +45,10 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             sharedEvents: sharedEvents);
 
         // Stats
-        _defensiveStat = ScriptableObject.CreateInstance<Stat>(); _defensiveStat.name = "DefenseStat";
-        _piercingStat = ScriptableObject.CreateInstance<Stat>(); _piercingStat.name = "PiercingStat";
-        _lifestealStat = ScriptableObject.CreateInstance<Stat>(); _lifestealStat.name = "LifestealStat";
-        _genericModStat = ScriptableObject.CreateInstance<Stat>(); _genericModStat.name = "GenericModStat";
+        _defensiveStat = ScriptableObject.CreateInstance<StatSO>(); _defensiveStat.name = "DefenseStat";
+        _piercingStat = ScriptableObject.CreateInstance<StatSO>(); _piercingStat.name = "PiercingStat";
+        _lifestealStat = ScriptableObject.CreateInstance<StatSO>(); _lifestealStat.name = "LifestealStat";
+        _genericModStat = ScriptableObject.CreateInstance<StatSO>(); _genericModStat.name = "GenericModStat";
 
         // Inject stats
         InjectPercentageStat(_attacker.Stats, _lifestealStat, new Percentage(25)); // lifesteal 25%
