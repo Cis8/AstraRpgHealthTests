@@ -22,13 +22,13 @@ public class EntityHealthMaxHpScalingTests
     private AttributeChangedGameEvent _attributeChangedEvt;
 
     // Dynamic stat scaling component
-    private class DynamicStatScaling : StatsScalingComponent
+    private class DynamicStatScaling : StatsScalingComponentSO
     {
         public StatSO Target;
         public int Mult;
         public static DynamicStatScaling Create(StatSetSO set, StatSO target, int mult) {
             var inst = CreateInstance<DynamicStatScaling>();
-            typeof(StatsScalingComponent)
+            typeof(StatsScalingComponentSO)
                 .GetField("_set", BindingFlags.Instance | BindingFlags.NonPublic)
                 ?.SetValue(inst, set);
             inst.Target = target;
