@@ -17,7 +17,6 @@ using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
 using ElectricDrill.AstraRpgHealth.Events;
 using ElectricDrill.AstraRpgHealth.Heal;
 using UnityEngine;
-using Attribute = ElectricDrill.AstraRpgFramework.Attributes.Attribute;
 
 namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
 {
@@ -335,7 +334,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         /// Inject a flat (raw long) attribute value into an EntityAttributes.
         /// Ensures the attribute exists in the fixed base attribute set and sets its fixed base value.
         /// </summary>
-        public static void InjectFlatAttribute(EntityAttributes attributes, Attribute attribute, long value)
+        public static void InjectFlatAttribute(EntityAttributes attributes, AttributeSO attribute, long value)
         {
             if (attributes == null || attribute == null) return;
             

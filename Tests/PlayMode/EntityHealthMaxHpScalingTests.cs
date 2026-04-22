@@ -17,7 +17,7 @@ public class EntityHealthMaxHpScalingTests
 {
     private HealthEntityBundle _entity;
     private StatSO _testStat;
-    private Attribute _testAttribute;
+    private AttributeSO _testAttribute;
     private StatChangedGameEvent _statChangedEvt;
     private AttributeChangedGameEvent _attributeChangedEvt;
 
@@ -41,9 +41,9 @@ public class EntityHealthMaxHpScalingTests
     // Fixed attribute scaling component
     private class FixedAttributeScaling : AttributesScalingComponent
     {
-        public Attribute Target;
+        public AttributeSO Target;
         public long Amount;
-        public static FixedAttributeScaling Create(AttributeSet set, Attribute target, long amount) {
+        public static FixedAttributeScaling Create(AttributeSet set, AttributeSO target, long amount) {
             var inst = CreateInstance<FixedAttributeScaling>();
             typeof(AttributesScalingComponent)
                 .GetField("_set", BindingFlags.Instance | BindingFlags.NonPublic)
@@ -54,7 +54,7 @@ public class EntityHealthMaxHpScalingTests
             return inst;
         }
         public override long CalculateValue(EntityCore entityCore) => Amount;
-        public override double Get(Attribute attribute) => attribute == Target ? Amount : 0d;
+        public override double Get(AttributeSO attribute) => attribute == Target ? Amount : 0d;
     }
 
     [SetUp]
@@ -62,7 +62,7 @@ public class EntityHealthMaxHpScalingTests
     {
         _testStat = ScriptableObject.CreateInstance<StatSO>();
         _testStat.name = "TestScalingStat";
-        _testAttribute = ScriptableObject.CreateInstance<Attribute>();
+        _testAttribute = ScriptableObject.CreateInstance<AttributeSO>();
         _testAttribute.name = "TestScalingAttribute";
 
         _entity = CreateEntity(
@@ -79,7 +79,7 @@ public class EntityHealthMaxHpScalingTests
                 var attrSet = ScriptableObject.CreateInstance<AttributeSet>();
                 typeof(AttributeSet)
                     .GetField("_attributes", BindingFlags.Instance | BindingFlags.NonPublic)
-                    ?.SetValue(attrSet, new SerializableHashSet<Attribute> { _testAttribute });
+                    ?.SetValue(attrSet, new SerializableHashSet<AttributeSO> { _testAttribute });
 
                 // Assign attribute set (try property then field)
                 var attrType = typeof(EntityAttributes);
