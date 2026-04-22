@@ -175,7 +175,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             // Ensure a fixed StatSet exists (internal field accessible)
             if (stats._fixedBaseStatsStatSet == null)
             {
-                stats._fixedBaseStatsStatSet = ScriptableObject.CreateInstance<StatSet>();
+                stats._fixedBaseStatsStatSet = ScriptableObject.CreateInstance<StatSetSO>();
                 // Initialize internal fixed base stats structures
                 stats.InitializeFixedBaseStats();
             }
@@ -285,7 +285,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             // Ensure fixed stat set exists
             if (stats._fixedBaseStatsStatSet == null)
             {
-                stats._fixedBaseStatsStatSet = ScriptableObject.CreateInstance<StatSet>();
+                stats._fixedBaseStatsStatSet = ScriptableObject.CreateInstance<StatSetSO>();
                 stats.InitializeFixedBaseStats();
             }
 
@@ -315,7 +315,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
 
             if (stats._fixedBaseStatsStatSet == null)
             {
-                stats._fixedBaseStatsStatSet = ScriptableObject.CreateInstance<StatSet>();
+                stats._fixedBaseStatsStatSet = ScriptableObject.CreateInstance<StatSetSO>();
                 stats.InitializeFixedBaseStats();
             }
 

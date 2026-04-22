@@ -103,14 +103,14 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             _mockEntityStats = new Mock<EntityStats>();
             _mockEntityCore.Setup(c => c.Level).Returns(new EntityLevel());
             _mockEntityCore.Setup(c => c.Stats).Returns(_mockEntityStats.Object);
-            _mockEntityStats.Setup(s => s.StatSet).Returns(ScriptableObject.CreateInstance<StatSet>());
+            _mockEntityStats.Setup(s => s.StatSet).Returns(ScriptableObject.CreateInstance<StatSetSO>());
             _mockEntityStats.Setup(s => s.Get(It.IsAny<StatSO>())).Returns(0L);
 
             _mockDealerCore = new Mock<EntityCore>();
             _mockDealerStats = new Mock<EntityStats>();
             _mockDealerCore.Setup(c => c.Level).Returns(new EntityLevel());
             _mockDealerCore.Setup(c => c.Stats).Returns(_mockDealerStats.Object);
-            _mockDealerStats.Setup(s => s.StatSet).Returns(ScriptableObject.CreateInstance<StatSet>());
+            _mockDealerStats.Setup(s => s.StatSet).Returns(ScriptableObject.CreateInstance<StatSetSO>());
             _mockDealerStats.Setup(s => s.Get(It.IsAny<StatSO>())).Returns(0L);
 
             _go.AddComponent<EntityHealth>();
@@ -315,7 +315,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
         {
             // Create a real StatSet containing the percentage stat
             var percentageStat = ScriptableObject.CreateInstance<StatSO>();
-            var statSet = ScriptableObject.CreateInstance<StatSet>();
+            var statSet = ScriptableObject.CreateInstance<StatSetSO>();
             statSet._stats.Add(percentageStat);
 
             var resurrectionSource = MockHealSource.Create();
@@ -349,7 +349,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
         {
             // Create a real StatSet containing the flat stat
             var flatStat = ScriptableObject.CreateInstance<StatSO>();
-            var statSet = ScriptableObject.CreateInstance<StatSet>();
+            var statSet = ScriptableObject.CreateInstance<StatSetSO>();
             statSet._stats.Add(flatStat);
 
             var resurrectionSource = MockHealSource.Create();
@@ -383,7 +383,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
         {
             // Create a real StatSet containing the flat stat
             var flatStat = ScriptableObject.CreateInstance<StatSO>();
-            var statSet = ScriptableObject.CreateInstance<StatSet>();
+            var statSet = ScriptableObject.CreateInstance<StatSetSO>();
             statSet._stats.Add(flatStat);
 
             var resurrectionSource = MockHealSource.Create();

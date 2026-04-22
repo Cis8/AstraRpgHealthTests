@@ -26,7 +26,7 @@ public class EntityHealthMaxHpScalingTests
     {
         public StatSO Target;
         public int Mult;
-        public static DynamicStatScaling Create(StatSet set, StatSO target, int mult) {
+        public static DynamicStatScaling Create(StatSetSO set, StatSO target, int mult) {
             var inst = CreateInstance<DynamicStatScaling>();
             typeof(StatsScalingComponent)
                 .GetField("_set", BindingFlags.Instance | BindingFlags.NonPublic)
