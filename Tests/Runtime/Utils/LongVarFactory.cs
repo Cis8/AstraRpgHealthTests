@@ -5,9 +5,9 @@ namespace ElectricDrill.AstraRpgHealthTests
 {
     public static class LongVarFactory
     {
-        public static LongVar CreateLongVar(long value)
+        public static LongVarSO CreateLongVar(long value)
         {
-            var longVar = ScriptableObject.CreateInstance<LongVar>();
+            var longVar = ScriptableObject.CreateInstance<LongVarSO>();
             longVar.Value = value;
             return longVar;
         }

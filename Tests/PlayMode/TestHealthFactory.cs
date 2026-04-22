@@ -200,7 +200,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             var totalMax = new LongRef { Value = maxHp };
             var hp = new LongRef { Value = maxHp };
             var barrier = new LongRef { Value = barrierAmount };
-            var deathThreshold = ScriptableObject.CreateInstance<LongVar>();
+            var deathThreshold = ScriptableObject.CreateInstance<LongVarSO>();
             deathThreshold.Value = allowNegative ? -9999 : 0;
 
             // OnDeathStrategy override (use public property, not reflection)
