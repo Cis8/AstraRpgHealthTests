@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
+using ElectricDrill.AstraRpgHealth.Damage;
 using ElectricDrill.AstraRpgHealth.Heal;
 using NUnit.Framework;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         private HealSourceSO _genericHealSource;
         private HealSourceSO _lifestealHealSource;
         private StatSO _lifestealStat;
-        private LifestealConfigSO _lifestealConfig;
+        private StatSO _genericLifestealStat;
         private HealthEventsBundle _sharedEvents;
 
         [SetUp]
@@ -44,19 +45,18 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
 
             _lifestealStat = ScriptableObject.CreateInstance<StatSO>();
             _lifestealStat.name = "LifestealStat";
-            
+            _genericLifestealStat = ScriptableObject.CreateInstance<StatSO>();
+            _genericLifestealStat.name = "GenericLifestealStat";
+
             InjectPercentageStat(_attacker.Stats, _lifestealStat, new Percentage(25));
 
-            // Assign lifesteal mapping on existing config (its lifesteal config auto-created or created here if missing)
-            _lifestealConfig = AssignLifestealMapping(
+            // Configure type-specific lifesteal directly on the DamageTypeSO
+            AssignLifestealMapping(
                 _attacker.Config,
                 _attacker.DefaultDamageType,
                 _lifestealStat,
                 _lifestealHealSource
             );
-            
-            // Set lifesteal config directly on the shared config
-            _attacker.Config.LifestealConfig = _lifestealConfig;
         }
 
         [TearDown]
@@ -73,7 +73,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             Object.DestroyImmediate(_genericHealSource);
             Object.DestroyImmediate(_lifestealHealSource);
             Object.DestroyImmediate(_lifestealStat);
-            Object.DestroyImmediate(_lifestealConfig);
+            Object.DestroyImmediate(_genericLifestealStat);
             Object.DestroyImmediate(_attacker.Config); // destroy config once (shared)
 
             // Destroy shared events
@@ -149,6 +149,97 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             // Critical damage: base 20 * 3 = 60 final => lifesteal 25% = 15 -> HP 65
             _target.Health.TakeDamage(BuildPre(20, _attacker, _target, crit: true, critMult: 3d));
             Assert.AreEqual(65, _attacker.Health.Hp);
+        }
+
+        // ── Generic + Type-specific combined lifesteal tests ────────────────────
+
+        [UnityTest]
+        public IEnumerator BothGenericAndTypeSpecific_Separate_HealAmountIsSum()
+        {
+            yield return null;
+            _attacker.Health.TakeDamage(BuildPre(50, _target, _attacker));
+            Assert.AreEqual(50, _attacker.Health.Hp);
+
+            // Generic 10%, type-specific 25% (from SetUp); deals 40 damage
+            // Expected: (40 * 10%) + (40 * 25%) = 4 + 10 = 14 → HP 64
+            SetupGenericLifesteal(new Percentage(10));
+
+            _target.Health.TakeDamage(BuildPre(40, _attacker, _target));
+            Assert.AreEqual(64, _attacker.Health.Hp);
+        }
+
+        [UnityTest]
+        public IEnumerator BothGenericAndTypeSpecific_Unified_HealAmountIsSum()
+        {
+            yield return null;
+            _attacker.Health.TakeDamage(BuildPre(50, _target, _attacker));
+            Assert.AreEqual(50, _attacker.Health.Hp);
+
+            SetupGenericLifesteal(new Percentage(10));
+            _attacker.Config.UnifyLifestealHeals = true;
+
+            // Same total: (40 * 10%) + (40 * 25%) = 14 → HP 64
+            _target.Health.TakeDamage(BuildPre(40, _attacker, _target));
+            Assert.AreEqual(64, _attacker.Health.Hp);
+        }
+
+        [UnityTest]
+        public IEnumerator BothGenericAndTypeSpecific_Separate_RaisesTwoHealEvents()
+        {
+            yield return null;
+            _attacker.Health.TakeDamage(BuildPre(50, _target, _attacker));
+
+            var healEventCount = 0;
+            _sharedEvents.Healed.OnEventRaised += _ => healEventCount++;
+
+            SetupGenericLifesteal(new Percentage(10));
+
+            _target.Health.TakeDamage(BuildPre(40, _attacker, _target));
+            Assert.AreEqual(2, healEventCount, "Separate mode must raise one heal event per source.");
+        }
+
+        [UnityTest]
+        public IEnumerator BothGenericAndTypeSpecific_Unified_RaisesOneHealEvent()
+        {
+            yield return null;
+            _attacker.Health.TakeDamage(BuildPre(50, _target, _attacker));
+
+            var healEventCount = 0;
+            _sharedEvents.Healed.OnEventRaised += _ => healEventCount++;
+
+            SetupGenericLifesteal(new Percentage(10));
+            _attacker.Config.UnifyLifestealHeals = true;
+
+            _target.Health.TakeDamage(BuildPre(40, _attacker, _target));
+            Assert.AreEqual(1, healEventCount, "Unified mode must raise a single combined heal event.");
+        }
+
+        [UnityTest]
+        public IEnumerator OnlyGenericLifesteal_Unified_CorrectAmount()
+        {
+            yield return null;
+            _attacker.Health.TakeDamage(BuildPre(50, _target, _attacker));
+            Assert.AreEqual(50, _attacker.Health.Hp);
+
+            // Use a fresh DamageTypeSO with no type-specific lifesteal configured
+            var plainType = ScriptableObject.CreateInstance<DamageTypeSO>();
+
+            SetupGenericLifesteal(new Percentage(10));
+            _attacker.Config.UnifyLifestealHeals = true;
+
+            // Only generic fires: 40 * 10% = 4 → HP 54
+            _target.Health.TakeDamage(BuildPre(40, _attacker, _target, type: plainType));
+            Assert.AreEqual(54, _attacker.Health.Hp);
+
+            Object.DestroyImmediate(plainType);
+        }
+
+        // ── Helpers ─────────────────────────────────────────────────────────────
+
+        private void SetupGenericLifesteal(Percentage rate)
+        {
+            InjectPercentageStat(_attacker.Stats, _genericLifestealStat, rate);
+            _attacker.Config.GenericLifesteal.Configure(_genericLifestealStat, _genericHealSource);
         }
     }
 }

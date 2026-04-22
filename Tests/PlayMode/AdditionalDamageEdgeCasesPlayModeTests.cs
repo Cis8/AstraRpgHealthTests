@@ -153,9 +153,8 @@ public class AdditionalDamageEdgeCasesPlayModeTests
         InjectPercentageStat(_atk.Stats, lsStat, new Percentage(50));
 
         var healSource = ScriptableObject.CreateInstance<HealSourceSO>(); Reg(healSource);
-        var cfg = AssignLifestealMapping(_atk.Config, _atk.DefaultDamageType, lsStat, healSource); Reg(cfg);
-        ConfigureLifestealBasisAfterCritical(cfg, _atk.DefaultDamageType, lsStat, healSource);
-        AstraRpgHealthConfigProvider.Instance.LifestealConfig = cfg;
+        AssignLifestealMapping(_atk.Config, _atk.DefaultDamageType, lsStat, healSource);
+        ConfigureLifestealBasisAfterCritical(_atk.DefaultDamageType, lsStat, healSource);
 
         _atk.Health._hp.Value = 95L;
 

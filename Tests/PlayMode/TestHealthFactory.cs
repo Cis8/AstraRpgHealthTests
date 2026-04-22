@@ -359,32 +359,11 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         }
 
         /// <summary>
-        /// Creates a LifestealConfig with a single mapping (_damageType -> lifestealStatConfig) and assigns it to the provided config.
-        /// Returns the created LifestealConfig so tests can Destroy it.
+        /// Configures type-specific lifesteal directly on the DamageTypeSO.
         /// </summary>
-        internal static LifestealConfigSO AssignLifestealMapping(AstraRpgHealthConfigSO config, DamageTypeSO damageType, StatSO lifestealStat, HealSourceSO lifestealSource)
+        internal static void AssignLifestealMapping(AstraRpgHealthConfigSO config, DamageTypeSO damageType, StatSO lifestealStat, HealSourceSO lifestealSource)
         {
-            // Prefer existing lifesteal config if already set, else create a fresh one.
-            var lifestealConfig = config.LifestealConfig;
-            if (!lifestealConfig)
-            {
-                lifestealConfig = ScriptableObject.CreateInstance<LifestealConfigSO>();
-                // Assign to config (if property has setter) else try reflection only for this assignment.
-                var cfgType = config.GetType();
-                var prop = cfgType.GetProperty("LifestealConfig", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                if (prop != null && prop.CanWrite)
-                    prop.SetValue(config, lifestealConfig);
-                else
-                {
-                    var field = cfgType.GetField("LifestealConfig", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                    field?.SetValue(config, lifestealConfig);
-                }
-            }
-
-            // Use internal API (no reflection) to declare mapping.
-            lifestealConfig.SetMapping(damageType, lifestealStat, lifestealSource);
-
-            return lifestealConfig;
+            damageType.Lifesteal.Configure(lifestealStat, lifestealSource);
         }
 
         public static void SetPrivateField(object obj, string fieldName, object value)
@@ -413,15 +392,12 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         /// <summary>
         /// Configures lifesteal so that its basis is the damage amount recorded AFTER the Critical step (Post).
         /// Uses Step mode (no reflection).
-        /// Overwrites any existing mapping for the _damageType.
         /// </summary>
-        internal static LifestealStatConfig ConfigureLifestealBasisAfterCritical(
-            LifestealConfigSO cfg,
+        internal static void ConfigureLifestealBasisAfterCritical(
             DamageTypeSO damageType,
             StatSO lifestealStat,
             HealSourceSO lifestealSource)
         {
-            if (!cfg) throw new ArgumentNullException(nameof(cfg));
             if (!damageType) throw new ArgumentNullException(nameof(damageType));
             if (!lifestealStat) throw new ArgumentNullException(nameof(lifestealStat));
             if (!lifestealSource) throw new ArgumentNullException(nameof(lifestealSource));
@@ -431,8 +407,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
                 typeof(ApplyCriticalMultiplierStep).AssemblyQualifiedName,
                 StepValuePoint.Post);
 
-            // Overwrite mapping with desired selector.
-            return cfg.SetMapping(damageType, lifestealStat, lifestealSource, selector, overwrite: true);
+            damageType.Lifesteal.Configure(lifestealStat, lifestealSource, selector);
         }
     }
 }

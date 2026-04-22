@@ -27,8 +27,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         private StatSO _passiveRegenStat;
         private StatSO _manualRegenStat;
         private StatSO _lifestealStat;
-        private LifestealConfigSO _lifestealConfig;
-        
+
         private int _preHealEventCount;
         private int _receivedHealEventCount;
 
@@ -90,7 +89,6 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             Object.DestroyImmediate(_passiveRegenStat);
             Object.DestroyImmediate(_manualRegenStat);
             Object.DestroyImmediate(_lifestealStat);
-            if (_lifestealConfig != null) Object.DestroyImmediate(_lifestealConfig);
 
             Object.DestroyImmediate(_sharedEvents.PreDmg);
             Object.DestroyImmediate(_sharedEvents.DamageResolution);
@@ -108,8 +106,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         private void ConfigureLifesteal()
         {
             InjectPercentageStat(_entity.Stats, _lifestealStat, new Percentage(25));
-            _lifestealConfig = AssignLifestealMapping(_entity.Config, _entity.DefaultDamageType, _lifestealStat, _lifestealHealSource);
-            _entity.Config.LifestealConfig = _lifestealConfig;
+            AssignLifestealMapping(_entity.Config, _entity.DefaultDamageType, _lifestealStat, _lifestealHealSource);
         }
 
         #region Passive Regeneration Tests

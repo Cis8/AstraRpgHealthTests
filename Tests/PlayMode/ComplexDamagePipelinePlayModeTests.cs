@@ -28,8 +28,6 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
     private FlatDamageReductionFnSO _flatDmgFn;
     private PercentageDefenseReductionFnSO _percDefFn;
 
-    private LifestealConfigSO _lifestealCfg;
-
     [SetUp]
     public void SetUp()
     {
@@ -81,12 +79,10 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         // Override target pipeline (defender uses chosen strategy)
         _target.Health._overrideDamageCalculationStrategy = strategy;
 
-        // Lifesteal mapping + configure basis after critical step post (overwrite with Step/Post)
+        // Configure lifesteal basis after critical step post (Step/Post)
         var lifestealSource = ScriptableObject.CreateInstance<HealSourceSO>();
-        _lifestealCfg = AssignLifestealMapping(_attacker.Config, dmgType, _lifestealStat, lifestealSource);
-        ConfigureLifestealBasisAfterCritical(_lifestealCfg, dmgType, _lifestealStat, lifestealSource);
-        // Set lifesteal config directly on the shared config
-        _attacker.Config.LifestealConfig = _lifestealCfg;
+        AssignLifestealMapping(_attacker.Config, dmgType, _lifestealStat, lifestealSource);
+        ConfigureLifestealBasisAfterCritical(dmgType, _lifestealStat, lifestealSource);
     }
 
     [TearDown]
@@ -105,7 +101,6 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         Object.DestroyImmediate(_genericModStat);
         Object.DestroyImmediate(_flatDmgFn);
         Object.DestroyImmediate(_percDefFn);
-        if (_lifestealCfg) Object.DestroyImmediate(_lifestealCfg);
     }
 
     [UnityTest]
