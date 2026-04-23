@@ -163,6 +163,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             // Generic 10%, type-specific 25% (from SetUp); deals 40 damage
             // Expected: (40 * 10%) + (40 * 25%) = 4 + 10 = 14 → HP 64
             SetupGenericLifesteal(new Percentage(10));
+            _attacker.Config.UnifyLifestealHeals = false;
 
             _target.Health.TakeDamage(BuildPre(40, _attacker, _target));
             Assert.AreEqual(64, _attacker.Health.Hp);
@@ -193,6 +194,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             _sharedEvents.Healed.OnEventRaised += _ => healEventCount++;
 
             SetupGenericLifesteal(new Percentage(10));
+            _attacker.Config.UnifyLifestealHeals = false;
 
             _target.Health.TakeDamage(BuildPre(40, _attacker, _target));
             Assert.AreEqual(2, healEventCount, "Separate mode must raise one heal event per source.");

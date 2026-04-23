@@ -1,6 +1,7 @@
 using System.Collections;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
+using ElectricDrill.AstraRpgHealth;
 using ElectricDrill.AstraRpgHealth.Heal;
 using NUnit.Framework;
 using UnityEngine;
@@ -121,7 +122,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             Assert.IsFalse(_entity.Config.SuppressPassiveRegenerationEvents);
             
             _entity.Health.TakeDamage(BuildPre(50, _entity, _entity));
-            SetPrivateField(_entity.Health, "_passiveHealthRegeneration", true);
+            _entity.Go.AddComponent<EntityPassiveHpRegeneration>();
             
             yield return new WaitForSeconds(1.2f);
             
@@ -138,7 +139,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             
             _entity.Config.SuppressPassiveRegenerationEvents = true;
             _entity.Health.TakeDamage(BuildPre(50, _entity, _entity));
-            SetPrivateField(_entity.Health, "_passiveHealthRegeneration", true);
+            _entity.Go.AddComponent<EntityPassiveHpRegeneration>();
             
             yield return new WaitForSeconds(1.2f);
             
@@ -156,7 +157,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             
             _entity.Config.SuppressPassiveRegenerationEvents = true;
             _entity.Health.TakeDamage(BuildPre(50, _entity, _entity));
-            SetPrivateField(_entity.Health, "_passiveHealthRegeneration", true);
+            _entity.Go.AddComponent<EntityPassiveHpRegeneration>();
             
             long initialHp = _entity.Health.Hp;
             yield return new WaitForSeconds(3.2f);
@@ -262,7 +263,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             _entity.Config.SuppressManualRegenerationEvents = false;
             
             _entity.Health.TakeDamage(BuildPre(50, _entity, _entity));
-            SetPrivateField(_entity.Health, "_passiveHealthRegeneration", true);
+            _entity.Go.AddComponent<EntityPassiveHpRegeneration>();
             
             yield return new WaitForSeconds(1.2f);
             Assert.AreEqual(0, _preHealEventCount, "No events from passive regen");
