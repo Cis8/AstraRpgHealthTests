@@ -4,8 +4,8 @@ using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
 using ElectricDrill.AstraRpgHealth.Config;
 using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
-using ElectricDrill.AstraRpgHealth.DamageReductionFunctions;
-using ElectricDrill.AstraRpgHealth.DefenseReductionFunctions;
+using ElectricDrill.AstraRpgHealth.DamageMitigationFunctions;
+using ElectricDrill.AstraRpgHealth.DefensePenetrationFunctions;
 using ElectricDrill.AstraRpgHealth.Heal;
 using NUnit.Framework;
 using UnityEngine;
@@ -89,7 +89,7 @@ public class AdditionalDamageEdgeCasesPlayModeTests
 
         var dmgType = _atk.DefaultDamageType;
         dmgType.DefensiveStat = defStat;
-        dmgType.DamageReductionFn = ScriptableObject.CreateInstance<FlatDamageReductionFnSO>(); Reg(dmgType.DamageReductionFn);
+        dmgType.DamageMitigationFn = ScriptableObject.CreateInstance<FlatDamageMitigationFnSO>(); Reg(dmgType.DamageMitigationFn);
 
         var pre = BuildPre(80, _atk, _tgt);
         _tgt.Health.TakeDamage(pre);
@@ -109,9 +109,9 @@ public class AdditionalDamageEdgeCasesPlayModeTests
 
         var dmgType = _atk.DefaultDamageType;
         dmgType.DefensiveStat = defStat;
-        dmgType.DamageReductionFn = ScriptableObject.CreateInstance<FlatDamageReductionFnSO>(); Reg(dmgType.DamageReductionFn);
+        dmgType.DamageMitigationFn = ScriptableObject.CreateInstance<FlatDamageMitigationFnSO>(); Reg(dmgType.DamageMitigationFn);
         dmgType.DefensiveStatPiercedBy = pierceStat;
-        dmgType.DefenseReductionFn = ScriptableObject.CreateInstance<PercentageDefenseReductionFnSO>(); Reg(dmgType.DefenseReductionFn);
+        dmgType.DefensePenetrationFn = ScriptableObject.CreateInstance<PercentageDefensePenetrationFnSO>(); Reg(dmgType.DefensePenetrationFn);
 
         var pre = BuildPre(40, _atk, _tgt);
         var res = _tgt.Health.TakeDamage(pre);
@@ -133,9 +133,9 @@ public class AdditionalDamageEdgeCasesPlayModeTests
 
         var dmgType = _atk.DefaultDamageType;
         dmgType.DefensiveStat = defStat;
-        dmgType.DamageReductionFn = ScriptableObject.CreateInstance<FlatDamageReductionFnSO>(); Reg(dmgType.DamageReductionFn);
+        dmgType.DamageMitigationFn = ScriptableObject.CreateInstance<FlatDamageMitigationFnSO>(); Reg(dmgType.DamageMitigationFn);
         dmgType.DefensiveStatPiercedBy = pierceStat;
-        dmgType.DefenseReductionFn = ScriptableObject.CreateInstance<PercentageDefenseReductionFnSO>(); Reg(dmgType.DefenseReductionFn);
+        dmgType.DefensePenetrationFn = ScriptableObject.CreateInstance<PercentageDefensePenetrationFnSO>(); Reg(dmgType.DefensePenetrationFn);
 
         var pre = BuildPre(40, _atk, _tgt);
         var res = _tgt.Health.TakeDamage(pre);

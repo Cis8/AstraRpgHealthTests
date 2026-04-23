@@ -5,8 +5,8 @@ using ElectricDrill.AstraRpgFramework.Utils;
 using ElectricDrill.AstraRpgHealth;
 using ElectricDrill.AstraRpgHealth.Damage;
 using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
-using ElectricDrill.AstraRpgHealth.DamageReductionFunctions;
-using ElectricDrill.AstraRpgHealth.DefenseReductionFunctions;
+using ElectricDrill.AstraRpgHealth.DamageMitigationFunctions;
+using ElectricDrill.AstraRpgHealth.DefensePenetrationFunctions;
 using ElectricDrill.AstraRpgHealth.Heal;
 using NUnit.Framework;
 using UnityEngine;
@@ -25,8 +25,8 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
     private StatSO _lifestealStat;
     private StatSO _genericModStat;
 
-    private FlatDamageReductionFnSO _flatDmgFn;
-    private PercentageDefenseReductionFnSO _percDefFn;
+    private FlatDamageMitigationFnSO _flatDmgFn;
+    private PercentageDefensePenetrationFnSO _percDefFn;
 
     [SetUp]
     public void SetUp()
@@ -58,15 +58,15 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         InjectPercentageStat(_attacker.Stats, _genericModStat, new Percentage(0)); // no mod for attacker
 
         // Reduction functions
-        _flatDmgFn = ScriptableObject.CreateInstance<FlatDamageReductionFnSO>();
-        _percDefFn = ScriptableObject.CreateInstance<PercentageDefenseReductionFnSO>();
+        _flatDmgFn = ScriptableObject.CreateInstance<FlatDamageMitigationFnSO>();
+        _percDefFn = ScriptableObject.CreateInstance<PercentageDefensePenetrationFnSO>();
 
         // Configure DamageType
         var dmgType = _attacker.DefaultDamageType;
         dmgType.DefensiveStat = _defensiveStat;
-        dmgType.DamageReductionFn = _flatDmgFn;
+        dmgType.DamageMitigationFn = _flatDmgFn;
         dmgType.DefensiveStatPiercedBy = _piercingStat;
-        dmgType.DefenseReductionFn = _percDefFn;
+        dmgType.DefensePenetrationFn = _percDefFn;
 
         // Assign generic modification stat to config (weakness/resistance step usage)
         _attacker.Config.GenericPercentageDamageModificationStat = _genericModStat;

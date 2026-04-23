@@ -3,8 +3,8 @@ using ElectricDrill.AstraRpgFramework;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgHealth.Damage;
 using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
-using ElectricDrill.AstraRpgHealth.DamageReductionFunctions;
-using ElectricDrill.AstraRpgHealth.DefenseReductionFunctions;
+using ElectricDrill.AstraRpgHealth.DamageMitigationFunctions;
+using ElectricDrill.AstraRpgHealth.DefensePenetrationFunctions;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -12,28 +12,28 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 {
     public class ApplyDefenseStepTests
     {
-        private class MockFlatDamageReductionFn : FlatDamageReductionFnSO
+        private class MockFlatDamageMitigationFn : FlatDamageMitigationFnSO
         {
             private long _result;
             public void Set(long r) => _result = r;
-            public override long CalculateReducedDamage(long amount, double defensiveStatValue) => _result;
+            public override long CalculateMitigatedDamage(long amount, double defensiveStatValue) => _result;
         }
 
-        private class MockFlatDefenseReductionFn : FlatDefenseReductionFnSO
+        private class MockFlatDefensePenetrationFn : FlatDefensePenetrationFnSO
         {
             private long _result;
             public void Set(long r) => _result = r;
-            public override double CalculateReducedDefense(long piercingStatValue, long defensiveStatValue, StatSO defensiveStat, bool clampDef = true) => _result;
+            public override double CalculatePiercedDefense(long piercingStatValue, long defensiveStatValue, StatSO defensiveStat, bool clampDef = true) => _result;
         }
 
         private class MockDamageType : DamageTypeSO
         {
-            public static MockDamageType Create(StatSO def = null, DamageReductionFnSO damageFn = null, StatSO pierce = null, DefenseReductionFnSO defenseFn = null) {
+            public static MockDamageType Create(StatSO def = null, DamageMitigationFnSO damageFn = null, StatSO pierce = null, DefensePenetrationFnSO defenseFn = null) {
                 var t = CreateInstance<MockDamageType>();
                 t.DefensiveStat = def;
-                t.DamageReductionFn = damageFn;
+                t.DamageMitigationFn = damageFn;
                 t.DefensiveStatPiercedBy = pierce;
-                t.DefenseReductionFn = defenseFn;
+                t.DefensePenetrationFn = defenseFn;
                 return t;
             }
         }
@@ -118,7 +118,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             const long EXPECTED = 70;
 
             var defStat = ScriptableObject.CreateInstance<StatSO>();
-            var dmgFn = ScriptableObject.CreateInstance<MockFlatDamageReductionFn>();
+            var dmgFn = ScriptableObject.CreateInstance<MockFlatDamageMitigationFn>();
             dmgFn.Set(EXPECTED);
 
             var (target, dealer, _, _) = MakeEntities(defensiveValue: DEF_VAL, defensiveStat: defStat);
@@ -148,10 +148,10 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             var defStat = ScriptableObject.CreateInstance<StatSO>();
             var pierceStat = ScriptableObject.CreateInstance<StatSO>();
 
-            var defFn = ScriptableObject.CreateInstance<MockFlatDefenseReductionFn>();
+            var defFn = ScriptableObject.CreateInstance<MockFlatDefensePenetrationFn>();
             defFn.Set(REDUCED_DEF);
 
-            var dmgFn = ScriptableObject.CreateInstance<MockFlatDamageReductionFn>();
+            var dmgFn = ScriptableObject.CreateInstance<MockFlatDamageMitigationFn>();
             dmgFn.Set(EXPECTED);
 
             var (target, dealer, _, _) = MakeEntities(
@@ -179,7 +179,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             const long EXPECTED = 0; // fully absorbed
 
             var defStat = ScriptableObject.CreateInstance<StatSO>();
-            var dmgFn = ScriptableObject.CreateInstance<MockFlatDamageReductionFn>();
+            var dmgFn = ScriptableObject.CreateInstance<MockFlatDamageMitigationFn>();
             dmgFn.Set(EXPECTED);
 
             var (target, dealer, _, _) = MakeEntities(defensiveValue: 100, defensiveStat: defStat);
@@ -202,7 +202,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             const long EXPECTED = 40; // partially reduced
 
             var defStat = ScriptableObject.CreateInstance<StatSO>();
-            var dmgFn = ScriptableObject.CreateInstance<MockFlatDamageReductionFn>();
+            var dmgFn = ScriptableObject.CreateInstance<MockFlatDamageMitigationFn>();
             dmgFn.Set(EXPECTED);
 
             var (target, dealer, _, _) = MakeEntities(defensiveValue: 50, defensiveStat: defStat);
