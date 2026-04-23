@@ -128,7 +128,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
                 .WithType(type)
                 .WithSource(source)
                 .WithTarget(target)
-                .WithDealer(dealer)
+                .WithPerformer(dealer)
                 .Build();
             return new DamageInfo(pre);
         }

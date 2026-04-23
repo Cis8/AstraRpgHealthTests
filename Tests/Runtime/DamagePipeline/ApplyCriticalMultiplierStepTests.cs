@@ -42,7 +42,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
                 .WithType(MockDamageType.Create())
                 .WithSource(MockDamageSource.Create())
                 .WithTarget(target)
-                .WithDealer(dealer)
+                .WithPerformer(dealer)
                 .WithIsCritical(crit)
                 .WithCriticalMultiplier(mult)
                 .Build();

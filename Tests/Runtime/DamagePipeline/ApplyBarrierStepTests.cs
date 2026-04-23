@@ -76,7 +76,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
                 .WithType(type)
                 .WithSource(MockDamageSource.Create())
                 .WithTarget(target)
-                .WithDealer(dealer)
+                .WithPerformer(dealer)
                 .Build();
             return new DamageInfo(pre);
         }

@@ -134,7 +134,7 @@ namespace ElectricDrill.AstraRpgHealthTests
                 .WithType(MockDamageType.Create())
                 .WithSource(MockDamageSource.Create())
                 .WithTarget(_mockEntityCore.Object)
-                .WithDealer(_mockDealerCore.Object)
+                .WithPerformer(_mockDealerCore.Object)
                 .Build();
             pre.Ignore = ignore;
             return pre;
@@ -214,7 +214,7 @@ namespace ElectricDrill.AstraRpgHealthTests
                 .WithAmount(50)
                 .WithSource(MockHealSource.Create())
                 .WithTarget(_mockEntityCore.Object)
-                .WithHealer(_mockEntityCore.Object)
+                .WithPerformer(_mockEntityCore.Object)
                 .Build());
             Assert.AreEqual(MAX_HP, _entityHealth.Hp);
         }

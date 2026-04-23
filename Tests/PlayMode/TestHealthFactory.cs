@@ -256,7 +256,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
                 .WithType(dmgType)
                 .WithSource(dmgSource)
                 .WithTarget(target.Core)
-                .WithDealer(dealer.Core)
+                .WithPerformer(dealer.Core)
                 .WithIsCritical(crit)
                 .WithCriticalMultiplier(critMult)
                 .Build();
