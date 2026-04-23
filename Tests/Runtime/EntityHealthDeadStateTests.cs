@@ -115,6 +115,8 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
 
             _go.AddComponent<EntityHealth>();
             _entityHealth = _go.GetComponent<EntityHealth>();
+            // EditMode tests: Awake() is not triggered by AddComponent, so _config must be set manually.
+            _entityHealth._config = AstraRpgHealthConfigProvider.Instance;
             _entityHealth._entityCore = _mockEntityCore.Object;
             _entityHealth._entityStats = _mockEntityStats.Object;
 

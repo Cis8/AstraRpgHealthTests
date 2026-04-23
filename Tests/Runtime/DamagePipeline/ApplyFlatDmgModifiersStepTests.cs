@@ -121,8 +121,8 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             return (targetCore, dealerCore, targetStats, dealerStats);
         }
 
-        private DamageInfo MakeDamageInfo(long raw, DamageTypeSO type, DamageSourceSO source, EntityCore target, EntityCore dealer)
-        {
+        private DamageInfo MakeDamageInfo(long raw, DamageTypeSO type, DamageSourceSO source, EntityCore target,
+            EntityCore dealer) {
             var pre = PreDamageContext.Builder
                 .WithAmount(raw)
                 .WithType(type)
@@ -130,13 +130,12 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
                 .WithTarget(target)
                 .WithPerformer(dealer)
                 .Build();
-            return new DamageInfo(pre);
+            return new DamageInfo(pre, AstraRpgHealthConfigProvider.Instance);
         }
-
+        
         [TearDown]
         public void Cleanup()
         {
-            AstraRpgHealthConfigProvider.Reset();
             foreach (var go in Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 Object.DestroyImmediate(go);
         }

@@ -151,7 +151,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
                 .WithTarget(_targetCore)
                 .WithPerformer(_dealerCore)
                 .Build();
-            return new DamageInfo(pre);
+            return new DamageInfo(pre, AstraRpgHealthConfigProvider.Instance);
         }
 
         #region Barrier Tests
