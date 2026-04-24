@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ElectricDrill.AstraRpgFramework;
 using ElectricDrill.AstraRpgFramework.Contexts;
 using ElectricDrill.AstraRpgFramework.GameActions;
@@ -51,7 +52,6 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
         private class MockConfig : IAstraRpgHealthConfig
         {
-            public SerializableDictionary<HealSourceSO, StatSO> HealSourceModifications { get; set; }
             public StatSO GenericPercentageDamageModificationStat { get; set; }
             public StatSO GenericFlatDamageModificationStat { get; set; }
             
@@ -84,27 +84,31 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             public EntityResurrectedGameEvent GlobalEntityResurrectedEvent { get; set; }
         }
 
-        private class TestStats : EntityStats
+        /// <summary>
+        /// EntityCore subclass that re-implements <see cref="IStatReader"/> with a simple dictionary,
+        /// bypassing the <see cref="EntityStats"/> StatSet requirement entirely.
+        /// C# interface re-implementation ensures this version is used when code calls
+        /// TryGet through the IStatReader reference stored in <see cref="DamageInfo.TargetStats"/>.
+        /// </summary>
+        private class StubEntityCore : EntityCore, IStatReader
         {
-            public long genericPercentageModValue;
-            public long genericFlatModValue;
-            public StatSO genericPercentageStat;
-            public StatSO genericFlatStat;
+            private readonly Dictionary<StatSO, long> _stats = new();
 
-            public override long Get(StatSO stat)
+            public void RegisterStat(StatSO stat, long value)
             {
-                if (stat == genericPercentageStat) return genericPercentageModValue;
-                if (stat == genericFlatStat) return genericFlatModValue;
-                return 0;
+                if (stat != null) _stats[stat] = value;
             }
+
+            bool IValueContainer<StatSO>.Contains(StatSO stat) => stat != null && _stats.ContainsKey(stat);
+            bool IStatReader.TryGet(StatSO stat, out long value) => _stats.TryGetValue(stat, out value);
+            bool IStatReader.TryGetBase(StatSO stat, out long value) => _stats.TryGetValue(stat, out value);
         }
 
         private GameObject _targetGo;
         private GameObject _dealerGo;
-        private EntityCore _targetCore;
+        private StubEntityCore _targetCore;
         private EntityCore _dealerCore;
         private EntityHealth _targetHealth;
-        private TestStats _targetStats;
 
         [SetUp]
         public void Setup()
@@ -112,15 +116,13 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             _targetGo = new GameObject("Target");
             _dealerGo = new GameObject("Dealer");
 
-            _targetCore = _targetGo.AddComponent<EntityCore>();
+            _targetCore = _targetGo.AddComponent<StubEntityCore>();
             _dealerCore = _dealerGo.AddComponent<EntityCore>();
 
-            _targetStats = _targetGo.AddComponent<TestStats>();
             _targetHealth = _targetGo.AddComponent<EntityHealth>();
             
             // Setup health component
             _targetHealth._entityCore = _targetCore;
-            _targetHealth._entityStats = _targetStats;
             _targetHealth._baseMaxHp = new LongRef { UseConstant = true, ConstantValue = 100 };
             _targetHealth._totalMaxHp = new LongRef { UseConstant = true, ConstantValue = 100 };
             _targetHealth._hp = new LongRef { UseConstant = true, ConstantValue = 100 };
@@ -199,8 +201,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         {
             const long raw = 100;
             var genericStat = CreateStat("GenericPercentageMod");
-            _targetStats.genericPercentageStat = genericStat;
-            _targetStats.genericPercentageModValue = -50; // -50% resistance
+            _targetCore.RegisterStat(genericStat, -50);
 
             var config = new MockConfig
             {
@@ -224,8 +225,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         {
             const long raw = 100;
             var genericStat = CreateStat("GenericPercentageMod");
-            _targetStats.genericPercentageStat = genericStat;
-            _targetStats.genericPercentageModValue = -50; // -50% resistance
+            _targetCore.RegisterStat(genericStat, -50);
 
             var config = new MockConfig
             {
@@ -249,8 +249,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         {
             const long raw = 100;
             var genericStat = CreateStat("GenericPercentageMod");
-            _targetStats.genericPercentageStat = genericStat;
-            _targetStats.genericPercentageModValue = -100; // -100% immunity
+            _targetCore.RegisterStat(genericStat, -100);
 
             var config = new MockConfig
             {
@@ -279,8 +278,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         {
             const long raw = 100;
             var genericStat = CreateStat("GenericFlatMod");
-            _targetStats.genericFlatStat = genericStat;
-            _targetStats.genericFlatModValue = -30; // -30 flat reduction
+            _targetCore.RegisterStat(genericStat, -30);
 
             var config = new MockConfig
             {
@@ -304,8 +302,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         {
             const long raw = 100;
             var genericStat = CreateStat("GenericFlatMod");
-            _targetStats.genericFlatStat = genericStat;
-            _targetStats.genericFlatModValue = -30; // -30 flat reduction
+            _targetCore.RegisterStat(genericStat, -30);
 
             var config = new MockConfig
             {
@@ -335,13 +332,11 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             
             // Setup percentage modifier
             var percentageStat = CreateStat("PercentageMod");
-            _targetStats.genericPercentageStat = percentageStat;
-            _targetStats.genericPercentageModValue = -50; // -50%
+            _targetCore.RegisterStat(percentageStat, -50);
             
             // Setup flat modifier
             var flatStat = CreateStat("FlatMod");
-            _targetStats.genericFlatStat = flatStat;
-            _targetStats.genericFlatModValue = -20; // -20 flat
+            _targetCore.RegisterStat(flatStat, -20);
 
             var config = new MockConfig
             {
@@ -378,13 +373,11 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             
             // Setup percentage modifier
             var percentageStat = CreateStat("PercentageMod");
-            _targetStats.genericPercentageStat = percentageStat;
-            _targetStats.genericPercentageModValue = -50; // -50%
+            _targetCore.RegisterStat(percentageStat, -50);
             
             // Setup flat modifier
             var flatStat = CreateStat("FlatMod");
-            _targetStats.genericFlatStat = flatStat;
-            _targetStats.genericFlatModValue = -20; // -20 flat
+            _targetCore.RegisterStat(flatStat, -20);
 
             var config = new MockConfig
             {
