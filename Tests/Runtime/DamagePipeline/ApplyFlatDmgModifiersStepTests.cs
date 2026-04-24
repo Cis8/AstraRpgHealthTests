@@ -81,16 +81,16 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         /// </summary>
         private class StubEntityCore : EntityCore, IStatReader
         {
-            private readonly Dictionary<StatSO, long> _stats = new();
+            private readonly Dictionary<StatSO, long> _statMap = new();
 
             public void RegisterStat(StatSO stat, long value)
             {
-                if (stat != null) _stats[stat] = value;
+                if (stat != null) _statMap[stat] = value;
             }
 
-            bool IValueContainer<StatSO>.Contains(StatSO stat) => stat != null && _stats.ContainsKey(stat);
-            bool IStatReader.TryGet(StatSO stat, out long value) => _stats.TryGetValue(stat, out value);
-            bool IStatReader.TryGetBase(StatSO stat, out long value) => _stats.TryGetValue(stat, out value);
+            bool IValueContainer<StatSO>.Contains(StatSO stat) => stat != null && _statMap.ContainsKey(stat);
+            bool IStatReader.TryGet(StatSO stat, out long value) => _statMap.TryGetValue(stat, out value);
+            bool IStatReader.TryGetBase(StatSO stat, out long value) => _statMap.TryGetValue(stat, out value);
         }
 
         private (StubEntityCore target, StubEntityCore dealer) MakeEntities(
