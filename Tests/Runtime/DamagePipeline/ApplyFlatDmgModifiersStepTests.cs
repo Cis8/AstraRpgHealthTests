@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ElectricDrill.AstraRpgFramework;
 using ElectricDrill.AstraRpgFramework.Contexts;
 using ElectricDrill.AstraRpgFramework.GameActions;
@@ -42,11 +43,8 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
         private class MockConfig : IAstraRpgHealthConfig
         {
-            public SerializableDictionary<HealSourceSO, StatSO> HealSourceModifications { get; set; }
             public StatSO GenericPercentageDamageModificationStat { get; set; }
             public StatSO GenericFlatDamageModificationStat { get; set; }
-            
-            // Other required properties (not used in these tests)
             public AttributesScalingComponentSO HealthAttributesScaling { get; set; }
             public StatSO GenericFlatHealAmountModifierStat { get; set; }
             public StatSO GenericPercentageHealAmountModifierStat { get; set; }
@@ -75,26 +73,27 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             public EntityResurrectedGameEvent GlobalEntityResurrectedEvent { get; set; }
         }
 
-        // Concrete stats component to avoid null Stats and allow deterministic values
-        private class TestStats : EntityStats
+        /// <summary>
+        /// EntityCore subclass that re-implements <see cref="IStatReader"/> with a simple dictionary,
+        /// bypassing the <see cref="EntityStats"/> StatSet requirement entirely.
+        /// C# interface re-implementation ensures this version is used when code calls
+        /// TryGet through the IStatReader reference stored in <see cref="DamageInfo.TargetStats"/>.
+        /// </summary>
+        private class StubEntityCore : EntityCore, IStatReader
         {
-            public long genericModValue;
-            public long sourceModValue;
-            public long typeModValue;
-            public StatSO genericStat;
-            public StatSO sourceStat;
-            public StatSO typeStat;
+            private readonly Dictionary<StatSO, long> _stats = new();
 
-            public override long Get(StatSO stat)
+            public void RegisterStat(StatSO stat, long value)
             {
-                if (stat == genericStat) return genericModValue;
-                if (stat == sourceStat) return sourceModValue;
-                if (stat == typeStat) return typeModValue;
-                return 0;
+                if (stat != null) _stats[stat] = value;
             }
+
+            bool IValueContainer<StatSO>.Contains(StatSO stat) => stat != null && _stats.ContainsKey(stat);
+            bool IStatReader.TryGet(StatSO stat, out long value) => _stats.TryGetValue(stat, out value);
+            bool IStatReader.TryGetBase(StatSO stat, out long value) => _stats.TryGetValue(stat, out value);
         }
 
-        private (EntityCore target, EntityCore dealer, TestStats targetStats, TestStats dealerStats) MakeEntities(
+        private (StubEntityCore target, StubEntityCore dealer) MakeEntities(
             long genericModValue = 0,
             long sourceModValue = 0,
             long typeModValue = 0,
@@ -102,27 +101,18 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             StatSO sourceStat = null,
             StatSO typeStat = null)
         {
-            var targetGo = new GameObject("Target");
-            var dealerGo = new GameObject("Dealer");
+            var target = new GameObject("Target").AddComponent<StubEntityCore>();
+            target.RegisterStat(genericStat, genericModValue);
+            target.RegisterStat(sourceStat, sourceModValue);
+            target.RegisterStat(typeStat, typeModValue);
 
-            var targetCore = targetGo.AddComponent<EntityCore>();
-            var dealerCore = dealerGo.AddComponent<EntityCore>();
-
-            var targetStats = targetGo.AddComponent<TestStats>();
-            targetStats.genericModValue = genericModValue;
-            targetStats.sourceModValue = sourceModValue;
-            targetStats.typeModValue = typeModValue;
-            targetStats.genericStat = genericStat;
-            targetStats.sourceStat = sourceStat;
-            targetStats.typeStat = typeStat;
-
-            var dealerStats = dealerGo.AddComponent<TestStats>();
-
-            return (targetCore, dealerCore, targetStats, dealerStats);
+            var dealer = new GameObject("Dealer").AddComponent<StubEntityCore>();
+            return (target, dealer);
         }
 
         private DamageInfo MakeDamageInfo(long raw, DamageTypeSO type, DamageSourceSO source, EntityCore target,
-            EntityCore dealer) {
+            EntityCore dealer)
+        {
             var pre = PreDamageContext.Builder
                 .WithAmount(raw)
                 .WithType(type)
@@ -132,7 +122,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
                 .Build();
             return new DamageInfo(pre, AstraRpgHealthConfigProvider.Instance);
         }
-        
+
         [TearDown]
         public void Cleanup()
         {
@@ -153,22 +143,15 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             const long raw = 100;
             var genericStat = CreateStat("GenericFlatMod");
 
-            var (target, dealer, _, _) = MakeEntities(
-                genericModValue: -20, // -20 flat damage
-                genericStat: genericStat);
+            var (target, dealer) = MakeEntities(genericModValue: -20, genericStat: genericStat);
 
-            var config = new MockConfig
+            AstraRpgHealthConfigProvider.Instance = new MockConfig
             {
                 GenericFlatDamageModificationStat = genericStat
             };
-            AstraRpgHealthConfigProvider.Instance = config;
 
-            var type = MockDamageType.Create();
-            var source = MockDamageSource.Create();
-            var info = MakeDamageInfo(raw, type, source, target, dealer);
-
-            var step = new ApplyFlatDmgModifiersStep();
-            step.Process(info);
+            var info = MakeDamageInfo(raw, MockDamageType.Create(), MockDamageSource.Create(), target, dealer);
+            new ApplyFlatDmgModifiersStep().Process(info);
 
             Assert.AreEqual(80, info.Amounts.Current); // 100 - 20 = 80
         }
@@ -179,22 +162,15 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             const long raw = 100;
             var genericStat = CreateStat("GenericFlatMod");
 
-            var (target, dealer, _, _) = MakeEntities(
-                genericModValue: 15, // +15 flat damage
-                genericStat: genericStat);
+            var (target, dealer) = MakeEntities(genericModValue: 15, genericStat: genericStat);
 
-            var config = new MockConfig
+            AstraRpgHealthConfigProvider.Instance = new MockConfig
             {
                 GenericFlatDamageModificationStat = genericStat
             };
-            AstraRpgHealthConfigProvider.Instance = config;
 
-            var type = MockDamageType.Create();
-            var source = MockDamageSource.Create();
-            var info = MakeDamageInfo(raw, type, source, target, dealer);
-
-            var step = new ApplyFlatDmgModifiersStep();
-            step.Process(info);
+            var info = MakeDamageInfo(raw, MockDamageType.Create(), MockDamageSource.Create(), target, dealer);
+            new ApplyFlatDmgModifiersStep().Process(info);
 
             Assert.AreEqual(115, info.Amounts.Current); // 100 + 15 = 115
         }
@@ -204,22 +180,14 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         {
             const long raw = 100;
             var sourceModStat = CreateStat("SourceFlatMod");
-
             var source = MockDamageSource.Create("TestSource", sourceModStat);
-            
-            var (target, dealer, _, _) = MakeEntities(
-                sourceModValue: -30, // -30 flat
-                sourceStat: sourceModStat);
 
-            // No dictionary config needed
-            var config = new MockConfig();
-            AstraRpgHealthConfigProvider.Instance = config;
+            var (target, dealer) = MakeEntities(sourceModValue: -30, sourceStat: sourceModStat);
 
-            var type = MockDamageType.Create();
-            var info = MakeDamageInfo(raw, type, source, target, dealer);
+            AstraRpgHealthConfigProvider.Instance = new MockConfig();
 
-            var step = new ApplyFlatDmgModifiersStep();
-            step.Process(info);
+            var info = MakeDamageInfo(raw, MockDamageType.Create(), source, target, dealer);
+            new ApplyFlatDmgModifiersStep().Process(info);
 
             Assert.AreEqual(70, info.Amounts.Current); // 100 - 30 = 70
         }
@@ -229,22 +197,14 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         {
             const long raw = 100;
             var typeModStat = CreateStat("TypeFlatMod");
-
             var type = MockDamageType.Create("TestType", typeModStat);
-            
-            var (target, dealer, _, _) = MakeEntities(
-                typeModValue: 25, // +25 flat
-                typeStat: typeModStat);
 
-            // No dictionary config needed
-            var config = new MockConfig();
-            AstraRpgHealthConfigProvider.Instance = config;
+            var (target, dealer) = MakeEntities(typeModValue: 25, typeStat: typeModStat);
 
-            var source = MockDamageSource.Create();
-            var info = MakeDamageInfo(raw, type, source, target, dealer);
+            AstraRpgHealthConfigProvider.Instance = new MockConfig();
 
-            var step = new ApplyFlatDmgModifiersStep();
-            step.Process(info);
+            var info = MakeDamageInfo(raw, type, MockDamageSource.Create(), target, dealer);
+            new ApplyFlatDmgModifiersStep().Process(info);
 
             Assert.AreEqual(125, info.Amounts.Current); // 100 + 25 = 125
         }
@@ -260,28 +220,19 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             var type = MockDamageType.Create("TestType", typeStat);
             var source = MockDamageSource.Create("TestSource", sourceStat);
 
-            var (target, dealer, _, _) = MakeEntities(
-                genericModValue: -10, // -10 flat
-                sourceModValue: -5,   // -5 flat
-                typeModValue: 20,     // +20 flat
-                genericStat: genericStat,
-                sourceStat: sourceStat,
-                typeStat: typeStat);
+            var (target, dealer) = MakeEntities(
+                genericModValue: -10, sourceModValue: -5, typeModValue: 20,
+                genericStat: genericStat, sourceStat: sourceStat, typeStat: typeStat);
 
-            var config = new MockConfig
+            AstraRpgHealthConfigProvider.Instance = new MockConfig
             {
-                GenericFlatDamageModificationStat = genericStat,
+                GenericFlatDamageModificationStat = genericStat
             };
-            AstraRpgHealthConfigProvider.Instance = config;
 
             var info = MakeDamageInfo(raw, type, source, target, dealer);
+            new ApplyFlatDmgModifiersStep().Process(info);
 
-            var step = new ApplyFlatDmgModifiersStep();
-            step.Process(info);
-
-            // Net: -10 -5 +20 = +5
-            // 100 + 5 = 105
-            Assert.AreEqual(105, info.Amounts.Current);
+            Assert.AreEqual(105, info.Amounts.Current); // net: -10 -5 +20 = +5 → 105
         }
 
         [Test]
@@ -290,43 +241,29 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             const long raw = 50;
             var genericStat = CreateStat("GenericFlatMod");
 
-            var (target, dealer, _, _) = MakeEntities(
-                genericModValue: -100, // -100 flat would result in negative
-                genericStat: genericStat);
+            var (target, dealer) = MakeEntities(genericModValue: -100, genericStat: genericStat);
 
-            var config = new MockConfig
+            AstraRpgHealthConfigProvider.Instance = new MockConfig
             {
                 GenericFlatDamageModificationStat = genericStat
             };
-            AstraRpgHealthConfigProvider.Instance = config;
 
-            var type = MockDamageType.Create();
-            var source = MockDamageSource.Create();
-            var info = MakeDamageInfo(raw, type, source, target, dealer);
+            var info = MakeDamageInfo(raw, MockDamageType.Create(), MockDamageSource.Create(), target, dealer);
+            new ApplyFlatDmgModifiersStep().Process(info);
 
-            var step = new ApplyFlatDmgModifiersStep();
-            step.Process(info);
-
-            // 50 - 100 = -50, but should be clamped to 0
-            Assert.AreEqual(0, info.Amounts.Current);
+            Assert.AreEqual(0, info.Amounts.Current); // 50 - 100 clamped to 0
         }
 
         [Test]
         public void ApplyFlatDmgModifiersStep_DoesNotModify_WhenNoConfigProvided()
         {
             const long raw = 100;
-            
-            var (target, dealer, _, _) = MakeEntities();
-            
-            // No config set
+            var (target, dealer) = MakeEntities();
+
             AstraRpgHealthConfigProvider.Instance = null;
 
-            var type = MockDamageType.Create();
-            var source = MockDamageSource.Create();
-            var info = MakeDamageInfo(raw, type, source, target, dealer);
-
-            var step = new ApplyFlatDmgModifiersStep();
-            step.Process(info);
+            var info = MakeDamageInfo(raw, MockDamageType.Create(), MockDamageSource.Create(), target, dealer);
+            new ApplyFlatDmgModifiersStep().Process(info);
 
             Assert.AreEqual(raw, info.Amounts.Current);
         }
@@ -337,24 +274,17 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             const long raw = 100;
             var genericStat = CreateStat("GenericFlatMod");
 
-            var (target, dealer, _, _) = MakeEntities(
-                genericModValue: 0, // No modification
-                genericStat: genericStat);
+            var (target, dealer) = MakeEntities(genericModValue: 0, genericStat: genericStat);
 
-            var config = new MockConfig
+            AstraRpgHealthConfigProvider.Instance = new MockConfig
             {
                 GenericFlatDamageModificationStat = genericStat
             };
-            AstraRpgHealthConfigProvider.Instance = config;
 
-            var type = MockDamageType.Create();
-            var source = MockDamageSource.Create();
-            var info = MakeDamageInfo(raw, type, source, target, dealer);
+            var info = MakeDamageInfo(raw, MockDamageType.Create(), MockDamageSource.Create(), target, dealer);
+            new ApplyFlatDmgModifiersStep().Process(info);
 
-            var step = new ApplyFlatDmgModifiersStep();
-            step.Process(info);
-
-            Assert.AreEqual(100, info.Amounts.Current); // No change
+            Assert.AreEqual(100, info.Amounts.Current);
         }
     }
 }
