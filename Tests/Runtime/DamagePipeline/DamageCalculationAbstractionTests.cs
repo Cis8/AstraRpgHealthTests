@@ -21,7 +21,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
     /// <item><see cref="DamageInfo"/> pre-resolves <see cref="DamageInfo.TargetBarrier"/>, <see cref="DamageInfo.TargetStats"/>
     /// and <see cref="DamageInfo.PerformerStats"/> once in the constructor, making them available to all steps.</item>
     /// <item><see cref="ApplyDefenseStep"/> handles null performer (environmental damage) gracefully without <c>NullReferenceException</c>.</item>
-    /// <item>Stats-reading steps treat missing stat readers as safe no-ops, relying on <c>IStatReader.GetOrZero</c> to return 0 for absent values.</item>
+    /// <item>Stats-reading steps treat missing stat readers as safe no-ops, relying on <c>IStatReader.GetElseZero</c> to return 0 for absent values.</item>
     /// </list>
     /// </summary>
     public class DamageCalculationAbstractionTests
@@ -266,7 +266,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             Assert.AreEqual(expectedResult, info.Amounts.Current);
         }
 
-        // ── Stats-reading steps — null target stats path (GetOrZero safe) ─────────
+        // ── Stats-reading steps — null target stats path (GetElseZero safe) ─────────
 
         [Test]
         public void ApplyFlatDmgModifiersStep_TargetWithNoStatsComponent_NoModification()
@@ -275,7 +275,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             var genericStat = ScriptableObject.CreateInstance<StatSO>();
             var config = new MockAstraRpgHealthConfig { GenericFlatDamageModificationStat = genericStat };
 
-            // EntityCore with no EntityStats component: GetOrZero must return 0
+            // EntityCore with no EntityStats component: GetElseZero must return 0
             var info = MakeInfo(raw, StubDamageType.Create(), MakeCoreOnly(), config: config);
 
             new ApplyFlatDmgModifiersStep().Process(info);
