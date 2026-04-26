@@ -43,6 +43,14 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
         private class MockConfig : IAstraRpgHealthConfig
         {
+            public MockConfig() : this(default) {
+            }
+
+            public MockConfig(HealthRoundingSettings roundingSettings) {
+                RoundingSettings = roundingSettings;
+            }
+
+            public HealthRoundingSettings RoundingSettings { get; }
             public StatSO GenericPercentageDamageModificationStat { get; set; }
             public StatSO GenericFlatDamageModificationStat { get; set; }
             public AttributesScalingComponentSO HealthAttributesScaling { get; set; }

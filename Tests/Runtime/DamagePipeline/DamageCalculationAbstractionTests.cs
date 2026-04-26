@@ -1,6 +1,7 @@
 using System;
 using ElectricDrill.AstraRpgFramework;
 using ElectricDrill.AstraRpgFramework.Stats;
+using ElectricDrill.AstraRpgFramework.Utils;
 using ElectricDrill.AstraRpgHealth.Barrier;
 using ElectricDrill.AstraRpgHealth.Config;
 using ElectricDrill.AstraRpgHealth.Damage;
@@ -73,7 +74,8 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             public long Result;
             public double CapturedDefensiveValue = -1;
 
-            public override long CalculateMitigatedDamage(long amount, double defensiveStatValue)
+            public override long CalculateMitigatedDamage(long amount, double defensiveStatValue,
+                RoundingMode roundingMode)
             {
                 CapturedDefensiveValue = defensiveStatValue;
                 return Result;

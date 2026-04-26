@@ -22,6 +22,7 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         public AttributesScalingComponentSO HealthAttributesScaling { get; set; }
         public StatSO GenericPercentageHealAmountModifierStat { get; set; }
         public StatSO GenericFlatHealAmountModifierStat { get; set; }
+        public HealthRoundingSettings RoundingSettings { get; }
         public StatSO GenericPercentageDamageModificationStat { get; set; }
         public StatSO GenericFlatDamageModificationStat { get; set; }
         public DamageCalculationStrategySO DefaultDamageCalculationCalculationStrategy { get; set; }
@@ -48,8 +49,13 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         public EntityHealedGameEvent GlobalEntityHealedEvent { get; set; }
         public EntityResurrectedGameEvent GlobalEntityResurrectedEvent { get; set; }
 
-        public MockAstraRpgHealthConfig()
+        public MockAstraRpgHealthConfig() : this(default)
         {
+        }
+
+        public MockAstraRpgHealthConfig(HealthRoundingSettings roundingSettings)
+        {
+            RoundingSettings = roundingSettings;
             // Initialize with sensible defaults
             PassiveHealthRegenerationInterval = 1f;
             SuppressPassiveRegenerationEvents = false;

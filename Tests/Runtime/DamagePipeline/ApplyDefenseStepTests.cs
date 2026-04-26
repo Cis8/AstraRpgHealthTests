@@ -1,6 +1,7 @@
 using System.Linq;
 using ElectricDrill.AstraRpgFramework;
 using ElectricDrill.AstraRpgFramework.Stats;
+using ElectricDrill.AstraRpgFramework.Utils;
 using ElectricDrill.AstraRpgHealth.Damage;
 using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
 using ElectricDrill.AstraRpgHealth.DamageMitigationFunctions;
@@ -16,7 +17,8 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         {
             private long _result;
             public void Set(long r) => _result = r;
-            public override long CalculateMitigatedDamage(long amount, double defensiveStatValue) => _result;
+            public override long CalculateMitigatedDamage(long amount, double defensiveStatValue,
+                RoundingMode roundingMode) => _result;
         }
 
         private class MockFlatDefensePenetrationFn : FlatDefensePenetrationFnSO
