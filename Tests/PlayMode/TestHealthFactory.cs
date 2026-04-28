@@ -20,9 +20,9 @@ using UnityEngine;
 
 namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
 {
-    public class MockAstraRpgFrameworkConfig : IAstraRpgFrameworkConfig
+    public class mockAstraFrameworkConfig : IAstraFrameworkConfig
     {
-        public MockAstraRpgFrameworkConfig(
+        public mockAstraFrameworkConfig(
             EntityCoreGameEvent spawnedEvent = null,
             EntityLevelUpGameEvent levelUpEvent = null,
             EntityLevelDownGameEvent levelDownEvent = null,
@@ -42,7 +42,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         public StatChangedGameEvent GlobalStatChangedEvent { get; set; }
         public AttributeChangedGameEvent GlobalAttributeChangedEvent { get; set; }
 
-        public static MockAstraRpgFrameworkConfig CreateMinimal() => new();
+        public static mockAstraFrameworkConfig CreateMinimal() => new();
     }
 
     /// <summary>
@@ -86,7 +86,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             public EntityAttributes Attributes;
             public EntityHealth Health;
             public AstraRpgHealthConfigSO Config;
-            public MockAstraRpgFrameworkConfig FrameworkConfig;
+            public mockAstraFrameworkConfig FrameworkConfig;
             public DamageTypeSO DefaultDamageType;
             public DamageSourceSO DefaultDamageSource;
             public HealthEventsBundle Events; // events actually used (shared or per-entity)
@@ -143,10 +143,10 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
 
             var events = sharedEvents ?? CreateSharedEvents();
             var evtBundle = events;
-            var frameworkConfig = sharedConfig != null && AstraRpgFrameworkConfigProvider.Instance is MockAstraRpgFrameworkConfig existingFrameworkConfig
+            var frameworkConfig = sharedConfig != null && AstraFrameworkConfigProvider.Instance is mockAstraFrameworkConfig existingFrameworkConfig
                 ? existingFrameworkConfig
-                : MockAstraRpgFrameworkConfig.CreateMinimal();
-            AstraRpgFrameworkConfigProvider.Instance = frameworkConfig;
+                : mockAstraFrameworkConfig.CreateMinimal();
+            AstraFrameworkConfigProvider.Instance = frameworkConfig;
 
             // Assign global events to config (must happen before go.SetActive(true) triggers Awake/ValidateConstraints)
             config.GlobalPreDamageInfoEvent = evtBundle.PreDmg;

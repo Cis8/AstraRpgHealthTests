@@ -100,7 +100,7 @@ public class EntityHealthMaxHpScalingTests
     [TearDown]
     public void TearDown()
     {
-        AstraRpgFrameworkConfigProvider.Reset();
+        AstraFrameworkConfigProvider.Reset();
 
         Object.DestroyImmediate(_entity.Go);
         Object.DestroyImmediate(_testStat);
