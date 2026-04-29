@@ -2,10 +2,10 @@ using System.Linq;
 using ElectricDrill.AstraRpgFramework;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
-using ElectricDrill.AstraRpgHealth.Damage;
-using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
-using ElectricDrill.AstraRpgHealth.DamageMitigationFunctions;
-using ElectricDrill.AstraRpgHealth.DefensePenetrationFunctions;
+using ElectricDrill.AstraHealth.Damage;
+using ElectricDrill.AstraHealth.Damage.CalculationPipeline;
+using ElectricDrill.AstraHealth.DamageMitigationFunctions;
+using ElectricDrill.AstraHealth.DefensePenetrationFunctions;
 using NUnit.Framework;
 using UnityEngine;
 

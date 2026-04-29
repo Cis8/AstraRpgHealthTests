@@ -4,11 +4,11 @@ using ElectricDrill.AstraRpgFramework.GameActions.Actions.Component;
 using ElectricDrill.AstraRpgFramework.GameActions.Actions.WithIHasEntity;
 using ElectricDrill.AstraRpgFramework.Scaling.ScalingComponents;
 using ElectricDrill.AstraRpgFramework.Stats;
-using ElectricDrill.AstraRpgHealth.Config;
-using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
-using ElectricDrill.AstraRpgHealth.Events;
-using ElectricDrill.AstraRpgHealth.Experience;
-using ElectricDrill.AstraRpgHealth.Heal;
+using ElectricDrill.AstraHealth.Config;
+using ElectricDrill.AstraHealth.Damage.CalculationPipeline;
+using ElectricDrill.AstraHealth.Events;
+using ElectricDrill.AstraHealth.Experience;
+using ElectricDrill.AstraHealth.Heal;
 using UnityEngine;
 
 namespace ElectricDrill.AstraRpgHealthTests.TestUtils

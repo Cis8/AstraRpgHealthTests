@@ -1,5 +1,5 @@
-using ElectricDrill.AstraRpgHealth.Damage;
-using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
+using ElectricDrill.AstraHealth.Damage;
+using ElectricDrill.AstraHealth.Damage.CalculationPipeline;
 using NUnit.Framework;
 
 namespace ElectricDrill.AstraRpgHealthTests.Runtime.Damage

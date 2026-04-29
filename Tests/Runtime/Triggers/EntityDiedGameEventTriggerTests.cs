@@ -1,9 +1,9 @@
 using System;
 using System.Reflection;
 using ElectricDrill.AstraRpgFramework;
-using ElectricDrill.AstraRpgHealth.Events;
-using ElectricDrill.AstraRpgHealth.Events.Contexts;
-using ElectricDrill.AstraRpgHealth.Triggers;
+using ElectricDrill.AstraHealth.Events;
+using ElectricDrill.AstraHealth.Events.Contexts;
+using ElectricDrill.AstraHealth.Triggers;
 using ElectricDrill.AstraRpgFrameworkTests.Utils;
 using NUnit.Framework;
 using UnityEngine;

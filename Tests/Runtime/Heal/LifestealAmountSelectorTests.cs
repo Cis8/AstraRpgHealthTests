@@ -1,6 +1,6 @@
-using ElectricDrill.AstraRpgHealth.Damage;
-using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
-using ElectricDrill.AstraRpgHealth.Heal;
+using ElectricDrill.AstraHealth.Damage;
+using ElectricDrill.AstraHealth.Damage.CalculationPipeline;
+using ElectricDrill.AstraHealth.Heal;
 using NUnit.Framework;
 
 namespace ElectricDrill.AstraRpgHealthTests.Runtime.Heal

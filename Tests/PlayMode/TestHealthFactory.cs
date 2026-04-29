@@ -10,12 +10,12 @@ using ElectricDrill.AstraRpgFramework.Experience;
 using ElectricDrill.AstraRpgFramework.GameActions;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
-using ElectricDrill.AstraRpgHealth;
-using ElectricDrill.AstraRpgHealth.Config;
-using ElectricDrill.AstraRpgHealth.Damage;
-using ElectricDrill.AstraRpgHealth.Damage.CalculationPipeline;
-using ElectricDrill.AstraRpgHealth.Events;
-using ElectricDrill.AstraRpgHealth.Heal;
+using ElectricDrill.AstraHealth;
+using ElectricDrill.AstraHealth.Config;
+using ElectricDrill.AstraHealth.Damage;
+using ElectricDrill.AstraHealth.Damage.CalculationPipeline;
+using ElectricDrill.AstraHealth.Events;
+using ElectricDrill.AstraHealth.Heal;
 using UnityEngine;
 
 namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode

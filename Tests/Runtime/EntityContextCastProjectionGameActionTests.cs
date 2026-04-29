@@ -3,9 +3,9 @@ using System.Threading;
 using ElectricDrill.AstraRpgFramework;
 using ElectricDrill.AstraRpgFramework.Contexts;
 using ElectricDrill.AstraRpgFramework.GameActions;
-using ElectricDrill.AstraRpgHealth.Damage;
-using ElectricDrill.AstraRpgHealth.Events.Contexts;
-using ElectricDrill.AstraRpgHealth.GameActions.Actions.WithIHasEntity;
+using ElectricDrill.AstraHealth.Damage;
+using ElectricDrill.AstraHealth.Events.Contexts;
+using ElectricDrill.AstraHealth.GameActions.Actions.WithIHasEntity;
 using NUnit.Framework;
 using UnityEngine;
 

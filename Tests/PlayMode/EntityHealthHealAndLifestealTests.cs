@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
-using ElectricDrill.AstraRpgHealth.Damage;
-using ElectricDrill.AstraRpgHealth.Heal;
+using ElectricDrill.AstraHealth.Damage;
+using ElectricDrill.AstraHealth.Heal;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;

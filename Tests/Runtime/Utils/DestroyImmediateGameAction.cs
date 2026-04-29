@@ -2,7 +2,7 @@ using System.Threading;
 using ElectricDrill.AstraRpgFramework.GameActions;
 using UnityEngine;
 
-namespace ElectricDrill.AstraRpgHealth.Tests.Runtime.Utils
+namespace ElectricDrill.AstraHealth.Tests.Runtime.Utils
 {
     /// <summary>
     /// Test action that immediately destroys a Component's GameObject.
