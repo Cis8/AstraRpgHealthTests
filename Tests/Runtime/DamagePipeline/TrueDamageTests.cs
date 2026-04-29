@@ -127,6 +127,10 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             _targetCore = _targetGo.AddComponent<StubEntityCore>();
             _dealerCore = _dealerGo.AddComponent<EntityCore>();
 
+            // These tests build DamageInfo directly; inject a minimal config up front so
+            // config-agnostic cases don't trigger the provider's Resources fallback path.
+            AstraRpgHealthConfigProvider.Instance = new MockConfig();
+
             _targetHealth = _targetGo.AddComponent<EntityHealth>();
             
             // Setup health component
