@@ -8,6 +8,7 @@ using ElectricDrill.AstraRpgFramework.Scaling.ScalingComponents;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
 using ElectricDrill.AstraHealth;
+using ElectricDrill.AstraHealth.Core;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;

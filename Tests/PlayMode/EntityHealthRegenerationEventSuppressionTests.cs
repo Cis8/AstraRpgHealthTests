@@ -2,6 +2,7 @@ using System.Collections;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
 using ElectricDrill.AstraHealth;
+using ElectricDrill.AstraHealth.Core;
 using ElectricDrill.AstraHealth.Heal;
 using NUnit.Framework;
 using UnityEngine;

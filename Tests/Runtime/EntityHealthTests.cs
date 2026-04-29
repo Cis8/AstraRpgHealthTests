@@ -8,6 +8,7 @@ using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
 using ElectricDrill.AstraHealth;
 using ElectricDrill.AstraHealth.Config;
+using ElectricDrill.AstraHealth.Core;
 using ElectricDrill.AstraHealth.Damage;
 using ElectricDrill.AstraHealth.Damage.CalculationPipeline;
 using ElectricDrill.AstraHealth.Events;
