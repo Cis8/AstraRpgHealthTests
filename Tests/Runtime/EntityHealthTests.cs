@@ -94,12 +94,12 @@ namespace ElectricDrill.AstraRpgHealthTests
             _mockDealerStats.Setup(s => s.Get(It.IsAny<StatSO>())).Returns(0L);
 
             // Inject mock config via provider BEFORE AddComponent<EntityHealth> (required events must be set)
-            AstraRpgHealthConfigProvider.Instance = MockAstraRpgHealthConfig.CreateMinimal();
+            AstraHealthConfigProvider.Instance = MockAstraHealthConfig.CreateMinimal();
 
             _go.AddComponent<EntityHealth>();
             _entityHealth = _go.GetComponent<EntityHealth>();
             // EditMode tests: Awake() is not triggered by AddComponent, so _config must be set manually.
-            _entityHealth._config = AstraRpgHealthConfigProvider.Instance;
+            _entityHealth._config = AstraHealthConfigProvider.Instance;
             _entityHealth._entityCore = _mockEntityCore.Object;
             _entityHealth._entityStats = _mockEntityStats.Object;
 
@@ -120,14 +120,14 @@ namespace ElectricDrill.AstraRpgHealthTests
             typeof(EntityHealth).GetField(field, BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(_entityHealth, value);
 
         private DamageResolutionGameEvent GetResolutionEvent() =>
-            ((IAstraRpgHealthConfig)AstraRpgHealthConfigProvider.Instance).GlobalDamageResolutionEvent;
+            ((IAstraHealthConfig)AstraHealthConfigProvider.Instance).GlobalDamageResolutionEvent;
 
         [TearDown]
         public void Teardown()
         {
             Object.DestroyImmediate(_go);
             // Reset provider to prevent test pollution
-            AstraRpgHealthConfigProvider.Reset();
+            AstraHealthConfigProvider.Reset();
         }
 
         private PreDamageContext BuildPre(long amount, bool ignore = false)

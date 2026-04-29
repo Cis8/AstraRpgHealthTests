@@ -51,7 +51,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             }
         }
 
-        private class MockConfig : IAstraRpgHealthConfig
+        private class MockConfig : IAstraHealthConfig
         {
             public MockConfig() : this(default) {
             }
@@ -130,7 +130,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
             // These tests build DamageInfo directly; inject a minimal config up front so
             // config-agnostic cases don't trigger the provider's Resources fallback path.
-            AstraRpgHealthConfigProvider.Instance = new MockConfig();
+            AstraHealthConfigProvider.Instance = new MockConfig();
 
             _targetHealth = _targetGo.AddComponent<EntityHealth>();
             
@@ -145,7 +145,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         [TearDown]
         public void Cleanup()
         {
-            AstraRpgHealthConfigProvider.Reset();
+            AstraHealthConfigProvider.Reset();
             Object.DestroyImmediate(_targetGo);
             Object.DestroyImmediate(_dealerGo);
         }
@@ -166,7 +166,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
                 .WithTarget(_targetCore)
                 .WithPerformer(_dealerCore)
                 .Build();
-            return new DamageInfo(pre, AstraRpgHealthConfigProvider.Instance);
+            return new DamageInfo(pre, AstraHealthConfigProvider.Instance);
         }
 
         #region Barrier Tests
@@ -220,7 +220,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             {
                 GenericPercentageDamageModificationStat = genericStat
             };
-            AstraRpgHealthConfigProvider.Instance = config;
+            AstraHealthConfigProvider.Instance = config;
 
             var type = MockDamageType.Create(ignorePercentage: true);
             var source = MockDamageSource.Create();
@@ -244,7 +244,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             {
                 GenericPercentageDamageModificationStat = genericStat
             };
-            AstraRpgHealthConfigProvider.Instance = config;
+            AstraHealthConfigProvider.Instance = config;
 
             var type = MockDamageType.Create(ignorePercentage: false);
             var source = MockDamageSource.Create();
@@ -268,7 +268,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             {
                 GenericPercentageDamageModificationStat = genericStat
             };
-            AstraRpgHealthConfigProvider.Instance = config;
+            AstraHealthConfigProvider.Instance = config;
 
             var type = MockDamageType.Create(ignorePercentage: true);
             var source = MockDamageSource.Create();
@@ -297,7 +297,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             {
                 GenericFlatDamageModificationStat = genericStat
             };
-            AstraRpgHealthConfigProvider.Instance = config;
+            AstraHealthConfigProvider.Instance = config;
 
             var type = MockDamageType.Create(ignoreFlat: true);
             var source = MockDamageSource.Create();
@@ -321,7 +321,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             {
                 GenericFlatDamageModificationStat = genericStat
             };
-            AstraRpgHealthConfigProvider.Instance = config;
+            AstraHealthConfigProvider.Instance = config;
 
             var type = MockDamageType.Create(ignoreFlat: false);
             var source = MockDamageSource.Create();
@@ -356,7 +356,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
                 GenericPercentageDamageModificationStat = percentageStat,
                 GenericFlatDamageModificationStat = flatStat
             };
-            AstraRpgHealthConfigProvider.Instance = config;
+            AstraHealthConfigProvider.Instance = config;
 
             var type = MockDamageType.Create(
                 ignoreBarrier: true,
@@ -397,7 +397,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
                 GenericPercentageDamageModificationStat = percentageStat,
                 GenericFlatDamageModificationStat = flatStat
             };
-            AstraRpgHealthConfigProvider.Instance = config;
+            AstraHealthConfigProvider.Instance = config;
 
             // Ignore only barrier and percentage, but not flat
             var type = MockDamageType.Create(

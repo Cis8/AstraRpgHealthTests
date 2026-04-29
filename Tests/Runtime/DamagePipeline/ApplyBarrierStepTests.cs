@@ -64,7 +64,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             eh._entityStats = stats;
             
             // Inject mock config via provider to avoid dependency on Resources
-            AstraRpgHealthConfigProvider.Instance = MockAstraRpgHealthConfig.CreateMinimal();
+            AstraHealthConfigProvider.Instance = MockAstraHealthConfig.CreateMinimal();
             
             eh.SetupMaxHp(EntityHealth.HpBehaviourOnMaxHpIncrease.AddHealthUpToMaxHp);
             return (eh, core);
@@ -193,7 +193,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         public void TearDown()
         {
             // Reset provider to prevent test pollution
-            AstraRpgHealthConfigProvider.Reset();
+            AstraHealthConfigProvider.Reset();
         }
     }
 }

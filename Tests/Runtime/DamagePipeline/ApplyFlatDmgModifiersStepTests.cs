@@ -41,7 +41,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             }
         }
 
-        private class MockConfig : IAstraRpgHealthConfig
+        private class MockConfig : IAstraHealthConfig
         {
             public MockConfig() : this(default) {
             }
@@ -128,7 +128,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
                 .WithTarget(target)
                 .WithPerformer(dealer)
                 .Build();
-            return new DamageInfo(pre, AstraRpgHealthConfigProvider.Instance);
+            return new DamageInfo(pre, AstraHealthConfigProvider.Instance);
         }
 
         [TearDown]
@@ -153,7 +153,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
             var (target, dealer) = MakeEntities(genericModValue: -20, genericStat: genericStat);
 
-            AstraRpgHealthConfigProvider.Instance = new MockConfig
+            AstraHealthConfigProvider.Instance = new MockConfig
             {
                 GenericFlatDamageModificationStat = genericStat
             };
@@ -172,7 +172,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
             var (target, dealer) = MakeEntities(genericModValue: 15, genericStat: genericStat);
 
-            AstraRpgHealthConfigProvider.Instance = new MockConfig
+            AstraHealthConfigProvider.Instance = new MockConfig
             {
                 GenericFlatDamageModificationStat = genericStat
             };
@@ -192,7 +192,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
             var (target, dealer) = MakeEntities(sourceModValue: -30, sourceStat: sourceModStat);
 
-            AstraRpgHealthConfigProvider.Instance = new MockConfig();
+            AstraHealthConfigProvider.Instance = new MockConfig();
 
             var info = MakeDamageInfo(raw, MockDamageType.Create(), source, target, dealer);
             new ApplyFlatDmgModifiersStep().Process(info);
@@ -209,7 +209,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
             var (target, dealer) = MakeEntities(typeModValue: 25, typeStat: typeModStat);
 
-            AstraRpgHealthConfigProvider.Instance = new MockConfig();
+            AstraHealthConfigProvider.Instance = new MockConfig();
 
             var info = MakeDamageInfo(raw, type, MockDamageSource.Create(), target, dealer);
             new ApplyFlatDmgModifiersStep().Process(info);
@@ -232,7 +232,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
                 genericModValue: -10, sourceModValue: -5, typeModValue: 20,
                 genericStat: genericStat, sourceStat: sourceStat, typeStat: typeStat);
 
-            AstraRpgHealthConfigProvider.Instance = new MockConfig
+            AstraHealthConfigProvider.Instance = new MockConfig
             {
                 GenericFlatDamageModificationStat = genericStat
             };
@@ -251,7 +251,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
             var (target, dealer) = MakeEntities(genericModValue: -100, genericStat: genericStat);
 
-            AstraRpgHealthConfigProvider.Instance = new MockConfig
+            AstraHealthConfigProvider.Instance = new MockConfig
             {
                 GenericFlatDamageModificationStat = genericStat
             };
@@ -268,7 +268,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             const long raw = 100;
             var (target, dealer) = MakeEntities();
 
-            AstraRpgHealthConfigProvider.Instance = null;
+            AstraHealthConfigProvider.Instance = null;
 
             var info = MakeDamageInfo(raw, MockDamageType.Create(), MockDamageSource.Create(), target, dealer);
             new ApplyFlatDmgModifiersStep().Process(info);
@@ -284,7 +284,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
             var (target, dealer) = MakeEntities(genericModValue: 0, genericStat: genericStat);
 
-            AstraRpgHealthConfigProvider.Instance = new MockConfig
+            AstraHealthConfigProvider.Instance = new MockConfig
             {
                 GenericFlatDamageModificationStat = genericStat
             };

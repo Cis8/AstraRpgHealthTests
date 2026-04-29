@@ -67,7 +67,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             public override DamageInfo CalculateDamage(DamageInfo data) => _fn?.Invoke(data) ?? data;
         }
 
-        private AstraRpgHealthConfigSO _config;
+        private AstraHealthConfigSO _config;
         private GameObject _go;
         private EntityHealth _entityHealth;
         private Mock<EntityCore> _mockEntityCore;
@@ -86,7 +86,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             _healSource = MockHealSource.Create();
 
             // Create and configure the config with required and optional events before the GO activates
-            _config = ScriptableObject.CreateInstance<AstraRpgHealthConfigSO>();
+            _config = ScriptableObject.CreateInstance<AstraHealthConfigSO>();
             _config.DefaultDamageCalculationCalculationStrategy = TestDamageCalculationStrategy.Create(d => d);
             _config.DefaultResurrectionSource = _healSource;
             _config.GlobalPreDamageInfoEvent = ScriptableObject.CreateInstance<PreDamageGameEvent>();
@@ -97,7 +97,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             _config.GlobalPreHealEvent = ScriptableObject.CreateInstance<PreHealGameEvent>();
             _config.GlobalEntityHealedEvent = ScriptableObject.CreateInstance<EntityHealedGameEvent>();
             _config.GlobalEntityResurrectedEvent = ScriptableObject.CreateInstance<EntityResurrectedGameEvent>();
-            AstraRpgHealthConfigProvider.Instance = _config;
+            AstraHealthConfigProvider.Instance = _config;
 
             _go = new GameObject("Entity");
             _mockEntityCore = new Mock<EntityCore>();
@@ -117,7 +117,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             _go.AddComponent<EntityHealth>();
             _entityHealth = _go.GetComponent<EntityHealth>();
             // EditMode tests: Awake() is not triggered by AddComponent, so _config must be set manually.
-            _entityHealth._config = AstraRpgHealthConfigProvider.Instance;
+            _entityHealth._config = AstraHealthConfigProvider.Instance;
             _entityHealth._entityCore = _mockEntityCore.Object;
             _entityHealth._entityStats = _mockEntityStats.Object;
 
@@ -136,7 +136,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.Runtime
             Object.DestroyImmediate(_damageSource);
             Object.DestroyImmediate(_damageType);
             Object.DestroyImmediate(_healSource);
-            AstraRpgHealthConfigProvider.Reset();
+            AstraHealthConfigProvider.Reset();
         }
 
         private PreDamageContext CreateDamageInfo(long amount)

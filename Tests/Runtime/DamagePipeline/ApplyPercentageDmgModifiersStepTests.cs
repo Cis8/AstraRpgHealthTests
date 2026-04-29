@@ -40,7 +40,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             }
         }
 
-        private class MockConfig : IAstraRpgHealthConfig
+        private class MockConfig : IAstraHealthConfig
         {
             public MockConfig() : this(default) {
             }
@@ -125,7 +125,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
                 .WithTarget(target)
                 .WithPerformer(dealer)
                 .Build();
-            return new DamageInfo(pre, AstraRpgHealthConfigProvider.Instance);
+            return new DamageInfo(pre, AstraHealthConfigProvider.Instance);
         }
 
         [TearDown]
@@ -150,7 +150,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
             var (target, dealer) = MakeEntities(genericModValue: -100, genericStat: genericStat);
 
-            AstraRpgHealthConfigProvider.Instance = new MockConfig
+            AstraHealthConfigProvider.Instance = new MockConfig
             {
                 GenericPercentageDamageModificationStat = genericStat
             };
@@ -171,7 +171,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
             var (target, dealer) = MakeEntities(genericModValue: -150, genericStat: genericStat);
 
-            AstraRpgHealthConfigProvider.Instance = new MockConfig
+            AstraHealthConfigProvider.Instance = new MockConfig
             {
                 GenericPercentageDamageModificationStat = genericStat
             };
@@ -192,7 +192,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
             var (target, dealer) = MakeEntities(genericModValue: -50, genericStat: genericStat);
 
-            AstraRpgHealthConfigProvider.Instance = new MockConfig
+            AstraHealthConfigProvider.Instance = new MockConfig
             {
                 GenericPercentageDamageModificationStat = genericStat
             };
@@ -214,7 +214,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
             var (target, dealer) = MakeEntities(sourceModValue: -100, sourceStat: sourceModStat);
 
-            AstraRpgHealthConfigProvider.Instance = new MockConfig();
+            AstraHealthConfigProvider.Instance = new MockConfig();
 
             var info = MakeDamageInfo(raw, MockDamageType.Create(), source, target, dealer);
             new ApplyPercentageDmgModifiersStep().Process(info);
@@ -233,7 +233,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
             var (target, dealer) = MakeEntities(typeModValue: -100, typeStat: typeModStat);
 
-            AstraRpgHealthConfigProvider.Instance = new MockConfig();
+            AstraHealthConfigProvider.Instance = new MockConfig();
 
             var info = MakeDamageInfo(raw, type, MockDamageSource.Create(), target, dealer);
             new ApplyPercentageDmgModifiersStep().Process(info);
@@ -262,7 +262,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
                 sourceStat: sourceStat,
                 typeStat: typeStat);
 
-            AstraRpgHealthConfigProvider.Instance = new MockConfig
+            AstraHealthConfigProvider.Instance = new MockConfig
             {
                 GenericPercentageDamageModificationStat = genericStat
             };
@@ -295,7 +295,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
                 sourceStat: sourceStat,
                 typeStat: typeStat);
 
-            AstraRpgHealthConfigProvider.Instance = new MockConfig
+            AstraHealthConfigProvider.Instance = new MockConfig
             {
                 GenericPercentageDamageModificationStat = genericStat
             };
@@ -315,7 +315,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             const long raw = 100;
             var (target, dealer) = MakeEntities();
 
-            AstraRpgHealthConfigProvider.Instance = null;
+            AstraHealthConfigProvider.Instance = null;
 
             var info = MakeDamageInfo(raw, MockDamageType.Create(), MockDamageSource.Create(), target, dealer);
             new ApplyPercentageDmgModifiersStep().Process(info);

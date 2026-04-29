@@ -118,7 +118,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             DamageTypeSO type,
             EntityCore target,
             EntityCore performer = null,
-            IAstraRpgHealthConfig config = null)
+            IAstraHealthConfig config = null)
         {
             var builder = PreDamageContext.Builder
                 .WithAmount(amount)
@@ -135,7 +135,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         {
             foreach (var go in Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 Object.DestroyImmediate(go);
-            AstraRpgHealthConfigProvider.Reset();
+            AstraHealthConfigProvider.Reset();
         }
 
         // ── DamageInfo pre-resolution ─────────────────────────────────────────────
@@ -275,7 +275,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         {
             const long raw = 100;
             var genericStat = ScriptableObject.CreateInstance<StatSO>();
-            var config = new MockAstraRpgHealthConfig { GenericFlatDamageModificationStat = genericStat };
+            var config = new MockAstraHealthConfig { GenericFlatDamageModificationStat = genericStat };
 
             // EntityCore with no EntityStats component: GetElseZero must return 0
             var info = MakeInfo(raw, StubDamageType.Create(), MakeCoreOnly(), config: config);
@@ -290,7 +290,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         {
             const long raw = 100;
             var genericStat = ScriptableObject.CreateInstance<StatSO>();
-            var config = new MockAstraRpgHealthConfig { GenericPercentageDamageModificationStat = genericStat };
+            var config = new MockAstraHealthConfig { GenericPercentageDamageModificationStat = genericStat };
 
             var info = MakeInfo(raw, StubDamageType.Create(), MakeCoreOnly(), config: config);
 

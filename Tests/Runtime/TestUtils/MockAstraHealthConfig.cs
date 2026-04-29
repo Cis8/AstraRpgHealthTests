@@ -14,10 +14,10 @@ using UnityEngine;
 namespace ElectricDrill.AstraRpgHealthTests.TestUtils
 {
     /// <summary>
-    /// Mock implementation of IAstraRpgHealthConfig for testing purposes.
+    /// Mock implementation of IAstraHealthConfig for testing purposes.
     /// Provides sensible defaults and allows overriding specific properties.
     /// </summary>
-    internal class MockAstraRpgHealthConfig : IAstraRpgHealthConfig
+    internal class MockAstraHealthConfig : IAstraHealthConfig
     {
         public AttributesScalingComponentSO HealthAttributesScaling { get; set; }
         public StatSO GenericPercentageHealAmountModifierStat { get; set; }
@@ -49,11 +49,11 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         public EntityHealedGameEvent GlobalEntityHealedEvent { get; set; }
         public EntityResurrectedGameEvent GlobalEntityResurrectedEvent { get; set; }
 
-        public MockAstraRpgHealthConfig() : this(default)
+        public MockAstraHealthConfig() : this(default)
         {
         }
 
-        public MockAstraRpgHealthConfig(HealthRoundingSettings roundingSettings)
+        public MockAstraHealthConfig(HealthRoundingSettings roundingSettings)
         {
             RoundingSettings = roundingSettings;
             // Initialize with sensible defaults
@@ -84,17 +84,17 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         /// <summary>
         /// Creates a minimal mock config with only the essentials needed for basic tests.
         /// </summary>
-        public static MockAstraRpgHealthConfig CreateMinimal()
+        public static MockAstraHealthConfig CreateMinimal()
         {
-            return new MockAstraRpgHealthConfig();
+            return new MockAstraHealthConfig();
         }
 
         /// <summary>
         /// Creates a mock config with a custom damage calculation strategy.
         /// </summary>
-        public static MockAstraRpgHealthConfig WithDamageStrategy(DamageCalculationStrategySO strategy)
+        public static MockAstraHealthConfig WithDamageStrategy(DamageCalculationStrategySO strategy)
         {
-            var config = new MockAstraRpgHealthConfig
+            var config = new MockAstraHealthConfig
             {
                 DefaultDamageCalculationCalculationStrategy = strategy
             };
@@ -104,9 +104,9 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         /// <summary>
         /// Creates a mock config with a custom death strategy.
         /// </summary>
-        public static MockAstraRpgHealthConfig WithDeathGameAction(GameAction<IHasEntity> strategy)
+        public static MockAstraHealthConfig WithDeathGameAction(GameAction<IHasEntity> strategy)
         {
-            var config = new MockAstraRpgHealthConfig
+            var config = new MockAstraHealthConfig
             {
                 DefaultOnDeathGameAction = strategy
             };
@@ -116,9 +116,9 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         /// <summary>
         /// Creates a mock config with a custom resurrection heal source.
         /// </summary>
-        public static MockAstraRpgHealthConfig WithResurrectionSource(HealSourceSO healSource)
+        public static MockAstraHealthConfig WithResurrectionSource(HealSourceSO healSource)
         {
-            var config = new MockAstraRpgHealthConfig
+            var config = new MockAstraHealthConfig
             {
                 DefaultResurrectionSource = healSource
             };
@@ -129,9 +129,9 @@ namespace ElectricDrill.AstraRpgHealthTests.TestUtils
         /// Creates a mock config with a custom health attributes scaling component.
         /// Use this only if your test entities have EntityAttributes configured.
         /// </summary>
-        public static MockAstraRpgHealthConfig WithHealthAttributesScaling(AttributesScalingComponentSO scalingComponent)
+        public static MockAstraHealthConfig WithHealthAttributesScaling(AttributesScalingComponentSO scalingComponent)
         {
-            var config = new MockAstraRpgHealthConfig
+            var config = new MockAstraHealthConfig
             {
                 HealthAttributesScaling = scalingComponent
             };

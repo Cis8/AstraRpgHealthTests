@@ -86,7 +86,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             public EntityStats Stats;
             public EntityAttributes Attributes;
             public EntityHealth Health;
-            public AstraRpgHealthConfigSO Config;
+            public AstraHealthConfigSO Config;
             public mockAstraFrameworkConfig FrameworkConfig;
             public DamageTypeSO DefaultDamageType;
             public DamageSourceSO DefaultDamageSource;
@@ -94,11 +94,11 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         }
 
         public static HealthEntityBundle CreateEntity(string name = "Entity",
-            AstraRpgHealthConfigSO sharedConfig = null,
+            AstraHealthConfigSO sharedConfig = null,
             long maxHp = 100,
             bool allowNegative = false,
             long barrierAmount = 0,
-            Action<AstraRpgHealthConfigSO> configMutator = null,
+            Action<AstraHealthConfigSO> configMutator = null,
             Action<EntityHealth> healthMutator = null,
             bool initializeStats = false,
             bool initializeAttributes = false,
@@ -109,7 +109,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             var config = sharedConfig;
             if (config == null)
             {
-                config = ScriptableObject.CreateInstance<AstraRpgHealthConfigSO>();
+                config = ScriptableObject.CreateInstance<AstraHealthConfigSO>();
                 // Ensure a default OnDeathGameAction on the config
                 var cfgDeath = ScriptableObject.CreateInstance<TestOnDeathStrategy>();
                 config.DefaultOnDeathGameAction = cfgDeath;
@@ -241,9 +241,9 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             };
         }
 
-        private static void SetConfigProviderInstance(AstraRpgHealthConfigSO config)
+        private static void SetConfigProviderInstance(AstraHealthConfigSO config)
         {
-            AstraRpgHealthConfigProvider.Instance = config;
+            AstraHealthConfigProvider.Instance = config;
         }
 
         public static PreDamageContext BuildPre(long amount, HealthEntityBundle dealer, HealthEntityBundle target,
@@ -362,7 +362,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         /// <summary>
         /// Configures type-specific lifesteal directly on the DamageTypeSO.
         /// </summary>
-        internal static void AssignLifestealMapping(AstraRpgHealthConfigSO config, DamageTypeSO damageType, StatSO lifestealStat, HealSourceSO lifestealSource)
+        internal static void AssignLifestealMapping(AstraHealthConfigSO config, DamageTypeSO damageType, StatSO lifestealStat, HealSourceSO lifestealSource)
         {
             damageType.Lifesteal.Configure(lifestealStat, lifestealSource);
         }
