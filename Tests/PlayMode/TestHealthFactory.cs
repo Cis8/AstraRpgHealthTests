@@ -23,18 +23,19 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
 {
     public class mockAstraFrameworkConfig : IAstraFrameworkConfig
     {
-        public mockAstraFrameworkConfig(
-            EntityCoreGameEvent spawnedEvent = null,
+        public mockAstraFrameworkConfig(EntityCoreGameEvent spawnedEvent = null,
             EntityLevelUpGameEvent levelUpEvent = null,
             EntityLevelDownGameEvent levelDownEvent = null,
             StatChangedGameEvent statChangedEvent = null,
-            AttributeChangedGameEvent attributeChangedEvent = null)
+            AttributeChangedGameEvent attributeChangedEvent = null,
+            StatSO experienceGainedModifierStat = null)
         {
             GlobalEntitySpawnedEvent = spawnedEvent ? spawnedEvent : ScriptableObject.CreateInstance<EntityCoreGameEvent>();
             GlobalEntityLevelUpEvent = levelUpEvent ? levelUpEvent : ScriptableObject.CreateInstance<EntityLevelUpGameEvent>();
             GlobalEntityLevelDownEvent = levelDownEvent ? levelDownEvent : ScriptableObject.CreateInstance<EntityLevelDownGameEvent>();
             GlobalStatChangedEvent = statChangedEvent ? statChangedEvent : ScriptableObject.CreateInstance<StatChangedGameEvent>();
             GlobalAttributeChangedEvent = attributeChangedEvent ? attributeChangedEvent : ScriptableObject.CreateInstance<AttributeChangedGameEvent>();
+            ExperienceGainedModifierStat = experienceGainedModifierStat ?  experienceGainedModifierStat : ScriptableObject.CreateInstance<StatSO>();
         }
 
         public EntityCoreGameEvent GlobalEntitySpawnedEvent { get; set; }
@@ -42,6 +43,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         public EntityLevelDownGameEvent GlobalEntityLevelDownEvent { get; set; }
         public StatChangedGameEvent GlobalStatChangedEvent { get; set; }
         public AttributeChangedGameEvent GlobalAttributeChangedEvent { get; set; }
+        public StatSO ExperienceGainedModifierStat { get; }
 
         public static mockAstraFrameworkConfig CreateMinimal() => new();
     }
