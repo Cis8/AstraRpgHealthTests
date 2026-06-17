@@ -49,7 +49,7 @@ namespace ElectricDrill.AstraRpgHealthTests
         [Test]
         public void PreDamageProjection_ForwardsPayload_WhenRuntimeTypeMatches()
         {
-            var projection = ScriptableObject.CreateInstance<EntityContextToPreDamageContextProjectionGameAction>();
+            var projection = ScriptableObject.CreateInstance<EntityContextToPreDamageContextProjectionGameActionSO>();
             var innerAction = ScriptableObject.CreateInstance<RecordingPreDamageAction>();
             SetInnerAction(projection, innerAction);
 
@@ -64,7 +64,7 @@ namespace ElectricDrill.AstraRpgHealthTests
         [Test]
         public void EntityDiedProjection_ForwardsPayload_WhenRuntimeTypeMatches()
         {
-            var projection = ScriptableObject.CreateInstance<EntityContextToEntityDiedContextProjectionGameAction>();
+            var projection = ScriptableObject.CreateInstance<EntityContextToEntityDiedContextProjectionGameActionSO>();
             var innerAction = ScriptableObject.CreateInstance<RecordingEntityDiedAction>();
             SetInnerAction(projection, innerAction);
 
@@ -79,7 +79,7 @@ namespace ElectricDrill.AstraRpgHealthTests
         [Test]
         public void DamageResolutionProjection_ForwardsPayload_WhenRuntimeTypeMatches()
         {
-            var projection = ScriptableObject.CreateInstance<EntityContextToDamageResolutionContextProjectionGameAction>();
+            var projection = ScriptableObject.CreateInstance<EntityContextToDamageResolutionContextProjectionGameActionSO>();
             var innerAction = ScriptableObject.CreateInstance<RecordingDamageResolutionAction>();
             SetInnerAction(projection, innerAction);
 
@@ -94,7 +94,7 @@ namespace ElectricDrill.AstraRpgHealthTests
         [Test]
         public void Projection_DoesNothing_WhenRuntimeTypeDoesNotMatch()
         {
-            var projection = ScriptableObject.CreateInstance<EntityContextToPreDamageContextProjectionGameAction>();
+            var projection = ScriptableObject.CreateInstance<EntityContextToPreDamageContextProjectionGameActionSO>();
             var innerAction = ScriptableObject.CreateInstance<RecordingPreDamageAction>();
             SetInnerAction(projection, innerAction);
 
