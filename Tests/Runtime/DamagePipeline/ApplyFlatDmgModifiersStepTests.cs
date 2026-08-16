@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using ElectricDrill.AstraRpgFramework;
 using ElectricDrill.AstraRpgFramework.Contexts;
 using ElectricDrill.AstraRpgFramework.GameActions;
+using ElectricDrill.AstraRpgFramework.Ownership;
 using ElectricDrill.AstraRpgFramework.Scaling.ScalingComponents;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
@@ -63,7 +64,9 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             public StatSO ManualHealthRegenerationStat { get; set; }
             public bool SuppressPassiveRegenerationEvents { get; set; }
             public bool SuppressManualRegenerationEvents { get; set; }
+            public EntityAttribution PerformerAttribution { get; set; }
             public LifestealStatConfig GenericLifesteal { get; set; }
+            public LifestealStatSource LifestealStatSource { get; set; }
             public bool SuppressLifestealEvents { get; set; }
             public bool UnifyLifestealHeals { get; set; }
             public GameAction<IHasEntity> DefaultOnDeathGameAction { get; set; }
