@@ -1,6 +1,8 @@
 ﻿using System.Collections;
+using ElectricDrill.AstraRpgFramework.Ownership;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
+using ElectricDrill.AstraHealth.Config;
 using ElectricDrill.AstraHealth.Damage;
 using ElectricDrill.AstraHealth.Heal;
 using NUnit.Framework;
@@ -236,12 +238,124 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             Object.DestroyImmediate(plainType);
         }
 
+        // ── Ownership attribution tests ──────────────────────────────────────────
+        // A weapon entity owned by a ship entity deals the damage; PerformerAttribution
+        // resolves "the beneficiary" to the ship instead of the literal performer (the weapon).
+
+        [UnityTest]
+        public IEnumerator WeaponOwnedByShip_UnderRootAttribution_ShipLifestealsInsteadOfWeapon()
+        {
+            yield return null;
+            var (ship, weapon) = CreateOwnedShipAndWeapon();
+
+            InjectPercentageStat(weapon.Stats, _genericLifestealStat, new Percentage(25));
+            _attacker.Config.GenericLifesteal.Configure(_genericLifestealStat, _genericHealSource);
+            _attacker.Config.PerformerAttribution = EntityAttribution.Root;
+
+            var healEventCount = 0;
+            _sharedEvents.Healed.OnEventRaised += _ => healEventCount++;
+
+            ship.Health.TakeDamage(BuildPre(30, _target, ship)); // ship: 100 -> 70
+
+            // Weapon (owned by ship) deals 40 damage -> generic lifesteal 25% = 10, credited to the ship.
+            _target.Health.TakeDamage(BuildPre(40, weapon, _target));
+
+            Assert.AreEqual(80, ship.Health.Hp, "The owning ship must receive the lifesteal heal.");
+            Assert.AreEqual(100, weapon.Health.Hp, "The weapon's own EntityHealth must not be healed.");
+            Assert.AreEqual(1, healEventCount, "Exactly one heal must fire even though the weapon also has an EntityHealth.");
+
+            DestroyOwnedShipAndWeapon(ship, weapon);
+        }
+
+        [UnityTest]
+        public IEnumerator LifestealStatSource_Beneficiary_UsesShipRateOnly()
+        {
+            yield return null;
+            var (ship, weapon) = CreateOwnedShipAndWeapon();
+
+            InjectPercentageStat(weapon.Stats, _genericLifestealStat, new Percentage(25)); // must be ignored
+            InjectPercentageStat(ship.Stats, _genericLifestealStat, new Percentage(10));
+            _attacker.Config.GenericLifesteal.Configure(_genericLifestealStat, _genericHealSource);
+            _attacker.Config.PerformerAttribution = EntityAttribution.Root;
+            _attacker.Config.LifestealStatSource = LifestealStatSource.Beneficiary;
+
+            ship.Health.TakeDamage(BuildPre(30, _target, ship)); // ship: 100 -> 70
+
+            // 40 * 10% (ship's rate; the weapon's 25% is ignored) = 4 -> ship 74
+            _target.Health.TakeDamage(BuildPre(40, weapon, _target));
+
+            Assert.AreEqual(74, ship.Health.Hp);
+
+            DestroyOwnedShipAndWeapon(ship, weapon);
+        }
+
+        [UnityTest]
+        public IEnumerator LifestealStatSource_PerformerThenBeneficiary_FallsBackWhenPerformerLacksTheStat()
+        {
+            yield return null;
+            var (ship, weapon) = CreateOwnedShipAndWeapon();
+
+            // Weapon never gets the stat added to its StatSet at all.
+            InjectPercentageStat(ship.Stats, _genericLifestealStat, new Percentage(10));
+            _attacker.Config.GenericLifesteal.Configure(_genericLifestealStat, _genericHealSource);
+            _attacker.Config.PerformerAttribution = EntityAttribution.Root;
+            _attacker.Config.LifestealStatSource = LifestealStatSource.PerformerThenBeneficiary;
+
+            ship.Health.TakeDamage(BuildPre(30, _target, ship)); // ship: 100 -> 70
+
+            // Weapon lacks the stat -> falls back to the ship's 10%: 40 * 10% = 4 -> ship 74
+            _target.Health.TakeDamage(BuildPre(40, weapon, _target));
+
+            Assert.AreEqual(74, ship.Health.Hp);
+
+            DestroyOwnedShipAndWeapon(ship, weapon);
+        }
+
+        [UnityTest]
+        public IEnumerator LifestealStatSource_Sum_AddsPerformerAndBeneficiaryRates()
+        {
+            yield return null;
+            var (ship, weapon) = CreateOwnedShipAndWeapon();
+
+            InjectPercentageStat(weapon.Stats, _genericLifestealStat, new Percentage(25));
+            InjectPercentageStat(ship.Stats, _genericLifestealStat, new Percentage(10));
+            _attacker.Config.GenericLifesteal.Configure(_genericLifestealStat, _genericHealSource);
+            _attacker.Config.PerformerAttribution = EntityAttribution.Root;
+            _attacker.Config.LifestealStatSource = LifestealStatSource.Sum;
+
+            ship.Health.TakeDamage(BuildPre(30, _target, ship)); // ship: 100 -> 70
+
+            // (25% + 10%) * 40 = 14 -> ship 84
+            _target.Health.TakeDamage(BuildPre(40, weapon, _target));
+
+            Assert.AreEqual(84, ship.Health.Hp);
+
+            DestroyOwnedShipAndWeapon(ship, weapon);
+        }
+
         // ── Helpers ─────────────────────────────────────────────────────────────
 
         private void SetupGenericLifesteal(Percentage rate)
         {
             InjectPercentageStat(_attacker.Stats, _genericLifestealStat, rate);
             _attacker.Config.GenericLifesteal.Configure(_genericLifestealStat, _genericHealSource);
+        }
+
+        private (HealthEntityBundle Ship, HealthEntityBundle Weapon) CreateOwnedShipAndWeapon()
+        {
+            var ship = CreateEntity("Ship", sharedConfig: _attacker.Config, sharedEvents: _sharedEvents, initializeStats: true);
+            var weapon = CreateOwnedEntity(ship.Core, "Weapon", sharedConfig: _attacker.Config, sharedEvents: _sharedEvents, initializeStats: true);
+            return (ship, weapon);
+        }
+
+        private static void DestroyOwnedShipAndWeapon(HealthEntityBundle ship, HealthEntityBundle weapon)
+        {
+            Object.DestroyImmediate(ship.Go);
+            Object.DestroyImmediate(weapon.Go);
+            Object.DestroyImmediate(ship.DefaultDamageType);
+            Object.DestroyImmediate(ship.DefaultDamageSource);
+            Object.DestroyImmediate(weapon.DefaultDamageType);
+            Object.DestroyImmediate(weapon.DefaultDamageSource);
         }
     }
 }
