@@ -43,7 +43,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             var expSource = victim.Go.AddComponent<TestExpSource>();
 
             ship.Core.Level.ExperienceGrowthFormula = CreateFlatGrowthFormula(maxLevel: 20, expForLevel2: 1000);
-            ship.Config.PerformerAttribution = EntityAttribution.Root;
+            ship.Config.KillCreditAttribution = EntityAttribution.Root;
             ship.Config.DefaultExpCollectionStrategy = ScriptableObject.CreateInstance<DirectKillExpStrategySO>();
             ship.Go.AddComponent<ExpCollector>();
 

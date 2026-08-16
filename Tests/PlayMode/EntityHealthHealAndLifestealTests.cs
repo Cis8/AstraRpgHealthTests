@@ -239,7 +239,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         }
 
         // ── Ownership attribution tests ──────────────────────────────────────────
-        // A weapon entity owned by a ship entity deals the damage; PerformerAttribution
+        // A weapon entity owned by a ship entity deals the damage; LifestealAttribution
         // resolves "the beneficiary" to the ship instead of the literal performer (the weapon).
 
         [UnityTest]
@@ -250,7 +250,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
 
             InjectPercentageStat(weapon.Stats, _genericLifestealStat, new Percentage(25));
             _attacker.Config.GenericLifesteal.Configure(_genericLifestealStat, _genericHealSource);
-            _attacker.Config.PerformerAttribution = EntityAttribution.Root;
+            _attacker.Config.LifestealAttribution = EntityAttribution.Root;
 
             var healEventCount = 0;
             _sharedEvents.Healed.OnEventRaised += _ => healEventCount++;
@@ -276,7 +276,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             InjectPercentageStat(weapon.Stats, _genericLifestealStat, new Percentage(25)); // must be ignored
             InjectPercentageStat(ship.Stats, _genericLifestealStat, new Percentage(10));
             _attacker.Config.GenericLifesteal.Configure(_genericLifestealStat, _genericHealSource);
-            _attacker.Config.PerformerAttribution = EntityAttribution.Root;
+            _attacker.Config.LifestealAttribution = EntityAttribution.Root;
             _attacker.Config.LifestealStatSource = LifestealStatSource.Beneficiary;
 
             ship.Health.TakeDamage(BuildPre(30, _target, ship)); // ship: 100 -> 70
@@ -298,7 +298,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             // Weapon never gets the stat added to its StatSet at all.
             InjectPercentageStat(ship.Stats, _genericLifestealStat, new Percentage(10));
             _attacker.Config.GenericLifesteal.Configure(_genericLifestealStat, _genericHealSource);
-            _attacker.Config.PerformerAttribution = EntityAttribution.Root;
+            _attacker.Config.LifestealAttribution = EntityAttribution.Root;
             _attacker.Config.LifestealStatSource = LifestealStatSource.PerformerThenBeneficiary;
 
             ship.Health.TakeDamage(BuildPre(30, _target, ship)); // ship: 100 -> 70
@@ -320,7 +320,7 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             InjectPercentageStat(weapon.Stats, _genericLifestealStat, new Percentage(25));
             InjectPercentageStat(ship.Stats, _genericLifestealStat, new Percentage(10));
             _attacker.Config.GenericLifesteal.Configure(_genericLifestealStat, _genericHealSource);
-            _attacker.Config.PerformerAttribution = EntityAttribution.Root;
+            _attacker.Config.LifestealAttribution = EntityAttribution.Root;
             _attacker.Config.LifestealStatSource = LifestealStatSource.Sum;
 
             ship.Health.TakeDamage(BuildPre(30, _target, ship)); // ship: 100 -> 70

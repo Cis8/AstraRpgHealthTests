@@ -296,7 +296,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             var weapon = MakeEmptyStatEntity("Weapon");
             weapon.Owner = MakeStatEntity("Ship", pierceStat, SHIP_PIERCING_VAL);
 
-            var config = new MockAstraHealthConfig { PerformerAttribution = EntityAttribution.Root };
+            var config = new MockAstraHealthConfig { DamageStatsAttribution = EntityAttribution.Root };
             var dmgType = MockDamageType.Create(
                 def: defStat,
                 damageFn: ScriptableObject.CreateInstance<FlatDamageMitigationFnSO>(),
@@ -330,7 +330,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             var weapon = MakeStatEntity("Weapon", pierceStat, WEAPON_PIERCING_VAL);
             weapon.Owner = MakeStatEntity("Ship", pierceStat, SHIP_PIERCING_VAL);
 
-            var config = new MockAstraHealthConfig { PerformerAttribution = EntityAttribution.Root };
+            var config = new MockAstraHealthConfig { DamageStatsAttribution = EntityAttribution.Root };
             var dmgType = MockDamageType.Create(
                 def: defStat,
                 damageFn: ScriptableObject.CreateInstance<FlatDamageMitigationFnSO>(),

@@ -63,7 +63,9 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             public StatSO ManualHealthRegenerationStat { get; set; }
             public bool SuppressPassiveRegenerationEvents { get; set; }
             public bool SuppressManualRegenerationEvents { get; set; }
-            public EntityAttribution PerformerAttribution { get; set; }
+            public EntityAttribution LifestealAttribution { get; set; }
+            public EntityAttribution KillCreditAttribution { get; set; }
+            public EntityAttribution DamageStatsAttribution { get; set; }
             public LifestealStatConfig GenericLifesteal { get; set; }
             public LifestealStatSource LifestealStatSource { get; set; }
             public bool SuppressLifestealEvents { get; set; }
