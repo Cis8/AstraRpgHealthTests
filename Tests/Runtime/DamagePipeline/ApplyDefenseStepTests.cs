@@ -1,11 +1,13 @@
 using System.Linq;
 using ElectricDrill.AstraRpgFramework;
+using ElectricDrill.AstraRpgFramework.Ownership;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
 using ElectricDrill.AstraHealth.Damage;
 using ElectricDrill.AstraHealth.Damage.CalculationPipeline;
 using ElectricDrill.AstraHealth.DamageMitigationFunctions;
 using ElectricDrill.AstraHealth.DefensePenetrationFunctions;
+using ElectricDrill.AstraRpgHealthTests.TestUtils;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -104,6 +106,36 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             dealerCore._stats = dealerStats;
 
             return (targetCore, dealerCore, targetStats, dealerStats);
+        }
+
+        // Real EntityStats (not the TestStats override above) backed by an actual StatSetSO, so
+        // Contains/TryGet reflect the injected stat instead of always missing it. Needed for the
+        // ownership fallback-chain tests below, which read stats through DamageInfo.PerformerStats
+        // (IStatReader.TryGet) rather than through ApplyDefenseStep's mocked reduction functions.
+        private static EntityCore MakeStatEntity(string name, StatSO stat, long value)
+        {
+            var go = new GameObject(name);
+            var core = go.AddComponent<EntityCore>();
+            var stats = go.AddComponent<EntityStats>();
+            var statSet = ScriptableObject.CreateInstance<StatSetSO>();
+            statSet._stats.Add(stat);
+            stats.SetFixedStatSet(statSet);
+            stats.SetFixed(stat, value);
+            core._stats = stats;
+            return core;
+        }
+
+        // Same as MakeStatEntity, but with an empty StatSet — Contains() is false for every stat,
+        // simulating a performer that genuinely doesn't define the stat (as opposed to defining it
+        // as 0), so IStatReader.TryGet falls through to the next reader in the chain.
+        private static EntityCore MakeEmptyStatEntity(string name)
+        {
+            var go = new GameObject(name);
+            var core = go.AddComponent<EntityCore>();
+            var stats = go.AddComponent<EntityStats>();
+            stats.SetFixedStatSet(ScriptableObject.CreateInstance<StatSetSO>());
+            core._stats = stats;
+            return core;
         }
 
         [TearDown]
@@ -238,6 +270,82 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
             // Damage should remain unchanged
             Assert.AreEqual(RAW, info.Amounts.Current);
             Assert.IsFalse((info.Reasons & DamagePreventionReason.DefenseAbsorbed) != 0);
+        }
+
+        // ── Ownership attribution: DamageInfo.PerformerStats fallback chain ─────
+        // Uses the real Flat penetration/mitigation functions (not the mocks above, which ignore
+        // their stat-value inputs) so the assertions are actually sensitive to which entity's stat
+        // fed the pipeline: reducedDefense = defVal - piercingVal; mitigatedDamage = amount - reducedDefense.
+        // Entities are built with MakeStatEntity/MakeEmptyStatEntity rather than MakeEntities/TestStats:
+        // TestStats never configures a real StatSet, so Contains() is always false and these two tests
+        // would pass trivially (reading 0 from every entity) without a real one.
+
+        [Test]
+        public void ApplyDefenseStep_UnderRootAttribution_UsesOwnerPiercingStat_WhenPerformerLacksIt()
+        {
+            const long RAW = 100;
+            const long DEF_VAL = 50;
+            const long SHIP_PIERCING_VAL = 20;
+            const long EXPECTED = 70; // 100 - (50 - 20)
+
+            var defStat = ScriptableObject.CreateInstance<StatSO>();
+            var pierceStat = ScriptableObject.CreateInstance<StatSO>();
+
+            var target = MakeStatEntity("Target", defStat, DEF_VAL);
+            // The weapon (performer) has no piercing stat at all; only its owner (the ship) does.
+            var weapon = MakeEmptyStatEntity("Weapon");
+            weapon.Owner = MakeStatEntity("Ship", pierceStat, SHIP_PIERCING_VAL);
+
+            var config = new MockAstraHealthConfig { PerformerAttribution = EntityAttribution.Root };
+            var dmgType = MockDamageType.Create(
+                def: defStat,
+                damageFn: ScriptableObject.CreateInstance<FlatDamageMitigationFnSO>(),
+                pierce: pierceStat,
+                defenseFn: ScriptableObject.CreateInstance<FlatDefensePenetrationFnSO>());
+
+            var pre = PreDamageContext.Builder
+                .WithAmount(RAW).WithType(dmgType).WithSource(MockDamageSource.Create())
+                .WithTarget(target).WithPerformer(weapon).Build();
+            var info = new DamageInfo(pre, config);
+
+            var processed = new ApplyDefenseStep().Process(info);
+
+            Assert.AreEqual(EXPECTED, processed.Amounts.Current,
+                "The ship's piercing stat must be picked up via the ChainedStatReader fallback.");
+        }
+
+        [Test]
+        public void ApplyDefenseStep_UnderRootAttribution_PrefersPerformerPiercingStat_WhenBothHaveIt()
+        {
+            const long RAW = 100;
+            const long DEF_VAL = 50;
+            const long WEAPON_PIERCING_VAL = 5;
+            const long SHIP_PIERCING_VAL = 20;
+            const long EXPECTED = 55; // 100 - (50 - 5); the ship's 20 must be ignored
+
+            var defStat = ScriptableObject.CreateInstance<StatSO>();
+            var pierceStat = ScriptableObject.CreateInstance<StatSO>();
+
+            var target = MakeStatEntity("Target", defStat, DEF_VAL);
+            var weapon = MakeStatEntity("Weapon", pierceStat, WEAPON_PIERCING_VAL);
+            weapon.Owner = MakeStatEntity("Ship", pierceStat, SHIP_PIERCING_VAL);
+
+            var config = new MockAstraHealthConfig { PerformerAttribution = EntityAttribution.Root };
+            var dmgType = MockDamageType.Create(
+                def: defStat,
+                damageFn: ScriptableObject.CreateInstance<FlatDamageMitigationFnSO>(),
+                pierce: pierceStat,
+                defenseFn: ScriptableObject.CreateInstance<FlatDefensePenetrationFnSO>());
+
+            var pre = PreDamageContext.Builder
+                .WithAmount(RAW).WithType(dmgType).WithSource(MockDamageSource.Create())
+                .WithTarget(target).WithPerformer(weapon).Build();
+            var info = new DamageInfo(pre, config);
+
+            var processed = new ApplyDefenseStep().Process(info);
+
+            Assert.AreEqual(EXPECTED, processed.Amounts.Current,
+                "The weapon's own piercing stat must win over the owning ship's.");
         }
     }
 }
