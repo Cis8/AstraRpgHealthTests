@@ -243,6 +243,29 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
             };
         }
 
+        /// <summary>
+        /// Like <see cref="CreateEntity"/>, but assigns <paramref name="owner"/> as the created
+        /// entity's <see cref="EntityCore.Owner"/> — for tests of ownership-aware attribution
+        /// (e.g. a weapon entity owned by a ship entity).
+        /// </summary>
+        public static HealthEntityBundle CreateOwnedEntity(EntityCore owner,
+            string name = "Entity",
+            AstraHealthConfigSO sharedConfig = null,
+            long maxHp = 100,
+            bool allowNegative = false,
+            long barrierAmount = 0,
+            Action<AstraHealthConfigSO> configMutator = null,
+            Action<EntityHealth> healthMutator = null,
+            bool initializeStats = false,
+            bool initializeAttributes = false,
+            HealthEventsBundle? sharedEvents = null)
+        {
+            var entity = CreateEntity(name, sharedConfig, maxHp, allowNegative, barrierAmount,
+                configMutator, healthMutator, initializeStats, initializeAttributes, sharedEvents);
+            entity.Core.Owner = owner;
+            return entity;
+        }
+
         private static void SetConfigProviderInstance(AstraHealthConfigSO config)
         {
             AstraHealthConfigProvider.Instance = config;
