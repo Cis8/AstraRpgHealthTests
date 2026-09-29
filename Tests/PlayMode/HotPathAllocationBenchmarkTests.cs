@@ -4,7 +4,6 @@ using ElectricDrill.AstraHealth.Damage;
 using ElectricDrill.AstraHealth.Heal;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.Scripting;
 using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
 using static ElectricDrill.AstraRpgHealthTests.Tests.PlayMode.TestHealthFactory;
@@ -17,11 +16,13 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
     /// <see cref="ElectricDrill.AstraHealth.Core.EntityHealth.Heal(PreHealContext)"/> instance.
     ///
     /// <para>
-    /// Measurement: the garbage collector is disabled for the measured window
-    /// (<see cref="GarbageCollector"/>) so the managed heap only grows, and the delta of
-    /// <see cref="GC.GetTotalMemory(bool)"/> across N iterations divided by N is the bytes/instance.
-    /// (<c>GC.GetAllocatedBytesForCurrentThread</c> is not implemented on every Unity Mono build, so it
-    /// is not used here.)
+    /// Measurement: the loop runs in small batches, and only the batches during which no collection
+    /// happened (<see cref="GC.CollectionCount(int)"/> unchanged) are counted. In such a batch the managed
+    /// heap only grows, so the delta of <see cref="GC.GetTotalMemory(bool)"/> divided by the batch size is
+    /// the bytes/instance. The collector is not paused
+    /// (<c>GarbageCollector.GCMode = Disabled</c> throws in the Editor, where this runs), and
+    /// <c>GC.GetAllocatedBytesForCurrentThread</c> is not implemented on every Unity Mono build, so
+    /// neither is used here.
     /// </para>
     /// <para>
     /// The ceilings are deliberately loose regression guards. The value is the logged
@@ -34,6 +35,9 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
     {
         private const int Warmup = 200;
         private const int Iterations = 10_000;
+
+        // Iterations per measured batch: small enough that most batches finish before the collector runs.
+        private const int BatchSize = 100;
 
         // Loose regression ceilings (bytes per instance, editor/Mono). Bump deliberately, with a note,
         // if a feature genuinely adds hot-path allocation.
@@ -71,25 +75,33 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         }
 
         /// <summary>
-        /// Runs <paramref name="body"/> <paramref name="iterations"/> times with the GC disabled and
-        /// returns the managed-heap growth per iteration, in bytes.
+        /// Runs <paramref name="body"/> until <paramref name="iterations"/> iterations have been measured
+        /// and returns the managed-heap growth per iteration, in bytes, or <see cref="double.NaN"/> if every
+        /// batch overlapped a collection. A batch that did is discarded and run again; the number of
+        /// attempts is capped so a run under constant collection cannot spin.
         /// </summary>
         private static double MeasureBytesPerIteration(int iterations, Action body)
         {
-            var previousMode = GarbageCollector.GCMode;
-            GarbageCollector.GCMode = GarbageCollector.Mode.Disabled;
-            try
+            long bytes = 0;
+            int measured = 0;
+            int maxAttempts = iterations / BatchSize * 3;
+
+            for (int attempt = 0; attempt < maxAttempts && measured < iterations; attempt++)
             {
+                int collections = GC.CollectionCount(0);
                 long before = GC.GetTotalMemory(false);
-                for (int i = 0; i < iterations; i++)
+                for (int i = 0; i < BatchSize; i++)
                     body();
                 long after = GC.GetTotalMemory(false);
-                return (after - before) / (double)iterations;
+
+                if (GC.CollectionCount(0) != collections)
+                    continue;
+
+                bytes += after - before;
+                measured += BatchSize;
             }
-            finally
-            {
-                GarbageCollector.GCMode = previousMode;
-            }
+
+            return measured == 0 ? double.NaN : bytes / (double)measured;
         }
 
         /// <summary>
@@ -98,7 +110,8 @@ namespace ElectricDrill.AstraRpgHealthTests.Tests.PlayMode
         private bool HeapMeasurementWorks()
         {
             double perIteration = MeasureBytesPerIteration(1_000, () => _sink = new byte[1024]);
-            // 1000 x ~1040 B with GC disabled must show clearly; allow slack for block-size rounding.
+            // 1000 x ~1040 B in collection-free batches must show clearly; allow slack for block-size rounding.
+            // NaN (no collection-free batch) compares false, so it reads as "unavailable".
             return perIteration > 512.0;
         }
 
