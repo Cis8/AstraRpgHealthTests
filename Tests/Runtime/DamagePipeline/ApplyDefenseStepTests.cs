@@ -1,5 +1,6 @@
 using System.Linq;
 using ElectricDrill.AstraRpgFramework;
+using ElectricDrill.AstraRpgFramework.Config;
 using ElectricDrill.AstraRpgFramework.Ownership;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
@@ -15,6 +16,9 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 {
     public class ApplyDefenseStepTests
     {
+        [SetUp]
+        public void SetUp() => AstraFrameworkConfigProvider.Instance = MockAstraFrameworkConfig.CreateMinimal();
+
         private class MockFlatDamageMitigationFn : FlatDamageMitigationFnSO
         {
             private long _result;
@@ -142,6 +146,7 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
         public void CleanupScene() {
             foreach (var go in Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include))
                 Object.DestroyImmediate(go);
+            AstraFrameworkConfigProvider.Reset();
         }
 
         [Test]
