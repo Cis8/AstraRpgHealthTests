@@ -6,11 +6,13 @@ using ElectricDrill.AstraRpgFramework.Ownership;
 using ElectricDrill.AstraRpgFramework.Stats;
 using ElectricDrill.AstraRpgFramework.Utils;
 using ElectricDrill.AstraHealth.Config;
+using ElectricDrill.AstraHealth.Core;
 using ElectricDrill.AstraHealth.Damage;
 using ElectricDrill.AstraHealth.Damage.CalculationPipeline;
 using ElectricDrill.AstraHealth.DamageMitigationFunctions;
 using ElectricDrill.AstraHealth.DefensePenetrationFunctions;
 using ElectricDrill.AstraHealth.ReductionFunctions;
+using ElectricDrill.AstraHealth.Utils;
 using ElectricDrill.AstraRpgHealthTests.TestUtils;
 using NUnit.Framework;
 using UnityEngine;
@@ -121,6 +123,38 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
             // A missing reader or a missing stat reads as 0.
             private long Read(IStatReader reader) => reader != null && reader.TryGet(Stat, out var value) ? value : 0;
+        }
+
+        /// <summary>
+        /// A function that depends on the target's maximum health. That is not a stat, so it does not go through
+        /// <see cref="ReductionContext.TargetStats"/>: it asks the target entity. It records what it read and leaves
+        /// the damage unchanged.
+        /// </summary>
+        private class MaxHpProbeMitigationFn : DamageMitigationFnSO
+        {
+            public long Seen = -1;
+
+            public override long CalculateMitigatedDamage(long amount, double defensiveStatValue, RoundingMode roundingMode)
+                => amount;
+
+            public override long CalculateMitigatedDamage(long amount, double defensiveStatValue, RoundingMode roundingMode,
+                in ReductionContext context)
+            {
+                // A missing target entity or health component reads as 0.
+                var health = context.Target.GetEntityHealth();
+                Seen = health != null ? health.MaxHp : 0;
+                return amount;
+            }
+        }
+
+        /// <summary>
+        /// Gives an entity a health component with a known max HP. In edit mode <c>Awake</c> does not run, so the
+        /// component holds exactly what is set here.
+        /// </summary>
+        private static void AddHealth(EntityCore core, long maxHp)
+        {
+            var health = core.gameObject.AddComponent<EntityHealth>();
+            health._totalMaxHp = new LongRef { UseConstant = true, ConstantValue = maxHp };
         }
 
         private EntityCore MakeEntity(string name, EntityLevel level, StatSO stat = null, long statValue = 0)
@@ -458,6 +492,45 @@ namespace ElectricDrill.AstraRpgHealthTests.DamagePipeline
 
             Assert.AreEqual(0L, probe.TargetValue);
             Assert.AreEqual(0L, probe.PerformerValue);
+        }
+
+        // ── A function that depends on something that is not a stat ───────────────
+
+        [Test]
+        public void MaxHealthFunction_ReadsTheTargetsMaxHp_ThroughTheTargetEntity()
+        {
+            var defStat = Make<StatSO>();
+            var probe = Make<MaxHpProbeMitigationFn>();
+            var target = MakeEntity("Target", 1);
+            AddHealth(target, 250);
+            var attacker = MakeEntity("Attacker", 1);
+            AddHealth(attacker, 900); // not what the function asks about
+
+            new ApplyDefenseStep().Process(MakeInfo(100, TestDamageType.Create(defStat, probe), target, attacker));
+
+            Assert.AreEqual(250L, probe.Seen);
+        }
+
+        [Test]
+        public void MaxHealthFunction_ReadsZero_WithoutATargetEntityOrWithoutAHealthComponent()
+        {
+            var probe = Make<MaxHpProbeMitigationFn>();
+            var contexts = new ReductionContext[]
+            {
+                ReductionContext.Default,
+                default,
+                new ReductionContext(10, 60),                          // levels alone: no target entity
+                new ReductionContext(MakeEntity("NoHealth", 1), null), // an entity without EntityHealth
+            };
+
+            foreach (var context in contexts)
+            {
+                probe.Seen = -1;
+
+                Assert.DoesNotThrow(() => probe.CalculateMitigatedDamage(100, 10, RoundingMode.Round, context));
+
+                Assert.AreEqual(0L, probe.Seen);
+            }
         }
     }
 }
